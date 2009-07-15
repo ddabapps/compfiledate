@@ -1,0 +1,44 @@
+;===============================================================================
+; VerInfo.vi
+;
+; Version information description file used to create VerInfo.res resource file.
+; Build this file with DelphiDabbler Version Information Editor from
+; http://www.delphidabbler.com/. Compile the resulting .rc file using the
+; Borland BRCC32 resource compiler.
+;
+; $Rev$
+; $Date$
+;
+;===============================================================================
+
+
+[Fixed File Info]
+File Version #=1, 0, 0, 1
+Product Version #=1, 0, 0, 0
+File OS=4
+File Type=1
+File Sub-Type=0
+File Flags Mask=63
+File Flags=0
+
+[Variable File Info]
+Language=2057
+Character Set=1252
+
+[String File Info]
+Comments=For licensing information see License.txt or go to http://www.delphidabbler.com/software/compfiledate/license.
+Company Name=DelphiDabbler
+File Description=File Date Comparison Utility
+File Version=<#F1>.<#F2>.<#F3> build <#F4>
+Internal Name=<SHORTFNAME>
+Legal Copyright=Copyright © P.D.Johnson, 2009.
+Legal Trademark=
+Original File Name=CompFileDate.exe
+Private Build=
+Product Name=DelphiDabbler File Date Comparison Utility
+Product Version=Release <#P1>.<#P2>.<#P3>
+Special Build=
+
+[Configuration Details]
+Identifier=
+NumRCComments=0
