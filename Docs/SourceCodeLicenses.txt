@@ -1,0 +1,52 @@
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+DELPHIDABBLER COMPFILEDATE SOURCE CODE LICENSING
+________________________________________________________________________________
+
+This document discusses and presents the relevant licenses governing the
+CompFileDate source code available from DelphiDabbler.com as part of the
+CompFileDate source code download.
+
+The download includes:
+
++ Original Source Code written by Peter Johnson.
++ Some binary resource files that may be difficult to recompile from source.
+
+Please refer to the relevant section below fo details of licensing.
+
+The download does not include all the source code required to rebuild
+CompFileDate. Explicitly it doesn't include source files from the Delphi 2006
+VCL. You must have Delphi 2006 in order to access these files.
+  
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Original Source Code
+________________________________________________________________________________
+
+Original source files are stored in the the following directories:
+
+  Src
+  Src\Assets
+
+Any original source code file that is governed by a license has a comment to
+that effect in the source file.
+
+Any other source code files that contain no copyright or license information can
+be freely used and modified without restriction.
+
+Many source code files are licensed under the Mozilla Public License v1.1. A
+full copy of that license can be found in MPL.txt
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Binary Resource Files
+________________________________________________________________________________
+
+The following binary files are provided in the Bin directory. Governing licenses
+are those that apply to their source files.
+
++ Resources.res - compiled from Resources.rc
++ VersionInfo.res - compiled from VersionInfo.vi
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
