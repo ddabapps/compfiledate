@@ -10,6 +10,9 @@ program CompFileDate;
 
 {$APPTYPE CONSOLE}
 
+{$RESOURCE Resources.res}   // general program assets
+{$RESOURCE VerInfo.res}     // version information
+
 {%ToDo 'CompFileDate.todo'}
 
 uses
@@ -28,3 +31,4 @@ begin
       Free;
     end;
 end.
+
