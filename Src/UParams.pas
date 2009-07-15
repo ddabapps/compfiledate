@@ -200,7 +200,7 @@ begin
       else if fFileName2 = '' then
         fFileName2 := fParams[Idx]
       else
-        raise EApplication.Create(sAppErrTooManyFiles, cAppErrTooManyFiles);
+        raise EApplication.Create(sAppErr2FilesNeeded, cAppErr2FilesNeeded);
     end
     else if SwitchToId(fParams[Idx], SwitchId) then
       HandleSwitch(SwitchId, Idx)

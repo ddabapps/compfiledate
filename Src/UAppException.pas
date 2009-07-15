@@ -61,18 +61,16 @@ uses
 const
   // Error exit codes
   cAppErrUnknown = 100;
-  cAppErrTooManyFiles = 101;
-  cAppErrBadSwitch = 102;
-  cAppErr2FilesNeeded = 103;
-  cAppErrFileNamesSame = 104;
-  cAppErrFileNameNotFound = 105;
+  cAppErrBadSwitch = 101;
+  cAppErr2FilesNeeded = 102;
+  cAppErrFileNamesSame = 103;
+  cAppErrFileNameNotFound = 104;
 
 
 resourcestring
   // Error messages
   sAppErrBadSwitch = 'Invalid switch "%s"';
-  sAppErrTooManyFiles = 'Too many file names supplied: two expected';
-  sAppErr2FilesNeeded = 'Two file names must be specified';
+  sAppErr2FilesNeeded = 'Exactly two file names must be specified';
   sAppErrFileNamesSame = 'File names must be different';
   sAppErrFileNameNotFound = 'Date for file "%s" not found';
 
