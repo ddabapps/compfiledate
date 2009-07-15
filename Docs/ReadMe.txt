@@ -34,12 +34,11 @@ Exit codes are:
   0    - <filename1> is newer than, or has the same date as <filename2>.
   1    - <filename1> is older than <filename2>.
   100  - Unknown error detected.
-  101  - Too many file names were specified on the command line.
-  102  - An invalid switch was supplied.
-  103  - Too few or no file names were specified on the command line.
-  104  - Both file names were the same.
-  105  - Date information couldn't be read from one or more files. File may not
-         exist.
+  101  - An invalid switch was supplied.
+  102  - Incorrect number of file names supplied.
+  103  - Both file names were the same.
+  104  - Date information couldn't be read from one or both files. It is
+         possible that a file doesn't exist.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
