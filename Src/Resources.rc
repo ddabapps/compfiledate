@@ -1,0 +1,12 @@
+/*
+ * Resources.rc
+ *
+ * Includes program's assets in resources.
+ *
+ * $Rev$
+ * $Date$
+ */
+
+/* Vista manifest file */
+1 24 Assets\CompFileDate.manifest
+
