@@ -177,4 +177,4 @@ releasesrc:
 # Version info filea are compiled by VIEd: a temporary .rc file is left behind
 .vi.rc:
   @echo +++ Compiling Version Info file $< +++
-  @$(VIED) $<
+  @$(VIED) .\$<
