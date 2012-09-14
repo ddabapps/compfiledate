@@ -8,6 +8,8 @@
 #
 # Usage:
 #   Run one of the following Make commands on the same directory as this file:
+#     Make config
+#       Configures source tree ready for building program.
 #     Make
 #     Make exe
 #       Builds CompFileDate.exe.
@@ -161,6 +163,19 @@ releasesrc:
   @zip -j -9 $(SRCFILE) Docs\SourceCodeLicenses.txt
   @zip -j -9 $(SRCFILE) Docs\MPL.txt
 
+# Configure source tree for building
+config:
+  @echo Configuring 
+  # Create build folders
+  @cd ..
+  @if exist Bin rmdir /S /Q Bin
+  @if exist Exe rmdir /S /Q Exe
+  @if exist Release rmdir /S /Q Release
+  @mkdir Bin
+  @mkdir Exe
+  @mkdir Release
+  @cd Src
+  
 # Implicit rules
 # Delphi projects are assumed to contain all required output and search path
 # info in project options .cfg file.
