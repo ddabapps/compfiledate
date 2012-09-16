@@ -72,21 +72,21 @@
 # ------------------------------------------------------------------------------
 
 
-# DELPHIROOT must point to the install directory for Delphi 2006. The preferred
-# option is for user to define this in the DELPHI2006 environment variable or to
-# directly define DELPHIROOT. If neither DELPHIROOT nor DELPHI2006 is defined
+# DELPHIROOT must point to the install directory for Delphi 2010. The preferred
+# option is for user to define this in the DELPHI2010 environment variable or to
+# directly define DELPHIROOT. If neither DELPHIROOT nor DELPHI2010 is defined
 # the directory is calculated from Make's directory. In this latter case it is
-# important to ensure it is the Delphi 2006 version of Make that is used.
+# important to ensure it is the Delphi 2010 version of Make that is used.
 !ifndef DELPHIROOT
-!ifdef DELPHI2006
-DELPHIROOT = $(DELPHI2006)
+!ifdef DELPHI2010
+DELPHIROOT = $(DELPHI2010)
 !else
 DELPHIROOT = $(MAKEDIR)\..
 !endif
 !endif
 
 # Define macros that access required programs
-# DCC32 and BRCC32 should be in same sub-directory of Delphi 2006
+# DCC32 and BRCC32 should be in same sub-directory of Delphi 2010
 DCC32 = "$(DELPHIROOT)\Bin\DCC32.exe"
 BRCC32 = "$(DELPHIROOT)\Bin\BRCC32.exe"
 # VIED is expected to be on the path or its install directory must be specified
@@ -113,7 +113,7 @@ everything: exe release
 
 # Build resources and delete intermediate file created by VIED
 resources : Resources.res VerInfo.res
-  -@del VerInfo.rc 
+  -@del VerInfo.rc
 
 # Build pascal source and link in resources
 pascal: CompFileDate.exe
@@ -134,7 +134,7 @@ clean:
   -@for /F "usebackq" %i in (`dir /S /B /A:D ..\__history`) do @rmdir /S /Q %i
   -@cd Src
   @echo Done.
-  
+
 # Create executable and source released zip files
 release: clean releaseexe releasesrc
 
@@ -169,7 +169,7 @@ releasesrc:
 
 # Configure source tree for building
 config:
-  @echo Configuring 
+  @echo Configuring
   # Create build folders
   @cd ..
   @if exist Bin rmdir /S /Q Bin
@@ -179,7 +179,7 @@ config:
   @mkdir Exe
   @mkdir Release
   @cd Src
-  
+
 # Implicit rules
 # Delphi projects are assumed to contain all required output and search path
 # info in project options .cfg file.
