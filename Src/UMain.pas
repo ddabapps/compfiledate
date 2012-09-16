@@ -123,15 +123,15 @@ resourcestring
     + '  filename2 | Name of second file to be compared.'#13#10
     + '  -v        | Verbose: writes output to standard output. No output if '
     + '- v not'#13#10'            | provided. Ignored on error.'#13#10
-    + '  -h or -?  | Displays help screen. Rrest of command line ignored.'#13#10
+    + '  -h or -?  | Displays help screen. Rest of command line ignored.'#13#10
     + #13#10
     + 'Exit code is 1 if filename1 is earlier than filename2 and zero if not.'
     + #13#10
     + 'If an error occurs then an error code >= 100 is returned and an error '
     + 'message'#13#10'is written to standard output, regardless of the -v '
     + 'switch. See documentation'#13#10'for details of error codes.';
-  sFile1Older = 'filename1 is older than filename2';
-  sFile1NotOlder = 'filename1 is not older than filename2';
+  sFile1Older = '"%0:s" is older than "%1:s"';
+  sFile1NotOlder = '"%0:s" is not older than "%1:s"';
 
 
 { TMain }
@@ -167,12 +167,16 @@ begin
       SignOn;
       if IsFile1EarlierThanFile2(fParams.FileName1, fParams.FileName2) then
       begin
-        fConsole.WriteLn(sFile1Older);
+        fConsole.WriteLn(
+          Format(sFile1Older, [fParams.FileName1, fParams.FileName2])
+        );
         ExitCode := 1;
       end
       else
       begin
-        fConsole.WriteLn(sFile1NotOlder);
+        fConsole.WriteLn(
+          Format(sFile1NotOlder, [fParams.FileName1, fParams.FileName2])
+        );
         ExitCode := 0;
       end;
     end
