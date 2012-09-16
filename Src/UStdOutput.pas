@@ -66,7 +66,7 @@ type
       }
   public
     class procedure Write(const Text: string);
-      {Writes text to standard output.
+      {Writes text to standard output in default ANSI encoding.
         @param Text [in] Text to be written.
       }
   end;
@@ -77,7 +77,7 @@ implementation
 
 uses
   // Delphi
-  Windows;
+  SysUtils, Windows;
 
 
 { TStdOutput }
@@ -91,14 +91,18 @@ begin
 end;
 
 class procedure TStdOutput.Write(const Text: string);
-  {Writes text to standard output.
+  {Writes text to standard output in default ANSI encoding.
     @param Text [in] Text to be written.
   }
 var
   Dummy: Cardinal;  // Unused param for Windows.WriteFile
+  Bytes: TBytes;    // Bytes of Text in default ANSI encoding
 begin
-  // Write the data
-  Windows.WriteFile(GetHandle, Text[1], Length(Text), Dummy, nil);
+  Bytes := TEncoding.Default.GetBytes(Text);
+  if Length(Bytes) = 0 then
+    Exit;
+  Windows.WriteFile(
+    GetHandle, Pointer(Bytes)^, Length(Bytes), Dummy, nil);
 end;
 
 end.
