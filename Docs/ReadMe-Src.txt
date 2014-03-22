@@ -66,7 +66,7 @@ environment variable.
 Licensing
 ________________________________________________________________________________
 
-Please see SourceCodeLicenses.txt for information about source code licenses.
+Please see LICENSE.txt for information about source code licenses.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯

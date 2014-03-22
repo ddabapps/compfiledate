@@ -57,21 +57,15 @@ ________________________________________________________________________________
 
 
 Source code for much of the program is available from
-http://www.delphidabbler.com/compfiledate/download. 
-
-See the file SourceCodeLicenses.txt file provided with the source code download
-for licensing information.
+http://www.delphidabbler.com/compfiledate/download.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Copyright and License
 ________________________________________________________________________________
 
-See the file License.txt provided with this download for copyright and
+See the file LICENSE.txt provided with this download for copyright and
 licensing information.
-
-The license is also available at
-http://www.delphidabbler.com/software/bdiff/license
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
