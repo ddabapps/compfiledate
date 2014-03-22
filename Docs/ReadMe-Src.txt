@@ -1,9 +1,6 @@
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 DelphiDabbler CompFileDate Source Code Readme
-
-$Rev$
-$Date$
 ________________________________________________________________________________
 
 Source code for the current version of DelphiDabbler CompFileDate is always

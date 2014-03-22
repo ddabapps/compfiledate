@@ -3,9 +3,6 @@
 #
 # Makefile for the project.
 #
-# $Rev$
-# $Date$
-#
 # Usage:
 #   Run one of the following Make commands on the same directory as this file:
 #     Make config

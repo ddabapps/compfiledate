@@ -4,9 +4,6 @@
  * Exception class for application errors. Stores error message and associated
  * error exit code.
  *
- * $Rev$
- * $Date$
- *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
