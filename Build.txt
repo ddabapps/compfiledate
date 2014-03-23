@@ -1,0 +1,95 @@
+CompFileDate Build Instructions
+===============================
+
+These instructions assume you are building the program using Delphi 2010. Later
+versions of Delphi may be suitable with some minor changes to the make file.
+
+
+Dependencies
+------------
+
+The program has no dependencies other than the Delphi VCL.
+
+
+Build Tools
+-----------
+
+The following tools are required to build the program:
+
++ A Delphi 2010 or later installation. The following tools are required:
+  - `DCC32.exe` command line compiler.
+  - `BRCC32.exe` resource compiler.
+  - `MAKE.exe` the Borland / Embarcaero make utility (other make tools will not
+     suffice). The following instructions assume that `MAKE` is on the system
+     path. If not you must specify the correct path when running `MAKE`
++ `VIEd.exe` (Version Information Editor by DelphiDabbler). See
+  http://delphidabbler.com/software/vied.
+
+
+Environment Variables
+---------------------
+
+The program's make file requires that the following environment variables must
+be set:
+
++ `DELPHIROOT` - must be set to the install directory of the version of Delphi
+  being used.
++ `DELPHI2010` - may be set to the install directory of Delphi 2010. If set then
+  `DELPHIROOT` is ignored.
++ `VIEDINST` - set to the install directory of `VIEd.exe`. If not set then
+  `VIEd.exe` is assumed to by on the path.
+
+
+Download the Source
+-------------------
+
+Source code for the current version of DelphiDabbler CompFileDate is always
+available from http://www.delphidabbler.com/download?id=compfiledate&type=src
+and from the Git repository at
+https://sourceforge.net/p/compfiledate/git/ci/master/tree/
+
+To build the program first create a folder and copy the source code from the
+download file or from Git into it, preserving the directory structure so that
+you have the following:
+
+    .
+    |
+    +-- Docs
+    |
+    +-- Src
+        |
+        +-- Assets
+
+
+Build the Program
+-----------------
+
+### Command Line
+
+The program is built using the `Makefile` in the `Src` directory.
+
+First configure the source tree by running `Make config`. This adds `Bin`, `Exe`
+and `Release` directories in the root.
+
+The program can now be created simply by running `Make` with no parameters.
+
+To create an release run `Make release` after running `Make`. This creates two
+zip files, one containing the executable code and the other the source code. The
+zip files are placed in the `Release` directory.
+
+### Using the Delphi IDE
+
+The program can be built using the Delphi IDE. Before this can be done you
+should run `Make config` followed by `Make resources` to configure the source
+tree and create the binary resource files required to build the source.
+
+### Other Build Options
+
+There are other build options available. See the comments in `Makefile` for
+details.
+
+
+Licensing
+---------
+
+See `LICENSE.txt` for information about source code licenses.
