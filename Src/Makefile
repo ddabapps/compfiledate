@@ -121,6 +121,7 @@ releasesrc:
   -@if exist $(SRCFILE) del $(SRCFILE)
   @zip -r -9 $(SRCFILE) Src
   @zip -r -9 $(SRCFILE) Docs
+  @zip -j -9 $(SRCFILE) .gitignore
   @zip -j -9 $(SRCFILE) Build.txt
   @zip -j -9 $(SRCFILE) LICENSE.txt
   -@cd Src
