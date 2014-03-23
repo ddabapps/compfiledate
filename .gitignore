@@ -1,0 +1,15 @@
+# .gitignore file for CompFileDate project
+
+# Delphi generated temporary files and directories
+*.local
+*.identcache
+*.projdata
+*.tvsconfig
+*.dsk
+*.~*
+__history/
+
+# Project specific directories
+Bin
+Release
+Exe
