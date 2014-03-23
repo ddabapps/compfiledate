@@ -32,11 +32,10 @@ Environment Variables
 The program's make file requires that the following environment variables must
 be set:
 
-+ `DELPHIROOT` - must be set to the install directory of the version of Delphi
-  being used.
-+ `DELPHI2010` - may be set to the install directory of Delphi 2010. If set then
-  `DELPHIROOT` is ignored.
-+ `VIEDINST` - set to the install directory of `VIEd.exe`. If not set then
++ `DELPHIROOT` - should be set to the install directory of the version of Delphi
+  being used. If not set it is assumed that Delphi is installed in the same
+  directory as `MAKE.exe`.
++ `VIEDROOT` - set to the install directory of `VIEd.exe`. If not set then
   `VIEd.exe` is assumed to by on the path.
 
 

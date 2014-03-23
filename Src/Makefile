@@ -36,17 +36,12 @@
 #       Builds program and creates release zip files.
 
 
-# DELPHIROOT must point to the install directory for Delphi 2010. The preferred
-# option is for user to define this in the DELPHI2010 environment variable or to
-# directly define DELPHIROOT. If neither DELPHIROOT nor DELPHI2010 is defined
-# the directory is calculated from Make's directory. In this latter case it is
-# important to ensure it is the Delphi 2010 version of Make that is used.
+# DELPHIROOT must point to the install directory for the version of Delphi being
+# used to compile the program. NOTE: The program is targeted at Delphi 2010 but
+# later compilers should be suitable with only minor changes.
 !ifndef DELPHIROOT
-!ifdef DELPHI2010
-DELPHIROOT = $(DELPHI2010)
-!else
+# DELPHIROOT not set: make a guess
 DELPHIROOT = $(MAKEDIR)\..
-!endif
 !endif
 
 # Define macros that access required programs
@@ -54,9 +49,9 @@ DELPHIROOT = $(MAKEDIR)\..
 DCC32 = "$(DELPHIROOT)\Bin\DCC32.exe"
 BRCC32 = "$(DELPHIROOT)\Bin\BRCC32.exe"
 # VIED is expected to be on the path or its install directory must be specified
-# in the VIEDINST macro.
-!ifdef VIEDINST
-VIED = "$(VIEDINST)\VIEd.exe" -makerc
+# in the VIEDROOT macro.
+!ifdef VIEDROOT
+VIED = "$(VIEDROOT)\VIEd.exe" -makerc
 !else
 VIED = "VIEd.exe" -makerc
 !endif
