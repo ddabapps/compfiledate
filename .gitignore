@@ -10,6 +10,4 @@
 __history/
 
 # Project specific directories
-Bin
-Release
-Exe
+Build

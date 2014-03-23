@@ -66,16 +66,21 @@ Build the Program
 
 ### Command Line
 
-The program is built using the `Makefile` in the `Src` directory.
+The program is built using the `Makefile` located in the `Src` directory.
 
-First configure the source tree by running `Make config`. This adds `Bin`, `Exe`
-and `Release` directories in the root.
+Open a command line console and navigate to the `Src` directory.
+
+First configure the source tree by running `Make config`. This creates a `Build`
+directory in the root that in turn contains `Bin`, `Exe` and `Release`
+sub-directories.
 
 The program can now be created simply by running `Make` with no parameters.
+Intermediate binary files will be placed in `Build\Bin` and the program
+executable will be written to `Build\Exe`.
 
 To create an release run `Make release` after running `Make`. This creates two
 zip files, one containing the executable code and the other the source code. The
-zip files are placed in the `Release` directory.
+zip files are placed in the `Build\Release` directory.
 
 ### Using the Delphi IDE
 

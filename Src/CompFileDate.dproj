@@ -13,8 +13,8 @@
 			<DCC_CVT_WIDENING_STRING_LOST>true</DCC_CVT_WIDENING_STRING_LOST>
 			<DCC_EXPLICIT_STRING_CAST_LOSS>true</DCC_EXPLICIT_STRING_CAST_LOSS>
 			<DCC_Description>File Date Comparison Utility</DCC_Description>
-			<DCC_UnitSearchPath>..\Bin;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-			<DCC_ExeOutput>..\Exe</DCC_ExeOutput>
+			<DCC_UnitSearchPath>..\Build\Bin;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_ExeOutput>..\Build\Exe</DCC_ExeOutput>
 			<DCC_TypedAtParameter>true</DCC_TypedAtParameter>
 			<DCC_CVT_ACHAR_TO_WCHAR>true</DCC_CVT_ACHAR_TO_WCHAR>
 			<DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
@@ -26,10 +26,10 @@
 			<DCC_S>false</DCC_S>
 			<DCC_N>true</DCC_N>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
-			<DCC_DependencyCheckOutputName>..\Exe\CompFileDate.exe</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>..\Build\Exe\CompFileDate.exe</DCC_DependencyCheckOutputName>
 			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-			<DCC_DcuOutput>..\Bin</DCC_DcuOutput>
+			<DCC_DcuOutput>..\Build\Bin</DCC_DcuOutput>
 		</PropertyGroup>
 		<ItemGroup>
 			<DelphiCompile Include="CompFileDate.dpr">

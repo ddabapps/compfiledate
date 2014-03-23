@@ -62,7 +62,7 @@ VIED = "VIEd.exe" -makerc
 !endif
 
 # Define macros for paths
-BIN = ..\Bin
+RESOUTDIR = ..\Build\Bin
 
 # Default is to build executables
 exe: res pascal
@@ -103,21 +103,21 @@ clean:
 release: clean releaseexe releasesrc
 
 # Create release zip file for executable
-EXEFILE = Release\dd-compfiledate.zip
+EXEFILE = Build\Release\dd-compfiledate.zip
 releaseexe:
   @echo.
   @echo Release executable
   @echo ------------------
   -@cd ..
   -@if exist $(EXEFILE) del $(EXEFILE)
-  @zip -j -9 $(EXEFILE) Exe\CompFileDate.exe
+  @zip -j -9 $(EXEFILE) Build\Exe\CompFileDate.exe
   @zip -j -9 $(EXEFILE) Docs\ReadMe.txt
   @zip -j -9 $(EXEFILE) LICENSE.txt
   @zip -j -9 $(EXEFILE) Docs\changelog.txt
   -@cd Src
 
 # Create release zip file for source
-SRCFILE = Release\dd-compfiledate-src.zip
+SRCFILE = Build\Release\dd-compfiledate-src.zip
 releasesrc:
   @echo.
   @echo Release source code
@@ -128,19 +128,23 @@ releasesrc:
   @zip -r -9 $(SRCFILE) Docs
   @zip -j -9 $(SRCFILE) Build.txt
   @zip -j -9 $(SRCFILE) LICENSE.txt
+  -@cd Src
 
 # Configure source tree for building
 config:
   @echo Configuring
   # Create build folders
   @cd ..
-  @if exist Bin rmdir /S /Q Bin
-  @if exist Exe rmdir /S /Q Exe
-  @if exist Release rmdir /S /Q Release
+  @if exist Build\Bin rmdir /S /Q Build\Bin
+  @if exist Build\Exe rmdir /S /Q Build\Exe
+  @if exist Build\Release rmdir /S /Q Build\Release
+  @if exist Build rmdir /S /Q Build
+  @mkdir Build
+  @cd Build
   @mkdir Bin
   @mkdir Exe
   @mkdir Release
-  @cd Src
+  @cd ..\Src
 
 # Implicit rules
 # Delphi projects are assumed to contain all required output and search path
@@ -149,11 +153,10 @@ config:
   @echo +++ Compiling Delphi Project $< +++
   @$(DCC32) $< -B
 
-# Resource files are compiled to directory specified by BIN macro, which must
-# have been set by caller
+# Resource files are compiled to directory specified by RESOUTDIR macro
 .rc.res:
   @echo +++ Compiling Resource file $< +++
-  @$(BRCC32) $< -fo$(BIN)\$(@F)
+  @$(BRCC32) $< -fo$(RESOUTDIR)\$(@F)
 
 # Version info filea are compiled by VIEd: a temporary .rc file is left behind
 .vi.rc:
