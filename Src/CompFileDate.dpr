@@ -16,8 +16,6 @@ program CompFileDate;
 {$RESOURCE Resources.res}   // general program assets
 {$RESOURCE VerInfo.res}     // version information
 
-{%ToDo 'CompFileDate.todo'}
-
 uses
   SysUtils,
   UAppException in 'UAppException.pas',

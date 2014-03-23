@@ -40,7 +40,6 @@
 			<DCCReference Include="UMain.pas"/>
 			<DCCReference Include="UParams.pas"/>
 			<DCCReference Include="UStdOutput.pas"/>
-			<None Include="CompFileDate.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
