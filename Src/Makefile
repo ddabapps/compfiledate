@@ -112,7 +112,7 @@ releaseexe:
   -@if exist $(EXEFILE) del $(EXEFILE)
   @zip -j -9 $(EXEFILE) Exe\CompFileDate.exe
   @zip -j -9 $(EXEFILE) Docs\ReadMe.txt
-  @zip -j -9 $(EXEFILE) Docs\License.txt
+  @zip -j -9 $(EXEFILE) LICENSE.txt
   @zip -j -9 $(EXEFILE) Docs\changelog.txt
   -@cd Src
 
@@ -125,11 +125,9 @@ releasesrc:
   -@cd ..
   -@if exist $(SRCFILE) del $(SRCFILE)
   @zip -r -9 $(SRCFILE) Src
-  @zip $(SRCFILE) -d Src\CompFileDate.dsk
-  @zip -r -9 $(SRCFILE) Bin\*.res
-  @zip -j -9 $(SRCFILE) Docs\ReadMe-Src.txt
-  @zip -j -9 $(SRCFILE) Docs\SourceCodeLicenses.txt
-  @zip -j -9 $(SRCFILE) Docs\MPL.txt
+  @zip -r -9 $(SRCFILE) Docs
+  @zip -j -9 $(SRCFILE) Build.txt
+  @zip -j -9 $(SRCFILE) LICENSE.txt
 
 # Configure source tree for building
 config:
