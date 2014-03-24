@@ -1,3 +1,9 @@
-Version 1.0 - 15 July 2009
-CompFileDate 1.0 - 15 July 2009
-+ Original version.
+Release v1.0.1 of 24 March 2014
++ Changed to use Unicode strings internally and to convert them to local ANSI encoding before output.
++ Fixed typo in help screen.
++ Now compiled with Delphi 2010.
++ Re-licensed source code and executable program under Mozilla Public License v2.0.
++ Updated documentation.
+
+Release v1.0.0 of 15 July 2009
++ Original version (compiled with Delphi 2006).
