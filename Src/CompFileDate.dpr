@@ -22,7 +22,8 @@ uses
   UConsole in 'UConsole.pas',
   UMain in 'UMain.pas',
   UParams in 'UParams.pas',
-  UStdOutput in 'UStdOutput.pas';
+  UStdOutput in 'UStdOutput.pas',
+  UDateComparer in 'UDateComparer.pas';
 
 begin
   with TMain.Create do
