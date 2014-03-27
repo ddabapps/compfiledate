@@ -20,13 +20,15 @@ type
   ///  <summary>Type of comparison operator to be used when comparing two dates.
   ///  </summary>
   ///  <remarks>
-  ///  <para>- EQ: check if both dates are equal.</para>
-  ///  <para>- LT: check if date1 is less than date2.</para>
-  ///  <para>- GT: check if date1 is greater than date2.</para>
-  ///  <para>- LTE: check if date1 is less than or equal to date2.</para>
-  ///  <para>- GTE: check if date1 is greater than or equal to date2.</para>
+  ///  <para>Assuming dates Left and Right, the values are as follows:</para>
+  ///  <para>- EQ: check if the dates are equal.</para>
+  ///  <para>- LT: check if Left is less than Right.</para>
+  ///  <para>- GT: check if Left is greater than Right.</para>
+  ///  <para>- LTE: check if Left is less than or equal to Right.</para>
+  ///  <para>- GTE: check if Left is greater than or equal to Right.</para>
+  ///  <para>- NEQ: check if the dates are not equal.</para>
   ///  </remarks>
-  TDateComparisonOp = (EQ, LT, GT, LTE, GTE);
+  TDateComparisonOp = (EQ, LT, GT, LTE, GTE, NEQ);
   {$SCOPEDENUMS OFF}
 
   ///  <summary>
@@ -84,6 +86,11 @@ begin
     Boolean
     begin
       Result := CompareDateTime(Left, Right) <> LessThanValue;
+    end;
+  fMap[TDateComparisonOp.NEQ] := function (const Left, Right: TDateTime):
+    Boolean
+    begin
+      Result := CompareDateTime(Left, Right) <> EqualsValue;
     end;
 end;
 
