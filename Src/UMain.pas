@@ -126,13 +126,13 @@ resourcestring
     + '  -h or -? or --help' + EOL
     + '    Displays help screen. Rest of command line ignored.' + EOL
     + EOL
-    + 'Exit code is 1 if filename1 is earlier than filename2 and zero if not.'
-    + EOL
+    + 'The program''s exit code is 1 if the comparison is true and 0 if it '
+    + 'fails.' + EOL
     + 'If an error occurs then an error code >= 100 is returned and an error '
     + 'message' + EOL
-    + 'is written to standard output, regardless of the -v switch. See '
-    + 'documentation' + EOL
-    + 'for details of error codes.';
+    + 'is written to standard output, regardless of whether the -v or '
+    + '--verbose' + EOL
+    + 'commands were used. See the documentation for details of error codes.';
 
   sEQ = '%0:s has same date as %1:s';
   sNEQ = '%0:s has different date to %1:s';
