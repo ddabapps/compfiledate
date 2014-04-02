@@ -119,11 +119,11 @@ resourcestring
     + 'provided).' + EOL
     + '      c, created or creation:' + EOL
     + '        Use date file were created.' + EOL
-    + '  -v' + EOL
+    + '  -v or --verbose' + EOL
     + '    Verbose: writes output to standard output. No output if -v not '
     + 'provided.' + EOL
     + '    Ignored on error.' + EOL
-    + '  -h or -?' + EOL
+    + '  -h or -? or --help' + EOL
     + '    Displays help screen. Rest of command line ignored.' + EOL
     + EOL
     + 'Exit code is 1 if filename1 is earlier than filename2 and zero if not.'

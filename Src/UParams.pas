@@ -150,9 +150,9 @@ var
 begin
   Command := fParams[Idx];
   Assert(AnsiStartsStr('-', Command));
-  if (Command = '-h') or (Command = '-?') then
+  if (Command = '-h') or (Command = '-?') or (Command = '--help') then
     fHelp := True
-  else if (Command = '-v') then
+  else if (Command = '-v') or (Command = '--verbose') then
     fVerbose := True
   else if (Command = '-c') then
   begin
