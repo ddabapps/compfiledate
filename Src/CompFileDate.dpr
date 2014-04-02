@@ -23,7 +23,8 @@ uses
   UMain in 'UMain.pas',
   UParams in 'UParams.pas',
   UStdOutput in 'UStdOutput.pas',
-  UDateComparer in 'UDateComparer.pas';
+  UDateComparer in 'UDateComparer.pas',
+  UDateExtractor in 'UDateExtractor.pas';
 
 begin
   with TMain.Create do

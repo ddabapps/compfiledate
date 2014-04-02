@@ -46,6 +46,7 @@
 			<DCCReference Include="UParams.pas"/>
 			<DCCReference Include="UStdOutput.pas"/>
 			<DCCReference Include="UDateComparer.pas"/>
+			<DCCReference Include="UDateExtractor.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
