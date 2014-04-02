@@ -19,7 +19,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UDateComparer;
+  UDateComparer, UDateExtractor;
 
 
 type
@@ -34,10 +34,12 @@ type
     fVerbose: Boolean;                // Value of Verbose property
     fHelp: Boolean;                   // Value of Help property
     fComparisonOp: TDateComparisonOp; // Value of ComparisonType property
+    fDateType: TDateType;             // Value of DateType property
     fFileName2: string;               // Value of FileName1 property
     fFileName1: string;               // Value of FileName2 property
     procedure ParseCommand(var Idx: Integer);
     procedure ParseCompareType(CT: string);
+    procedure ParseDateType(DT: string);
   public
     constructor Create;
       {Class constructor. Initialises object.
@@ -56,6 +58,8 @@ type
       {Flag true if -h or -? switch has been provided on command line}
     property ComparisonOp: TDateComparisonOp read fComparisonOp;
       {Type of comparison to be applied to file dates}
+    property DateType: TDateType read fDateType;
+      {Specifies which file date to read: last modified or creation date}
     property FileName1: string read fFileName1;
       {First file name on command line}
     property FileName2: string read fFileName2;
@@ -93,6 +97,7 @@ begin
   fFileName1 := '';
   fFileName2 := '';
   fComparisonOp := TDateComparisonOp.LT;
+  fDateType := TDateType.LastModified;
 end;
 
 destructor TParams.Destroy;
@@ -157,6 +162,14 @@ begin
     else
       ParseCompareType('');   // reports error
   end
+  else if (Command = '-d') then
+  begin
+    Inc(Idx);
+    if Idx < fParams.Count then
+      ParseDateType(fParams[Idx])
+    else
+      ParseDateType('');      // reports error
+  end
   else if AnsiStartsStr('--compare', Command) then
   begin
     EqualsPos := AnsiPos('=', Command);
@@ -164,6 +177,14 @@ begin
       ParseCompareType(AnsiRightStr(Command, Length(Command) - EqualsPos))
     else
       ParseCompareType('');   // reports error
+  end
+  else if AnsiStartsStr('--datetype', Command) then
+  begin
+    EqualsPos := AnsiPos('=', Command);
+    if EqualsPos > 0 then
+      ParseDateType(AnsiRightStr(Command, Length(Command) - EqualsPos))
+    else
+      ParseDateType('');   // reports error
   end
   else
     raise EApplication.CreateFmt(
@@ -191,6 +212,20 @@ begin
     fComparisonOp := TDateComparisonOp.NEQ
   else
     raise EApplication.Create(sAppErrBadCompareType, cAppErrBadCompareType);
+end;
+
+procedure TParams.ParseDateType(DT: string);
+begin
+  if DT = '' then
+    raise EApplication.Create(sAppErrNoDateType, cAppErrNoDateType);
+  DT := AnsiLowerCase(DT);
+  if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
+    or (DT = 'modification') then
+    fDateType := TDateType.LastModified
+  else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
+    fDateType := TDateType.Created
+  else
+    raise EApplication.Create(sAppErrBadDateType, cAppErrBadDateType);
 end;
 
 end.

@@ -30,17 +30,20 @@ const
   cAppErrFileNameNotFound = 104;
   cAppErrNoCompareType = 105;
   cAppErrBadCompareType = 106;
-
+  cAppErrNoDateType = 107;
+  cAppErrBadDateType = 108;
 
 resourcestring
   // Error messages
   sAppErrBadSwitch = 'Invalid command "%s"';
   sAppErr2FilesNeeded = 'Exactly two file names must be specified';
   sAppErrFileNamesSame = 'File names must be different';
-  sAppErrFileNameNotFound = 'Date for file "%s" not found';
+  sAppErrFileNameNotFound = 'File "%s" not found';
   sAppErrNoCompareType = 'No comparison type specified for -c or --compare '
     + 'command';
   sAppErrBadCompareType = 'Invalid comparison type in -c or --compare command';
+  sAppErrNoDateType = 'No date type specified for -t or --datetype command';
+  sAppErrBadDateType = 'Invalid date type in -t or --datetype command';
 
 type
 

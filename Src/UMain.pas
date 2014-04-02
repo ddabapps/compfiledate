@@ -70,7 +70,7 @@ uses
   // Delphi
   Windows, DateUtils,
   // Project
-  UAppException, UDateComparer;
+  UAppException, UDateComparer, UDateExtractor;
 
 const
   EOL = #13#10;
@@ -94,7 +94,7 @@ resourcestring
     + EOL
     + 'Options are:' + EOL
     + '  -c <op> or --compare=<op>' + EOL
-    + '    Defines the compare operation to use. <op> is one of the following'
+    + '    Defines the compare operation to use. <op> is one of the following:'
     + EOL
     + '      eq, equal or same:' + EOL
     + '        Check if dates of the files are the same.' + EOL
@@ -110,6 +110,15 @@ resourcestring
     + '        Check if 1st file date in no later than 2nd file date.' + EOL
     + '      neq, not-equal, not-same, different' + EOL
     + '        Check if dates of the files are different.' + EOL
+    + '  -d <type> or --datetype=<type>' + EOL
+    + '    Determines whether file last modification or creation dates are '
+    + 'compared.' + EOL
+    + '    <type> is one of the following:' + EOL
+    + '      m, modified, last-modified or modification:' + EOL
+    + '        Use date files were last modified (default if option is not '
+    + 'provided).' + EOL
+    + '      c, created or creation:' + EOL
+    + '        Use date file were created.' + EOL
     + '  -v' + EOL
     + '    Verbose: writes output to standard output. No output if -v not '
     + 'provided.' + EOL
@@ -132,8 +141,11 @@ resourcestring
   sGT = '%0:s is newer than %1:s';
   sGTE = '%0:s is no older than %1:s';
 
-  sSuccessReport = 'Comparison is true';
-  sFailureReport = 'Comparison is false';
+  sSuccessReport = 'Comparison using %s is true';
+  sFailureReport = 'Comparison using %s is false';
+
+  sDateTypeModified = 'last modification dates';
+  sDateTypeCreated = 'creation dates';
 
 const
   TrueResponses: array[TDateComparisonOp] of string = (
@@ -142,22 +154,22 @@ const
   FalseResponses: array[TDateComparisonOp] of string = (
     sNEQ, sGTE, sLTE, sGT, sLT, SEQ
   );
-
+  DateTypeResponses: array[TDateType] of string = (
+    sDateTypeModified, sDateTypeCreated
+  );
 
 { TMain }
 
 function TMain.CompareFileDates: Boolean;
 var
-  FileDate1, FileDate2: TDateTime;  // modification dates of files
+  FileDate1, FileDate2: TDateTime;  // required file dates
 begin
-  if not FileAge(fParams.FileName1, FileDate1) then
-    raise EApplication.Create(
-      sAppErrFileNameNotFound, [fParams.FileName1], cAppErrFileNameNotFound
-    );
-  if not FileAge(fParams.FileName2, FileDate2) then
-    raise EApplication.Create(
-      sAppErrFileNameNotFound, [fParams.FileName2], cAppErrFileNameNotFound
-    );
+  FileDate1 := TDateExtractor.GetDate(
+    fParams.FileName1, fParams.DateType, False
+  );
+  FileDate2 := TDateExtractor.GetDate(
+    fParams.FileName2, fParams.DateType, False
+  );
   Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
 end;
 
@@ -192,7 +204,9 @@ begin
       SignOn;
       if CompareFileDates then
       begin
-        fConsole.WriteLn(sSuccessReport);
+        fConsole.WriteLn(
+          Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
+        );
         fConsole.WriteLn(
           Format(
             TrueResponses[fParams.ComparisonOp],
@@ -203,7 +217,9 @@ begin
       end
       else
       begin
-        fConsole.WriteLn(sFailureReport);
+        fConsole.WriteLn(
+          Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
+        );
         fConsole.WriteLn(
           Format(
             FalseResponses[fParams.ComparisonOp],
