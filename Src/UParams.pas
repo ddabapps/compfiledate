@@ -35,6 +35,7 @@ type
     fHelp: Boolean;                   // Value of Help property
     fComparisonOp: TDateComparisonOp; // Value of ComparisonType property
     fDateType: TDateType;             // Value of DateType property
+    fFollowShortcuts: Boolean;        // Value of FollowShortcuts property
     fFileName2: string;               // Value of FileName1 property
     fFileName1: string;               // Value of FileName2 property
     procedure ParseCommand(var Idx: Integer);
@@ -60,6 +61,10 @@ type
       {Type of comparison to be applied to file dates}
     property DateType: TDateType read fDateType;
       {Specifies which file date to read: last modified or creation date}
+    property FollowShortcuts: Boolean read fFollowShortcuts;
+      {Specifies if shortcut files are to be followed. When True the files
+      targetted by any shorcut are used in the date comparison, otherwise the
+      date of the shortcut file itself is used}
     property FileName1: string read fFileName1;
       {First file name on command line}
     property FileName2: string read fFileName2;
@@ -98,6 +103,7 @@ begin
   fFileName2 := '';
   fComparisonOp := TDateComparisonOp.LT;
   fDateType := TDateType.LastModified;
+  fFollowShortcuts := False;
 end;
 
 destructor TParams.Destroy;
@@ -154,6 +160,8 @@ begin
     fHelp := True
   else if (Command = '-v') or (Command = '--verbose') then
     fVerbose := True
+  else if (Command = '-s') or (Command = '--followshortcuts') then
+    fFollowShortcuts := True
   else if (Command = '-c') then
   begin
     Inc(Idx);

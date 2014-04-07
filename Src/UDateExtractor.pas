@@ -5,8 +5,7 @@
  *
  * Copyright (C) 2014, Peter Johnson (www.delphidabbler.com).
  *
- * Static class that extracts a suported file date from a file, optionally
- * following sym-links.
+ * Static class that extracts a suported file date from a file.
 }
 
 
@@ -29,8 +28,8 @@ type
   TDateExtractor = class
   public
     constructor Create;
-    class function GetDate(const FileName: string; const DateType: TDateType;
-      const FollowSymLinks: Boolean): TDateTime;
+    class function GetDate(const FileName: string; const DateType: TDateType):
+      TDateTime;
   end;
 
 
@@ -51,11 +50,11 @@ begin
 end;
 
 class function TDateExtractor.GetDate(const FileName: string;
-  const DateType: TDateType; const FollowSymLinks: Boolean): TDateTime;
+  const DateType: TDateType): TDateTime;
 var
   DTI: TDateTimeInfoRec;
 begin
-  if not FileGetDateTimeInfo(FileName, DTI, FollowSymLinks) then
+  if not FileGetDateTimeInfo(FileName, DTI, False) then
     raise EApplication.Create(
       sAppErrFileNameNotFound, [FileName], cAppErrFileNameNotFound
     );

@@ -19,7 +19,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UConsole, UParams;
+  UConsole, UFileInfo, UParams;
 
 
 type
@@ -45,7 +45,7 @@ type
     ///  <summary>Compares modification dates of the two files passed on the
     ///  command line using the user's chosen comparison operation and returns
     ///  True if the comparison succeeds or False if not.</summary>
-    function CompareFileDates: Boolean;
+    function CompareFileDates(const File1, File2: TFileInfo): Boolean;
     class function GetProductVersionStr: string;
       {Gets the program's product version number from version information.
         @return Version number as a dot delimited string.
@@ -119,6 +119,14 @@ resourcestring
     + 'provided).' + EOL
     + '      c, created or creation:' + EOL
     + '        Use date file were created.' + EOL
+    + '  -s or --followshortcuts' + EOL
+    + '    Indicates that if either filename1 or filename2 is a shortcut file '
+    + 'then the' + EOL
+    + '    date of the target file will be used in comparisons. If neither '
+    + 'command is' + EOL
+    + '    specified then shortcuts are not followed and the date of '
+    + 'the shortcut file' + EOL
+    + '    itself is used.' + EOL
     + '  -v or --verbose' + EOL
     + '    Verbose: writes output to standard output. No output if -v not '
     + 'provided.' + EOL
@@ -160,16 +168,12 @@ const
 
 { TMain }
 
-function TMain.CompareFileDates: Boolean;
+function TMain.CompareFileDates(const File1, File2: TFileInfo): Boolean;
 var
   FileDate1, FileDate2: TDateTime;  // required file dates
 begin
-  FileDate1 := TDateExtractor.GetDate(
-    fParams.FileName1, fParams.DateType, False
-  );
-  FileDate2 := TDateExtractor.GetDate(
-    fParams.FileName2, fParams.DateType, False
-  );
+  FileDate1 := TDateExtractor.GetDate(File1.ResolvedFileName, fParams.DateType);
+  FileDate2 := TDateExtractor.GetDate(File2.ResolvedFileName, fParams.DateType);
   Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
 end;
 
@@ -194,6 +198,8 @@ end;
 procedure TMain.Execute;
   {Executes program.
   }
+var
+  File1, File2: TFileInfo;
 begin
   try
     fParams.Parse;
@@ -202,7 +208,9 @@ begin
       // Normal execution
       fConsole.Silent := not fParams.Verbose;
       SignOn;
-      if CompareFileDates then
+      File1 := TFileInfo.Create(fParams.FileName1, fParams.FollowShortcuts);
+      File2 := TFileInfo.Create(fParams.FileName2, fParams.FollowShortcuts);
+      if CompareFileDates(File1, File2) then
       begin
         fConsole.WriteLn(
           Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
@@ -210,7 +218,7 @@ begin
         fConsole.WriteLn(
           Format(
             TrueResponses[fParams.ComparisonOp],
-            [fParams.FileName1, fParams.FileName2]
+            [File1.ResolvedFileName, File2.ResolvedFileName]
           )
         );
         ExitCode := 1;
@@ -223,7 +231,7 @@ begin
         fConsole.WriteLn(
           Format(
             FalseResponses[fParams.ComparisonOp],
-            [fParams.FileName1, fParams.FileName2]
+            [File1.ResolvedFileName, File2.ResolvedFileName]
           )
         );
         ExitCode := 0;
