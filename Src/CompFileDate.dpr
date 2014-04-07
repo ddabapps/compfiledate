@@ -24,7 +24,8 @@ uses
   UParams in 'UParams.pas',
   UStdOutput in 'UStdOutput.pas',
   UDateComparer in 'UDateComparer.pas',
-  UDateExtractor in 'UDateExtractor.pas';
+  UDateExtractor in 'UDateExtractor.pas',
+  UFileInfo in 'UFileInfo.pas';
 
 begin
   with TMain.Create do
