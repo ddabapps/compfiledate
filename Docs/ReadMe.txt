@@ -6,8 +6,7 @@ About The Program
 -----------------
 
 CompFileDate.exe compares the dates of two files whose names are passed on the
-command line and returns an exit code that informs if the first named file has
-an older modification date than the second file.
+command line and returns an exit code that indicates the result.
 
 The usage is:
 
