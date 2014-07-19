@@ -11,31 +11,71 @@ an older modification date than the second file.
 
 The usage is:
 
-    CompFileDate <filename1> <filename2> [-v]
+  CompFileDate <filename1> <filename2> [options]
 
-or:
+or
 
-    CompFileDate -h | -?
+  CompFileDate -h | -? | --help
 
-where:
+where
 
-* `<filename1>` is the name of the first file to be compared.
-* `<filename2>` is the name of the second file to be compared.
-* `-v` causes the program to emit output to the console's standard output. If
-  this switch is not specified the program emits no output, unless an error is
-  detected when the switch is ignored.
-* `-h` or `-?` displays a help screen on standard output.
+  <filename1> is the name of the first file to be compared.
+  <filename2> is the name of the second file to be compared.
 
-Exit codes are:
+options are:
 
-* `0` - `<filename1>` is newer than, or has the same date as `<filename2>`.
-* `1` - `<filename1>` is older than `<filename2>`.
-* `100` - Unknown error detected.
-* `101` - An invalid switch was supplied.
-* `102` - Incorrect number of file names supplied.
-* `103` - Both file names were the same.
-* `104` - Date information couldn't be read from one or both files. It is
-  possible that a file doesn't exist.
+  -c <op> or --compare=<op>
+    Defines the compare operation to use. <op> must be one of the following:
+      eq, equal or same:
+        Check if the dates of the files are the same.
+      gt, newer or later:
+        Check if the 1st file date is later than the 2nd file date.
+      gte, not-older or not-earlier
+        Check if the 1st file date is no earlier than the 2nd file date.
+      lt, older or earlier
+        Check if the 1st file date is earlier than the 2nd file date (default
+        used if this option is not provided).
+      lte, not-newer, not-later
+        Check if the 1st file date is no later than the 2nd file date.
+      neq, not-equal, not-same, different
+        Check if the dates of the files are different.
+
+  -d <type> or --datetype=<type>
+    Determines whether the last modification or creation dates of the files are
+    compared. <type> must be one of the following:
+      m, modified, last-modified or modification:
+        Use the date the files were last modified (default used if the option is
+        not provided).
+      c, created or creation:
+        Use the date the files were created.
+
+  -s or --followshortcuts
+    Indicates that if either filename1 or filename2 is a shortcut file then the
+    date of the shortcut's target file will be used in comparisons. If neither
+    option is specified then shortcuts are not followed and the date of the
+    shortcut file itself is used in the comparison.
+
+  -v or --verbose
+    Verbose: writes output to standard output. No output is generated if this
+    option is not provided. Errors are always output regardless of this option.
+
+  -h or -? or --help
+    Displays a help screen. Any file names and other options are ignored.
+
+The program's exit code is 1 if the comparison is true and 0 if it is false.
+If an error occurs then an error code >= 100 is returned and an error message
+is written to standard output, regardless of whether the -v or --verbose
+commands were used. The error codes are:
+
+  100 - unknown error
+  101 - invalid command or option
+  102 - incorrect number of files specified (two required)
+  103 - both file names are the same
+  104 - one or both files cannot be found
+  105 - no comparison type was specified for the -c or --compare option
+  106 - an invalid comparison type was specified for the -c or --compare option
+  107 - no date type was specified for the -t or --datetype option
+  108 - an invalid date type was specified for the -t or --datetype option
 
 
 Installation
