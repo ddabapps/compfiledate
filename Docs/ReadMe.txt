@@ -87,14 +87,14 @@ installation is required.
 You may want to modify the Windows PATH environment variable to include the
 location of the program.
 
-To uninstall simply delete the program. They make no changes to the system.
+To uninstall simply delete the program. It makes no changes to the system.
 
 
 Source Code
 -----------
 
-Source code for much of the program is available from
-http://www.delphidabbler.com/compfiledate/download.
+The program's source code is available on GitHub. See delphidabbler/compfiledate
+at https://github.com/delphidabbler/compfiledate
 
 
 Copyright and License
@@ -109,3 +109,9 @@ Change Log
 
 The change log is provided in the file `ChangeLog.txt` provided with this
 download.
+
+
+Web page
+--------
+
+The program has a web page at http://www.delphidabbler.com/software/compfiledate
