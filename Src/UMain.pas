@@ -94,10 +94,10 @@ resourcestring
     + EOL
     + 'Options are:' + EOL
     + '  -c <op> or --compare=<op>' + EOL
-    + '    Defines the compare operation to use. <op> is one of the following:'
-    + EOL
+    + '    Defines the compare operation to use. <op> must be one of the '
+    + 'following:' + EOL
     + '      eq, equal or same:' + EOL
-    + '        Check if dates of the files are the same.' + EOL
+    + '        Check if file dates are the same.' + EOL
     + '      gt, newer or later:' + EOL
     + '        Check if 1st file date is later than 2nd file date.' + EOL
     + '      gte, not-older or not-earlier' + EOL
@@ -107,40 +107,40 @@ resourcestring
     + 'if option' + EOL
     + '        is not provided).' + EOL
     + '      lte, not-newer, not-later' + EOL
-    + '        Check if 1st file date in no later than 2nd file date.' + EOL
+    + '        Check if 1st file date is no later than 2nd file date.' + EOL
     + '      neq, not-equal, not-same, different' + EOL
-    + '        Check if dates of the files are different.' + EOL
+    + '        Check if file dates are different.' + EOL
     + '  -d <type> or --datetype=<type>' + EOL
-    + '    Determines whether file last modification or creation dates are '
-    + 'compared.' + EOL
-    + '    <type> is one of the following:' + EOL
+    + '    Determines whether last modification or creation dates are '
+    + 'compared. <type>' + EOL
+    + '    must be one of the following:' + EOL
     + '      m, modified, last-modified or modification:' + EOL
     + '        Use date files were last modified (default if option is not '
     + 'provided).' + EOL
     + '      c, created or creation:' + EOL
-    + '        Use date file were created.' + EOL
+    + '        Use date files were created.' + EOL
     + '  -s or --followshortcuts' + EOL
     + '    Indicates that if either filename1 or filename2 is a shortcut file '
     + 'then the' + EOL
     + '    date of the target file will be used in comparisons. If neither '
-    + 'command is' + EOL
+    + 'option is' + EOL
     + '    specified then shortcuts are not followed and the date of '
     + 'the shortcut file' + EOL
     + '    itself is used.' + EOL
     + '  -v or --verbose' + EOL
-    + '    Verbose: writes output to standard output. No output if -v not '
-    + 'provided.' + EOL
-    + '    Ignored on error.' + EOL
+    + '    Verbose: writes output to standard output. No output if option is '
+    + 'not ' + EOL
+    + '    provided. Ignored on error.' + EOL
     + '  -h or -? or --help' + EOL
     + '    Displays help screen. Rest of command line ignored.' + EOL
     + EOL
-    + 'The program''s exit code is 1 if the comparison is true and 0 if it '
-    + 'fails.' + EOL
+    + 'The program''s exit code is 1 if the comparison is true and 0 if it is '
+    + 'false.' + EOL
     + 'If an error occurs then an error code >= 100 is returned and an error '
     + 'message' + EOL
     + 'is written to standard output, regardless of whether the -v or '
     + '--verbose' + EOL
-    + 'commands were used. See the documentation for details of error codes.';
+    + 'options were used. See the documentation for details of error codes.';
 
   sEQ = '%0:s has same date as %1:s';
   sNEQ = '%0:s has different date to %1:s';
