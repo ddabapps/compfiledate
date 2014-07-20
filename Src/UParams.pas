@@ -66,7 +66,7 @@ type
       {Specifies which file date to read: last modified or creation date}
     property FollowShortcuts: Boolean read fFollowShortcuts;
       {Specifies if shortcut files are to be followed. When True the files
-      targetted by any shorcut are used in the date comparison, otherwise the
+      targeted by any shortcut are used in the date comparison, otherwise the
       date of the shortcut file itself is used}
     property FileName1: string read fFileName1;
       {First file name on command line}

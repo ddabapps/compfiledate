@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2014, Peter Johnson (www.delphidabbler.com).
  *
- * Implements advnaced record that stores information about a file and resolves
+ * Implements advanced record that stores information about a file and resolves
  * file shortcuts if required.
 }
 

@@ -94,7 +94,7 @@ clean:
   -@cd Src
   @echo Done.
 
-# Create executable and source released zip files
+# Create executable and source release zip files
 release: clean releaseexe releasesrc
 
 # Create release zip file for executable
@@ -154,7 +154,7 @@ config:
   @echo +++ Compiling Resource file $< +++
   @$(BRCC32) $< -fo$(RESOUTDIR)\$(@F)
 
-# Version info filea are compiled by VIEd: a temporary .rc file is left behind
+# Version info files are compiled by VIEd: a temporary .rc file is left behind
 .vi.rc:
   @echo +++ Compiling Version Info file $< +++
   @$(VIED) .\$<

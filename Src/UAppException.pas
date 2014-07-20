@@ -63,7 +63,7 @@ type
     constructor Create(const Msg: string; const Args: array of const;
       const ExitCode: Integer); overload;
       {Class constructor. Sets up exception object.
-        @param Msg [in] Format template for error messaqe.
+        @param Msg [in] Format template for error message.
         @param Args [in] Values to be included in format template.
         @param ExitCode [in] Program exit code associated with error.
       }
@@ -90,7 +90,7 @@ end;
 constructor EApplication.Create(const Msg: string; const Args: array of const;
   const ExitCode: Integer);
   {Class constructor. Sets up exception object.
-    @param Msg [in] Format template for error messaqe.
+    @param Msg [in] Format template for error message.
     @param Args [in] Values to be included in format template.
     @param ExitCode [in] Program exit code associated with error.
   }

@@ -36,7 +36,7 @@ be set:
   being used. If not set it is assumed that Delphi is installed in the same
   directory as `MAKE.exe`.
 + `VIEDROOT` - set to the install directory of `VIEd.exe`. If not set then
-  `VIEd.exe` is assumed to by on the path.
+  `VIEd.exe` is assumed to be on the path.
 
 
 Download the Source
@@ -45,7 +45,7 @@ Download the Source
 The program's source code is maintained in the delphidabbler/compfiledate Git
 repository on GitHub. See https://github.com/delphidabbler/compfiledate
 
-Either clone or fork the repro into a directory on your computer. The following
+Either clone or fork the repo into a directory on your computer. The following
 directory structure will be created within your nominated directory:
 
     .
@@ -74,7 +74,7 @@ The program can now be created simply by running `Make` with no parameters.
 Intermediate binary files will be placed in `Build\Bin` and the program
 executable will be written to `Build\Exe`.
 
-To create an release run `Make release` after running `Make`. This creates two
+To create a release run `Make release` after running `Make`. This creates two
 zip files, one containing the executable code and the other the source code. The
 zip files are placed in the `Build\Release` directory.
 
@@ -93,9 +93,9 @@ details.
 Contributing
 ------------
 
-Contributions are welcome. Please fork the GitHub repro and create a new feature
-branch off the `development`. Commit your changes to the feature branch. When
-ready create a pull request on the main GitHub repro.
+Contributions are welcome. Please fork the GitHub repo and create a new feature
+branch off the `development` branch. Commit your changes to the feature branch.
+When ready create a pull request on the main GitHub repo.
 
 
 Licensing
