@@ -29,8 +29,8 @@ The following tools are required to build the program:
 Environment Variables
 ---------------------
 
-The program's make file requires that the following environment variables must
-be set:
+The make file uses the following environment variables, which should be set
+before calling Make, or defined on the Make command line:
 
 + `DELPHIROOT` - should be set to the install directory of the version of Delphi
   being used. If not set it is assumed that Delphi is installed in the same

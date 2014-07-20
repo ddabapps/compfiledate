@@ -44,20 +44,19 @@ type
     procedure ParseDateType(DT: string);
   public
     constructor Create;
-      {Class constructor. Initialises object.
-        @param Config [in] Configuration object to be updated from command line.
+      {Constructs object instance.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destroys object instance.
       }
     procedure Parse;
       {Parses the command line.
         @except Exception raised if error in command line.
       }
     property Verbose: Boolean read fVerbose;
-      {Flag true if -v switch has been provided on command line}
+      {Flag true if -v or --verbose command has been provided on command line}
     property Help: Boolean read fHelp;
-      {Flag true if -h or -? switch has been provided on command line}
+      {Flag true if -h, -? or --help command has been provided on command line}
     property Version: Boolean read fVersion;
       {Flag true if -V or --version command has been provided on command line}
     property ComparisonOp: TDateComparisonOp read fComparisonOp;
@@ -88,9 +87,6 @@ uses
 { TParams }
 
 constructor TParams.Create;
-  {Class constructor. Initialises object.
-    @param Config [in] Configuration object to be updated from command line.
-  }
 var
   Idx: Integer; // loops through all parameters
 begin
@@ -111,17 +107,12 @@ begin
 end;
 
 destructor TParams.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   fParams.Free;
   inherited;
 end;
 
 procedure TParams.Parse;
-  {Parses the command line.
-    @except Exception raised if error in command line.
-  }
 var
   Idx: Integer;         // loops through all parameters on command line
 begin

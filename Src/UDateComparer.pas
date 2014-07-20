@@ -31,7 +31,6 @@ type
   TDateComparisonOp = (EQ, LT, GT, LTE, GTE, NEQ);
   {$SCOPEDENUMS OFF}
 
-  ///  <summary>
   TDateComparer = class
   strict private
     type

@@ -24,13 +24,13 @@ options are:
 
   -c <op> or --compare=<op>
     Defines the compare operation to use. <op> must be one of the following:
-      eq, equal or same:
+      eq, equal, same:
         Check if the dates of the files are the same.
-      gt, newer or later:
+      gt, newer, later:
         Check if the 1st file date is later than the 2nd file date.
-      gte, not-older or not-earlier
+      gte, not-older, not-earlier
         Check if the 1st file date is no earlier than the 2nd file date.
-      lt, older or earlier
+      lt, older, earlier
         Check if the 1st file date is earlier than the 2nd file date (default
         used if this option is not provided).
       lte, not-newer, not-later
@@ -41,10 +41,10 @@ options are:
   -d <type> or --datetype=<type>
     Determines whether the last modification or creation dates of the files are
     compared. <type> must be one of the following:
-      m, modified, last-modified or modification:
+      m, modified, last-modified, modification:
         Use the date the files were last modified (default used if the option is
         not provided).
-      c, created or creation:
+      c, created, creation:
         Use the date the files were created.
 
   -s or --followshortcuts

@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2014, Peter Johnson (www.delphidabbler.com).
  *
- * Static class that extracts a suported file date from a file.
+ * Static class that extracts a supported file date from a file.
 }
 
 
