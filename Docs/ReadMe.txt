@@ -11,10 +11,9 @@ command line and returns an exit code that indicates the result.
 The usage is:
 
   CompFileDate <filename1> <filename2> [options]
-
-or
-
   CompFileDate -h | -? | --help
+  CompFileDate -V | --version
+  
 
 where
 
@@ -56,15 +55,19 @@ options are:
 
   -v or --verbose
     Verbose: writes output to standard output. No output is generated if this
-    option is not provided. Errors are always output regardless of this option.
+    option is not provided. Output is always written when an error occurs or
+    when help or the program's version number are requested.
 
   -h or -? or --help
     Displays a help screen. Any file names and other options are ignored.
 
+  -V or --version.
+    Displays the program's version number on standard output and halts. Any file
+    names and other options are ignored.
+
 The program's exit code is 1 if the comparison is true and 0 if it is false.
 If an error occurs then an error code >= 100 is returned and an error message
-is written to standard output, regardless of whether the -v or --verbose
-commands were used. The error codes are:
+is written to standard output. The error codes are:
 
   100 - unknown error
   101 - invalid command or option
