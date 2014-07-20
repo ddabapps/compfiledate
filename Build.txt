@@ -1,7 +1,7 @@
 CompFileDate Build Instructions
 ===============================
 
-These instructions assume you are building the program using Delphi 2010. Later
+These instructions assume you are building the program using Delphi XE. Later
 versions of Delphi may be suitable with some minor changes to the make file.
 
 
@@ -16,7 +16,7 @@ Build Tools
 
 The following tools are required to build the program:
 
-+ A Delphi 2010 or later installation. The following tools are required:
++ A Delphi XE or later installation. The following tools are required:
   - `DCC32.exe` command line compiler.
   - `BRCC32.exe` resource compiler.
   - `MAKE.exe` the Borland / Embarcaero make utility (other make tools will not
@@ -29,27 +29,24 @@ The following tools are required to build the program:
 Environment Variables
 ---------------------
 
-The program's make file requires that the following environment variables must
-be set:
+The make file uses the following environment variables, which should be set
+before calling Make, or defined on the Make command line:
 
 + `DELPHIROOT` - should be set to the install directory of the version of Delphi
   being used. If not set it is assumed that Delphi is installed in the same
   directory as `MAKE.exe`.
 + `VIEDROOT` - set to the install directory of `VIEd.exe`. If not set then
-  `VIEd.exe` is assumed to by on the path.
+  `VIEd.exe` is assumed to be on the path.
 
 
 Download the Source
 -------------------
 
-Source code for the current version of DelphiDabbler CompFileDate is always
-available from http://www.delphidabbler.com/download?id=compfiledate&type=src
-and from the Git repository at
-https://sourceforge.net/p/compfiledate/git/ci/master/tree/
+The program's source code is maintained in the delphidabbler/compfiledate Git
+repository on GitHub. See https://github.com/delphidabbler/compfiledate
 
-To build the program first create a folder and copy the source code from the
-download file or from Git into it, preserving the directory structure so that
-you have the following:
+Either clone or fork the repo into a directory on your computer. The following
+directory structure will be created within your nominated directory:
 
     .
     |
@@ -77,7 +74,7 @@ The program can now be created simply by running `Make` with no parameters.
 Intermediate binary files will be placed in `Build\Bin` and the program
 executable will be written to `Build\Exe`.
 
-To create an release run `Make release` after running `Make`. This creates two
+To create a release run `Make release` after running `Make`. This creates two
 zip files, one containing the executable code and the other the source code. The
 zip files are placed in the `Build\Release` directory.
 
@@ -91,6 +88,14 @@ tree and create the binary resource files required to build the source.
 
 There are other build options available. See the comments in `Makefile` for
 details.
+
+
+Contributing
+------------
+
+Contributions are welcome. Please fork the GitHub repo and create a new feature
+branch off the `development` branch. Commit your changes to the feature branch.
+When ready create a pull request on the main GitHub repo.
 
 
 Licensing

@@ -17,19 +17,12 @@ interface
 
 uses
   // Delphi
-  Classes;
+  Classes,
+  // Project
+  UDateComparer, UDateExtractor;
 
 
 type
-
-  {
-  TSwitchId:
-    Ids representing each valid command line switch.
-  }
-  TSwitchId = (
-    siHelp,         // show help screen
-    siVerbose       // verbose output
-  );
 
   {
   TParams:
@@ -37,39 +30,43 @@ type
   }
   TParams = class(TObject)
   private
-    fParams: TStringList;   // List of command line parameters
-    fVerbose: Boolean;      // Value of Verbose property
-    fHelp: Boolean;         // Value of Help property
-    fFileName2: string;     // Value of FileName1 property
-    fFileName1: string;     // Value of FileName2 property
-    function SwitchToId(const Switch: string; out Id: TSwitchId): Boolean;
-      {Finds id of a switch.
-        @param Switch [in] Text defining switch.
-        @param Id [out] Id of switch. Undefined if switch is invalid.
-        @return True if switch is valid, False otherwise.
-      }
-    procedure HandleSwitch(const Id: TSwitchId; var ParamIdx: Integer);
-      {Processes switch, updating config file.
-        @param Id [in] Id of switch to handle.
-        @param ParamIdx [in/out]. Index of current switch in fParams[]. ParamIdx
-          should be incremented if an addition parameter is read.
-      }
+    fParams: TStringList;             // List of command line parameters
+    fVerbose: Boolean;                // Value of Verbose property
+    fHelp: Boolean;                   // Value of Help property
+    fVersion: Boolean;                // Value of Version property
+    fComparisonOp: TDateComparisonOp; // Value of ComparisonType property
+    fDateType: TDateType;             // Value of DateType property
+    fFollowShortcuts: Boolean;        // Value of FollowShortcuts property
+    fFileName2: string;               // Value of FileName1 property
+    fFileName1: string;               // Value of FileName2 property
+    procedure ParseCommand(var Idx: Integer);
+    procedure ParseCompareType(CT: string);
+    procedure ParseDateType(DT: string);
   public
     constructor Create;
-      {Class constructor. Initialises object.
-        @param Config [in] Configuration object to be updated from command line.
+      {Constructs object instance.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destroys object instance.
       }
     procedure Parse;
       {Parses the command line.
         @except Exception raised if error in command line.
       }
     property Verbose: Boolean read fVerbose;
-      {Flag true if -v switch has been provided on command line}
+      {Flag true if -v or --verbose command has been provided on command line}
     property Help: Boolean read fHelp;
-      {Flag true if -h or -? switch has been provided on command line}
+      {Flag true if -h, -? or --help command has been provided on command line}
+    property Version: Boolean read fVersion;
+      {Flag true if -V or --version command has been provided on command line}
+    property ComparisonOp: TDateComparisonOp read fComparisonOp;
+      {Type of comparison to be applied to file dates}
+    property DateType: TDateType read fDateType;
+      {Specifies which file date to read: last modified or creation date}
+    property FollowShortcuts: Boolean read fFollowShortcuts;
+      {Specifies if shortcut files are to be followed. When True the files
+      targeted by any shortcut are used in the date comparison, otherwise the
+      date of the shortcut file itself is used}
     property FileName1: string read fFileName1;
       {First file name on command line}
     property FileName2: string read fFileName2;
@@ -87,25 +84,9 @@ uses
   UAppException;
 
 
-const
-  // Map of switches onto switch id.
-  cSwitches: array[1..3] of record
-    Switch: string;   // switch
-    Id: TSwitchId;    // switch id
-  end = (
-    // -v causes verbose output
-    (Switch: '-v';        Id: siVerbose;),
-    (Switch: '-h';        Id: siHelp),
-    (Switch: '-?';        Id: siHelp)
-  );
-
-
 { TParams }
 
 constructor TParams.Create;
-  {Class constructor. Initialises object.
-    @param Config [in] Configuration object to be updated from command line.
-  }
 var
   Idx: Integer; // loops through all parameters
 begin
@@ -115,41 +96,25 @@ begin
   for Idx := 1 to ParamCount do
     fParams.Add(Trim(ParamStr(Idx)));
   // Set defaults
+  fHelp := False;
+  fVersion := False;
   fVerbose := False;
   fFileName1 := '';
   fFileName2 := '';
+  fComparisonOp := TDateComparisonOp.LT;
+  fDateType := TDateType.LastModified;
+  fFollowShortcuts := False;
 end;
 
 destructor TParams.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
-  FreeAndNil(fParams);
+  fParams.Free;
   inherited;
 end;
 
-procedure TParams.HandleSwitch(const Id: TSwitchId; var ParamIdx: Integer);
-  {Processes switch, updating config file.
-    @param Id [in] Id of switch to handle.
-    @param ParamIdx [in/out]. Index of current switch in fParams[]. ParamIdx
-      should be incremented if an addition parameter is read.
-  }
-begin
-  case Id of
-    siVerbose:
-      fVerbose := True;
-    siHelp:
-      fHelp := True;
-  end;
-end;
-
 procedure TParams.Parse;
-  {Parses the command line.
-    @except Exception raised if error in command line.
-  }
 var
   Idx: Integer;         // loops through all parameters on command line
-  SwitchId: TSwitchId;  // id of each switch
 begin
   // Loop through all switches on command line
   Idx := 0;
@@ -165,16 +130,12 @@ begin
       else
         raise EApplication.Create(sAppErr2FilesNeeded, cAppErr2FilesNeeded);
     end
-    else if SwitchToId(fParams[Idx], SwitchId) then
-      HandleSwitch(SwitchId, Idx)
     else
-      raise EApplication.CreateFmt(
-        sAppErrBadSwitch, [fParams[Idx], cAppErrBadSwitch]
-      );
-    // Next switch parameter
+      ParseCommand(Idx);
+    // Next parameter
     Inc(Idx);
   end;
-  if not Help then
+  if not Help and not Version then
   begin
     if (fFileName1 = '') or (fFileName2 = '') then
       raise EApplication.Create(sAppErr2FilesNeeded, cAppErr2FilesNeeded);
@@ -183,25 +144,99 @@ begin
   end;
 end;
 
-function TParams.SwitchToId(const Switch: string; out Id: TSwitchId): Boolean;
-  {Finds id of a switch.
-    @param Switch [in] Text defining switch.
-    @param Id [out] Id of switch. Undefined if switch is invalid.
-    @return True if switch is valid, False otherwise.
-  }
+procedure TParams.ParseCommand(var Idx: Integer);
 var
-  Idx: Integer; // loops through list of valid switches
+  Command: string;
+  EqualsPos: Integer;
 begin
-  Result := False;
-  for Idx := Low(cSwitches) to High(cSwitches) do
+  Command := fParams[Idx];
+  Assert(AnsiStartsStr('-', Command));
+  if (Command = '-h') or (Command = '-?') or (Command = '--help') then
   begin
-    if Switch = cSwitches[Idx].Switch then
-    begin
-      Id := cSwitches[Idx].Id;
-      Result := True;
-      Break;
-    end;
-  end;
+    if not fVersion then
+      fHelp := True;
+  end
+  else if (Command = '-V') or (Command = '--version') then
+  begin
+    if not fHelp then
+      fVersion := True
+  end
+  else if (Command = '-v') or (Command = '--verbose') then
+    fVerbose := True
+  else if (Command = '-s') or (Command = '--followshortcuts') then
+    fFollowShortcuts := True
+  else if (Command = '-c') then
+  begin
+    Inc(Idx);
+    if Idx < fParams.Count then
+      ParseCompareType(fParams[Idx])
+    else
+      ParseCompareType('');   // reports error
+  end
+  else if (Command = '-d') then
+  begin
+    Inc(Idx);
+    if Idx < fParams.Count then
+      ParseDateType(fParams[Idx])
+    else
+      ParseDateType('');      // reports error
+  end
+  else if AnsiStartsStr('--compare', Command) then
+  begin
+    EqualsPos := AnsiPos('=', Command);
+    if EqualsPos > 0 then
+      ParseCompareType(AnsiRightStr(Command, Length(Command) - EqualsPos))
+    else
+      ParseCompareType('');   // reports error
+  end
+  else if AnsiStartsStr('--datetype', Command) then
+  begin
+    EqualsPos := AnsiPos('=', Command);
+    if EqualsPos > 0 then
+      ParseDateType(AnsiRightStr(Command, Length(Command) - EqualsPos))
+    else
+      ParseDateType('');   // reports error
+  end
+  else
+    raise EApplication.CreateFmt(
+      sAppErrBadSwitch, [fParams[Idx], cAppErrBadSwitch]
+    );
+end;
+
+procedure TParams.ParseCompareType(CT: string);
+begin
+  if CT = '' then
+    raise EApplication.Create(sAppErrNoCompareType, cAppErrNoCompareType);
+  CT := AnsiLowerCase(CT);
+  if (CT = 'eq') or (CT = 'equal') or (CT = 'same') then
+    fComparisonOp := TDateComparisonOp.EQ
+  else if (CT = 'gt') or (CT = 'newer') or (CT = 'later') then
+    fComparisonOp := TDateComparisonOp.GT
+  else if (CT = 'gte') or (CT = 'not-older') or (CT = 'not-earlier') then
+    fComparisonOp := TDateComparisonOp.GTE
+  else if (CT = 'lt') or (CT = 'older') or (CT = 'earlier') then
+    fComparisonOp := TDateComparisonOp.LT
+  else if (CT = 'lte') or (CT = 'not-newer') or (CT = 'not-later') then
+    fComparisonOp := TDateComparisonOp.LTE
+  else if (CT = 'neq') or (CT = 'not-equal') or (CT = 'not-same')
+    or (CT = 'different') then
+    fComparisonOp := TDateComparisonOp.NEQ
+  else
+    raise EApplication.Create(sAppErrBadCompareType, cAppErrBadCompareType);
+end;
+
+procedure TParams.ParseDateType(DT: string);
+begin
+  if DT = '' then
+    raise EApplication.Create(sAppErrNoDateType, cAppErrNoDateType);
+  DT := AnsiLowerCase(DT);
+  if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
+    or (DT = 'modification') then
+    fDateType := TDateType.LastModified
+  else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
+    fDateType := TDateType.Created
+  else
+    raise EApplication.Create(sAppErrBadDateType, cAppErrBadDateType);
 end;
 
 end.

@@ -37,7 +37,7 @@
 
 
 # DELPHIROOT must point to the install directory for the version of Delphi being
-# used to compile the program. NOTE: The program is targeted at Delphi 2010 but
+# used to compile the program. NOTE: The program is targeted at Delphi XE but
 # later compilers should be suitable with only minor changes.
 !ifndef DELPHIROOT
 # DELPHIROOT not set: make a guess
@@ -45,7 +45,7 @@ DELPHIROOT = $(MAKEDIR)\..
 !endif
 
 # Define macros that access required programs
-# DCC32 and BRCC32 should be in same sub-directory of Delphi 2010
+# DCC32 and BRCC32 should be in same sub-directory of Delphi XE
 DCC32 = "$(DELPHIROOT)\Bin\DCC32.exe"
 BRCC32 = "$(DELPHIROOT)\Bin\BRCC32.exe"
 # VIED is expected to be on the path or its install directory must be specified
@@ -94,7 +94,7 @@ clean:
   -@cd Src
   @echo Done.
 
-# Create executable and source released zip files
+# Create executable and source release zip files
 release: clean releaseexe releasesrc
 
 # Create release zip file for executable
@@ -154,7 +154,7 @@ config:
   @echo +++ Compiling Resource file $< +++
   @$(BRCC32) $< -fo$(RESOUTDIR)\$(@F)
 
-# Version info filea are compiled by VIEd: a temporary .rc file is left behind
+# Version info files are compiled by VIEd: a temporary .rc file is left behind
 .vi.rc:
   @echo +++ Compiling Version Info file $< +++
   @$(VIED) .\$<

@@ -19,7 +19,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UConsole, UParams;
+  UConsole, UFileInfo, UParams;
 
 
 type
@@ -38,16 +38,17 @@ type
     procedure ShowHelp;
       {Writes help text to console.
       }
+    procedure ShowVersion;
+      {Writes program version to console.
+      }
     procedure ReportError(const E: Exception);
       {Reports an error onto standard output.
         @param E [in] Exception containing error message.
       }
-    function IsFile1EarlierThanFile2(const File1, File2: string): Boolean;
-      {Checks if a file has an earlier modification date than a second file.
-        @param File1 [in] Name of first file to be compared.
-        @param File2 [in] Name of second file to be compared.
-        @return True if File1 has earlier modification date than File2.
-      }
+    ///  <summary>Compares modification dates of the two files passed on the
+    ///  command line using the user's chosen comparison operation and returns
+    ///  True if the comparison succeeds or False if not.</summary>
+    function CompareFileDates(const File1, File2: TFileInfo): Boolean;
     class function GetProductVersionStr: string;
       {Gets the program's product version number from version information.
         @return Version number as a dot delimited string.
@@ -72,32 +73,118 @@ uses
   // Delphi
   Windows, DateUtils,
   // Project
-  UAppException;
+  UAppException, UDateComparer, UDateExtractor;
 
+const
+  EOL = #13#10;
 
 resourcestring
   // Messages written to console
-  sSignOn = 'CompFileDate %s by DelphiDabbler (www.delphidabbler.com)';
-  sError = 'Error: %s';
-  sUsage = 'Usage: CompFileDate filename1 filename2 [-v]'#13#10
-         + '  or   CompFileDate -h | -?';
-  sHelp =
-      '  filename1 | Name of first file to be compared.'#13#10
-    + '  filename2 | Name of second file to be compared.'#13#10
-    + '  -v        | Verbose: writes output to standard output. No output if '
-    + '- v not'#13#10'            | provided. Ignored on error.'#13#10
-    + '  -h or -?  | Displays help screen. Rest of command line ignored.'#13#10
-    + #13#10
-    + 'Exit code is 1 if filename1 is earlier than filename2 and zero if not.'
-    + #13#10
-    + 'If an error occurs then an error code >= 100 is returned and an error '
-    + 'message'#13#10'is written to standard output, regardless of the -v '
-    + 'switch. See documentation'#13#10'for details of error codes.';
-  sFile1Older = '"%0:s" is older than "%1:s"';
-  sFile1NotOlder = '"%0:s" is not older than "%1:s"';
+  sSignOn = 'CompFileDate by DelphiDabbler (www.delphidabbler.com)';
 
+  sError = 'Error: %s';
+
+  sUsage =
+      'Usage: CompFileDate filename1 filename2 [options]'
+    + EOL
+    + '  or   CompFileDate -h | -? | --help'
+    + EOL
+    + '  or   CompFileDate -V | --version';
+
+  sHelp =
+      'filename1' + EOL
+    + '  Name of first file to be compared.' + EOL
+    + 'filename2' + EOL
+    + '  Name of second file to be compared.' + EOL
+    + EOL
+    + 'Options are:' + EOL
+    + '  -c <op> or --compare=<op>' + EOL
+    + '    Defines the compare operation to use. <op> must be one of the '
+    + 'following:' + EOL
+    + '      eq, equal, same:' + EOL
+    + '        Check if file dates are the same.' + EOL
+    + '      gt, newer, later:' + EOL
+    + '        Check if 1st file date is later than 2nd file date.' + EOL
+    + '      gte, not-older, not-earlier' + EOL
+    + '        Check if 1st file date is no earlier than 2nd file date.' + EOL
+    + '      lt, older, earlier' + EOL
+    + '        Check if 1st file date is earlier than 2nd file date (default '
+    + 'if option' + EOL
+    + '        is not provided).' + EOL
+    + '      lte, not-newer, not-later' + EOL
+    + '        Check if 1st file date is no later than 2nd file date.' + EOL
+    + '      neq, not-equal, not-same, different' + EOL
+    + '        Check if file dates are different.' + EOL
+    + '  -d <type> or --datetype=<type>' + EOL
+    + '    Determines whether last modification or creation dates are '
+    + 'compared. <type>' + EOL
+    + '    must be one of the following:' + EOL
+    + '      m, modified, last-modified, modification:' + EOL
+    + '        Use date files were last modified (default if option is not '
+    + 'provided).' + EOL
+    + '      c, created, creation:' + EOL
+    + '        Use date files were created.' + EOL
+    + '  -s or --followshortcuts' + EOL
+    + '    Indicates that if either filename1 or filename2 is a shortcut file '
+    + 'then the' + EOL
+    + '    date of the target file will be used in comparisons. If neither '
+    + 'option is' + EOL
+    + '    specified then shortcuts are not followed and the date of '
+    + 'the shortcut file' + EOL
+    + '    itself is used.' + EOL
+    + '  -v or --verbose' + EOL
+    + '    Verbose: writes output to standard output. No output if option is '
+    + 'not' + EOL
+    + '    provided. Output is always written when an error occurs or when '
+    + 'help or' + EOL
+    + '    version number are requested.' + EOL
+    + '  -h or -? or --help' + EOL
+    + '    Displays help screen. Rest of command line ignored.' + EOL
+    + '  -V or --version' + EOL
+    + '    Displays program version number. Rest of command line ignored.' + EOL
+    + EOL
+    + 'The program''s exit code is 1 if the comparison is true and 0 if it is '
+    + 'false.' + EOL
+    + EOL
+    + 'If an error occurs then an error code >= 100 is returned and an error '
+    + 'message' + EOL
+    + 'is written to standard output. See documentation for details of error '
+    + 'codes.';
+
+  sEQ = '%0:s has same date as %1:s';
+  sNEQ = '%0:s has different date to %1:s';
+  sLT = '%0:s is older than %1:s';
+  sLTE = '%0:s is no newer than %1:s';
+  sGT = '%0:s is newer than %1:s';
+  sGTE = '%0:s is no older than %1:s';
+
+  sSuccessReport = 'Comparison using %s is true';
+  sFailureReport = 'Comparison using %s is false';
+
+  sDateTypeModified = 'last modification dates';
+  sDateTypeCreated = 'creation dates';
+
+const
+  TrueResponses: array[TDateComparisonOp] of string = (
+    sEQ, sLT, sGT, sLTE, sGTE, sNEQ
+  );
+  FalseResponses: array[TDateComparisonOp] of string = (
+    sNEQ, sGTE, sLTE, sGT, sLT, SEQ
+  );
+  DateTypeResponses: array[TDateType] of string = (
+    sDateTypeModified, sDateTypeCreated
+  );
 
 { TMain }
+
+function TMain.CompareFileDates(const File1, File2: TFileInfo): Boolean;
+var
+  FileDate1, FileDate2: TDateTime;  // required file dates
+begin
+  FileDate1 := TDateExtractor.GetDate(File1.ResolvedFileName, fParams.DateType);
+  FileDate2 := TDateExtractor.GetDate(File2.ResolvedFileName, fParams.DateType);
+  Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
+end;
 
 constructor TMain.Create;
   {Class constructor. Sets up object.
@@ -120,32 +207,49 @@ end;
 procedure TMain.Execute;
   {Executes program.
   }
+var
+  File1, File2: TFileInfo;
 begin
   try
     fParams.Parse;
-    if not fParams.Help then
+    if fParams.Help then
+      ShowHelp
+    else if fParams.Version then
+      ShowVersion
+    else
     begin
       // Normal execution
       fConsole.Silent := not fParams.Verbose;
       SignOn;
-      if IsFile1EarlierThanFile2(fParams.FileName1, fParams.FileName2) then
+      File1 := TFileInfo.Create(fParams.FileName1, fParams.FollowShortcuts);
+      File2 := TFileInfo.Create(fParams.FileName2, fParams.FollowShortcuts);
+      if CompareFileDates(File1, File2) then
       begin
         fConsole.WriteLn(
-          Format(sFile1Older, [fParams.FileName1, fParams.FileName2])
+          Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
+        );
+        fConsole.WriteLn(
+          Format(
+            TrueResponses[fParams.ComparisonOp],
+            [File1.ResolvedFileName, File2.ResolvedFileName]
+          )
         );
         ExitCode := 1;
       end
       else
       begin
         fConsole.WriteLn(
-          Format(sFile1NotOlder, [fParams.FileName1, fParams.FileName2])
+          Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
+        );
+        fConsole.WriteLn(
+          Format(
+            FalseResponses[fParams.ComparisonOp],
+            [File1.ResolvedFileName, File2.ResolvedFileName]
+          )
         );
         ExitCode := 0;
       end;
-    end
-    else
-      // Display help
-      ShowHelp;
+    end;
   except
     // Report any errors
     on E: EApplication do
@@ -206,26 +310,6 @@ begin
   end;
 end;
 
-function TMain.IsFile1EarlierThanFile2(const File1, File2: string): Boolean;
-  {Checks if a file has an earlier modification date than a second file.
-    @param File1 [in] Name of first file to be compared.
-    @param File2 [in] Name of second file to be compared.
-    @return True if File1 has earlier modification date than File2.
-  }
-var
-  FileDate1, FileDate2: TDateTime;  // modification dates of files
-begin
-  if not FileAge(File1, FileDate1) then
-    raise EApplication.Create(
-      sAppErrFileNameNotFound, [File1], cAppErrFileNameNotFound
-    );
-  if not FileAge(File2, FileDate2) then
-    raise EApplication.Create(
-      sAppErrFileNameNotFound, [File2], cAppErrFileNameNotFound
-    );
-  Result := CompareDateTime(FileDate1, FileDate2) < 0;
-end;
-
 procedure TMain.ReportError(const E: Exception);
   {Reports an error onto standard output.
     @param E [in] Exception containing error message.
@@ -249,6 +333,12 @@ begin
   fConsole.WriteLn(sHelp);
 end;
 
+procedure TMain.ShowVersion;
+begin
+  fConsole.Silent := False;
+  fConsole.WriteLn('v' + GetProductVersionStr);
+end;
+
 procedure TMain.SignOn;
   {Writes sign on message to console.
   }
@@ -259,7 +349,7 @@ begin
     Exit;
   // Write underlined sign on message
   Msg := Format(sSignOn, [GetProductVersionStr]);
-  fConsole.WriteLn(Msg);
+  fConsole.WriteLn(sSignOn);
   fConsole.WriteLn(StringOfChar('-', Length(Msg)));
   // Record that we've signed on
   fSignedOn := True;

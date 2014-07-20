@@ -31,7 +31,7 @@ type
       {Class constructor. Sets up object.
       }
     procedure Write(const Text: string);
-      {Write text to standard output unless slient.
+      {Write text to standard output unless silent.
         @param Text [in] Text to be written.
       }
     procedure WriteLn(const Text: string); overload;
@@ -65,7 +65,7 @@ begin
 end;
 
 procedure TConsole.Write(const Text: string);
-  {Write text to standard output unless slient.
+  {Write text to standard output unless silent.
     @param Text [in] Text to be written.
   }
 begin

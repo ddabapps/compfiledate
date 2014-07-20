@@ -28,15 +28,22 @@ const
   cAppErr2FilesNeeded = 102;
   cAppErrFileNamesSame = 103;
   cAppErrFileNameNotFound = 104;
-
+  cAppErrNoCompareType = 105;
+  cAppErrBadCompareType = 106;
+  cAppErrNoDateType = 107;
+  cAppErrBadDateType = 108;
 
 resourcestring
   // Error messages
-  sAppErrBadSwitch = 'Invalid switch "%s"';
+  sAppErrBadSwitch = 'Invalid command "%s"';
   sAppErr2FilesNeeded = 'Exactly two file names must be specified';
   sAppErrFileNamesSame = 'File names must be different';
-  sAppErrFileNameNotFound = 'Date for file "%s" not found';
-
+  sAppErrFileNameNotFound = 'File "%s" not found';
+  sAppErrNoCompareType = 'No comparison type specified for -c or --compare '
+    + 'command';
+  sAppErrBadCompareType = 'Invalid comparison type in -c or --compare command';
+  sAppErrNoDateType = 'No date type specified for -t or --datetype command';
+  sAppErrBadDateType = 'Invalid date type in -t or --datetype command';
 
 type
 
@@ -56,7 +63,7 @@ type
     constructor Create(const Msg: string; const Args: array of const;
       const ExitCode: Integer); overload;
       {Class constructor. Sets up exception object.
-        @param Msg [in] Format template for error messaqe.
+        @param Msg [in] Format template for error message.
         @param Args [in] Values to be included in format template.
         @param ExitCode [in] Program exit code associated with error.
       }
@@ -83,7 +90,7 @@ end;
 constructor EApplication.Create(const Msg: string; const Args: array of const;
   const ExitCode: Integer);
   {Class constructor. Sets up exception object.
-    @param Msg [in] Format template for error messaqe.
+    @param Msg [in] Format template for error message.
     @param Args [in] Values to be included in format template.
     @param ExitCode [in] Program exit code associated with error.
   }
