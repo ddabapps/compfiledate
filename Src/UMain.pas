@@ -101,13 +101,13 @@ resourcestring
     + '  -c <op> or --compare=<op>' + EOL
     + '    Defines the compare operation to use. <op> must be one of the '
     + 'following:' + EOL
-    + '      eq, equal or same:' + EOL
+    + '      eq, equal, same:' + EOL
     + '        Check if file dates are the same.' + EOL
-    + '      gt, newer or later:' + EOL
+    + '      gt, newer, later:' + EOL
     + '        Check if 1st file date is later than 2nd file date.' + EOL
-    + '      gte, not-older or not-earlier' + EOL
+    + '      gte, not-older, not-earlier' + EOL
     + '        Check if 1st file date is no earlier than 2nd file date.' + EOL
-    + '      lt, older or earlier' + EOL
+    + '      lt, older, earlier' + EOL
     + '        Check if 1st file date is earlier than 2nd file date (default '
     + 'if option' + EOL
     + '        is not provided).' + EOL
@@ -119,10 +119,10 @@ resourcestring
     + '    Determines whether last modification or creation dates are '
     + 'compared. <type>' + EOL
     + '    must be one of the following:' + EOL
-    + '      m, modified, last-modified or modification:' + EOL
+    + '      m, modified, last-modified, modification:' + EOL
     + '        Use date files were last modified (default if option is not '
     + 'provided).' + EOL
-    + '      c, created or creation:' + EOL
+    + '      c, created, creation:' + EOL
     + '        Use date files were created.' + EOL
     + '  -s or --followshortcuts' + EOL
     + '    Indicates that if either filename1 or filename2 is a shortcut file '
