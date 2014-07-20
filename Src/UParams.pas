@@ -33,6 +33,7 @@ type
     fParams: TStringList;             // List of command line parameters
     fVerbose: Boolean;                // Value of Verbose property
     fHelp: Boolean;                   // Value of Help property
+    fVersion: Boolean;                // Value of Version property
     fComparisonOp: TDateComparisonOp; // Value of ComparisonType property
     fDateType: TDateType;             // Value of DateType property
     fFollowShortcuts: Boolean;        // Value of FollowShortcuts property
@@ -57,6 +58,8 @@ type
       {Flag true if -v switch has been provided on command line}
     property Help: Boolean read fHelp;
       {Flag true if -h or -? switch has been provided on command line}
+    property Version: Boolean read fVersion;
+      {Flag true if -V or --version command has been provided on command line}
     property ComparisonOp: TDateComparisonOp read fComparisonOp;
       {Type of comparison to be applied to file dates}
     property DateType: TDateType read fDateType;
@@ -98,6 +101,7 @@ begin
     fParams.Add(Trim(ParamStr(Idx)));
   // Set defaults
   fHelp := False;
+  fVersion := False;
   fVerbose := False;
   fFileName1 := '';
   fFileName2 := '';
@@ -140,7 +144,7 @@ begin
     // Next parameter
     Inc(Idx);
   end;
-  if not Help then
+  if not Help and not Version then
   begin
     if (fFileName1 = '') or (fFileName2 = '') then
       raise EApplication.Create(sAppErr2FilesNeeded, cAppErr2FilesNeeded);
@@ -157,7 +161,15 @@ begin
   Command := fParams[Idx];
   Assert(AnsiStartsStr('-', Command));
   if (Command = '-h') or (Command = '-?') or (Command = '--help') then
-    fHelp := True
+  begin
+    if not fVersion then
+      fHelp := True;
+  end
+  else if (Command = '-V') or (Command = '--version') then
+  begin
+    if not fHelp then
+      fVersion := True
+  end
   else if (Command = '-v') or (Command = '--verbose') then
     fVerbose := True
   else if (Command = '-s') or (Command = '--followshortcuts') then

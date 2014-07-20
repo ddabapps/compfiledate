@@ -38,6 +38,9 @@ type
     procedure ShowHelp;
       {Writes help text to console.
       }
+    procedure ShowVersion;
+      {Writes program version to console.
+      }
     procedure ReportError(const E: Exception);
       {Reports an error onto standard output.
         @param E [in] Exception containing error message.
@@ -77,14 +80,16 @@ const
 
 resourcestring
   // Messages written to console
-  sSignOn = 'CompFileDate %s by DelphiDabbler (www.delphidabbler.com)';
+  sSignOn = 'CompFileDate by DelphiDabbler (www.delphidabbler.com)';
 
   sError = 'Error: %s';
 
   sUsage =
       'Usage: CompFileDate filename1 filename2 [options]'
     + EOL
-    + '  or   CompFileDate -h | -?';
+    + '  or   CompFileDate -h | -? | --help'
+    + EOL
+    + '  or   CompFileDate -V | --version';
 
   sHelp =
       'filename1' + EOL
@@ -129,18 +134,22 @@ resourcestring
     + '    itself is used.' + EOL
     + '  -v or --verbose' + EOL
     + '    Verbose: writes output to standard output. No output if option is '
-    + 'not ' + EOL
-    + '    provided. Ignored on error.' + EOL
+    + 'not' + EOL
+    + '    provided. Output is always written when an error occurs or when '
+    + 'help or' + EOL
+    + '    version number are requested.' + EOL
     + '  -h or -? or --help' + EOL
     + '    Displays help screen. Rest of command line ignored.' + EOL
+    + '  -V or --version' + EOL
+    + '    Displays program version number. Rest of command line ignored.' + EOL
     + EOL
     + 'The program''s exit code is 1 if the comparison is true and 0 if it is '
     + 'false.' + EOL
+    + EOL
     + 'If an error occurs then an error code >= 100 is returned and an error '
     + 'message' + EOL
-    + 'is written to standard output, regardless of whether the -v or '
-    + '--verbose' + EOL
-    + 'options were used. See the documentation for details of error codes.';
+    + 'is written to standard output. See documentation for details of error '
+    + 'codes.';
 
   sEQ = '%0:s has same date as %1:s';
   sNEQ = '%0:s has different date to %1:s';
@@ -203,7 +212,11 @@ var
 begin
   try
     fParams.Parse;
-    if not fParams.Help then
+    if fParams.Help then
+      ShowHelp
+    else if fParams.Version then
+      ShowVersion
+    else
     begin
       // Normal execution
       fConsole.Silent := not fParams.Verbose;
@@ -236,10 +249,7 @@ begin
         );
         ExitCode := 0;
       end;
-    end
-    else
-      // Display help
-      ShowHelp;
+    end;
   except
     // Report any errors
     on E: EApplication do
@@ -323,6 +333,12 @@ begin
   fConsole.WriteLn(sHelp);
 end;
 
+procedure TMain.ShowVersion;
+begin
+  fConsole.Silent := False;
+  fConsole.WriteLn('v' + GetProductVersionStr);
+end;
+
 procedure TMain.SignOn;
   {Writes sign on message to console.
   }
@@ -333,7 +349,7 @@ begin
     Exit;
   // Write underlined sign on message
   Msg := Format(sSignOn, [GetProductVersionStr]);
-  fConsole.WriteLn(Msg);
+  fConsole.WriteLn(sSignOn);
   fConsole.WriteLn(StringOfChar('-', Length(Msg)));
   // Record that we've signed on
   fSignedOn := True;
