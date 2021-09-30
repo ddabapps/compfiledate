@@ -38,6 +38,8 @@ type
     procedure ShowHelp;
       {Writes help text to console.
       }
+    ///  <summary>Write short-form of help text to console.</summary>
+    procedure ShowShortHelp;
     procedure ShowVersion;
       {Writes program version to console.
       }
@@ -151,6 +153,8 @@ resourcestring
     + 'is written to standard output. See documentation for details of error '
     + 'codes.';
 
+  sShortHelp = 'For further help use CompFileDate --help';
+
   sEQ = '%0:s has same date as %1:s';
   sNEQ = '%0:s has different date to %1:s';
   sLT = '%0:s is older than %1:s';
@@ -214,6 +218,8 @@ begin
     fParams.Parse;
     if fParams.Help then
       ShowHelp
+    else if fParams.ShortHelp then
+      ShowShortHelp
     else if fParams.Version then
       ShowVersion
     else
@@ -331,6 +337,16 @@ begin
   fConsole.WriteLn(sUsage);
   fConsole.WriteLn;
   fConsole.WriteLn(sHelp);
+end;
+
+procedure TMain.ShowShortHelp;
+begin
+  fConsole.Silent := False;
+  SignOn;
+  fConsole.WriteLn;
+  fConsole.WriteLn(sUsage);
+  fConsole.WriteLn;
+  fConsole.WriteLn(sShortHelp);
 end;
 
 procedure TMain.ShowVersion;

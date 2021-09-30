@@ -33,6 +33,7 @@ type
     fParams: TStringList;             // List of command line parameters
     fVerbose: Boolean;                // Value of Verbose property
     fHelp: Boolean;                   // Value of Help property
+    fShortHelp: Boolean;              // Value of ShortHelp property
     fVersion: Boolean;                // Value of Version property
     fComparisonOp: TDateComparisonOp; // Value of ComparisonType property
     fDateType: TDateType;             // Value of DateType property
@@ -57,6 +58,9 @@ type
       {Flag true if -v or --verbose command has been provided on command line}
     property Help: Boolean read fHelp;
       {Flag true if -h, -? or --help command has been provided on command line}
+    property ShortHelp: Boolean read fShortHelp;
+      {Flag true if program is started with no file names provided on command
+      line}
     property Version: Boolean read fVersion;
       {Flag true if -V or --version command has been provided on command line}
     property ComparisonOp: TDateComparisonOp read fComparisonOp;
@@ -137,10 +141,15 @@ begin
   end;
   if not Help and not Version then
   begin
-    if (fFileName1 = '') or (fFileName2 = '') then
-      raise EApplication.Create(sAppErr2FilesNeeded, cAppErr2FilesNeeded);
-    if AnsiSameText(fFileName1, fFileName2) then
-      raise EApplication.Create(sAppErrFileNamesSame, cAppErrFileNamesSame);
+    if (fFileName1 = '') and (fFileName2 = '') then
+      fShortHelp := True
+    else
+    begin
+      if (fFileName1 = '') or (fFileName2 = '') then
+        raise EApplication.Create(sAppErr2FilesNeeded, cAppErr2FilesNeeded);
+      if AnsiSameText(fFileName1, fFileName2) then
+        raise EApplication.Create(sAppErrFileNamesSame, cAppErrFileNamesSame);
+    end;
   end;
 end;
 
