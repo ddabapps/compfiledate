@@ -55,6 +55,13 @@ VIED = "$(VIEDROOT)\VIEd.exe" -makerc
 !else
 VIED = "VIEd.exe" -makerc
 !endif
+# ZIP.exe is expected to be on the path or its install directory must be
+# specified in the ZIPROOT macro
+!ifdef ZIPROOT
+ZIP = "$(ZIPROOT)\Zip.exe"
+!else
+ZIP = "Zip.exe"
+!endif
 
 # Define macros for paths
 RESOUTDIR = ..\Build\Bin
@@ -105,10 +112,10 @@ releaseexe:
   @echo ------------------
   -@cd ..
   -@if exist $(EXEFILE) del $(EXEFILE)
-  @zip -j -9 $(EXEFILE) Build\Exe\CompFileDate.exe
-  @zip -j -9 $(EXEFILE) Docs\ReadMe.txt
-  @zip -j -9 $(EXEFILE) LICENSE.md
-  @zip -j -9 $(EXEFILE) CHANGELOG.md
+  @$(ZIP) -j -9 $(EXEFILE) Build\Exe\CompFileDate.exe
+  @$(ZIP) -j -9 $(EXEFILE) Docs\ReadMe.txt
+  @$(ZIP) -j -9 $(EXEFILE) LICENSE.md
+  @$(ZIP) -j -9 $(EXEFILE) CHANGELOG.md
   -@cd Src
 
 # Create release zip file for source
@@ -119,12 +126,12 @@ releasesrc:
   @echo -------------------
   -@cd ..
   -@if exist $(SRCFILE) del $(SRCFILE)
-  @zip -r -9 $(SRCFILE) Src
-  @zip -r -9 $(SRCFILE) Docs
-  @zip -j -9 $(SRCFILE) .gitignore
-  @zip -j -9 $(SRCFILE) Build.txt
-  @zip -j -9 $(SRCFILE) LICENSE.md
-  @zip -j -9 $(SRCFILE) CHANGELOG.md
+  @$(ZIP) -r -9 $(SRCFILE) Src
+  @$(ZIP) -r -9 $(SRCFILE) Docs
+  @$(ZIP) -j -9 $(SRCFILE) .gitignore
+  @$(ZIP) -j -9 $(SRCFILE) Build.txt
+  @$(ZIP) -j -9 $(SRCFILE) LICENSE.md
+  @$(ZIP) -j -9 $(SRCFILE) CHANGELOG.md
   -@cd Src
 
 # Configure source tree for building

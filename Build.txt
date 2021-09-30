@@ -24,6 +24,9 @@ The following tools are required to build the program:
      path. If not you must specify the correct path when running `MAKE`
 + `VIEd.exe` (Version Information Editor by DelphiDabbler). See
   http://delphidabbler.com/software/vied.
++ `Zip.exe` This program is used to create CompFileDates's release file. You can
+  get a Windows command line version at
+  http://stahlforce.com/dev/index.php?tool=zipunzip.
 
 
 Environment Variables
@@ -37,6 +40,8 @@ before calling Make, or defined on the Make command line:
   directory as `MAKE.exe`.
 + `VIEDROOT` - set to the install directory of `VIEd.exe`. If not set then
   `VIEd.exe` is assumed to be on the path.
++ `ZIPROOT` - set to the install directory of `Zip.exe`. If not set then
+  `Zip.exe` is assumed to be on the path.
 
 
 Download the Source
