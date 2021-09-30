@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2014, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2014-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements advanced record that stores information about a file and resolves
  * file shortcuts if required.

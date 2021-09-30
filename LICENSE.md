@@ -1,6 +1,6 @@
 ﻿# License
 
-_CompFileDate_ is copyright © 2009-2014 by [Peter D Johnson][1].
+_CompFileDate_ is copyright © 2009-2021 by [Peter D Johnson][1].
 
 The executable program and original source code are made available under the terms of the [Mozilla Public License v2.0][2].
 
