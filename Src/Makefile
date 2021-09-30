@@ -107,8 +107,8 @@ releaseexe:
   -@if exist $(EXEFILE) del $(EXEFILE)
   @zip -j -9 $(EXEFILE) Build\Exe\CompFileDate.exe
   @zip -j -9 $(EXEFILE) Docs\ReadMe.txt
-  @zip -j -9 $(EXEFILE) LICENSE.txt
-  @zip -j -9 $(EXEFILE) Docs\changelog.txt
+  @zip -j -9 $(EXEFILE) LICENSE.md
+  @zip -j -9 $(EXEFILE) CHANGELOG.md
   -@cd Src
 
 # Create release zip file for source
@@ -123,7 +123,8 @@ releasesrc:
   @zip -r -9 $(SRCFILE) Docs
   @zip -j -9 $(SRCFILE) .gitignore
   @zip -j -9 $(SRCFILE) Build.txt
-  @zip -j -9 $(SRCFILE) LICENSE.txt
+  @zip -j -9 $(SRCFILE) LICENSE.md
+  @zip -j -9 $(SRCFILE) CHANGELOG.md
   -@cd Src
 
 # Configure source tree for building
