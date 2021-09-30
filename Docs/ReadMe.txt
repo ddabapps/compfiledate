@@ -13,7 +13,7 @@ The usage is:
   CompFileDate <filename1> <filename2> [options]
   CompFileDate -h | -? | --help
   CompFileDate -V | --version
-  
+
 
 where
 
@@ -65,6 +65,9 @@ options are:
     Displays the program's version number on standard output and halts. Any file
     names and other options are ignored.
 
+If no file names are provided on the command line and none of the help or
+version commands are used then a brief help message is displayed.
+
 The program's exit code is 1 if the comparison is true and 0 if it is false.
 If an error occurs then an error code >= 100 is returned and an error message
 is written to standard output. The error codes are:
@@ -102,18 +105,18 @@ at https://github.com/delphidabbler/compfiledate
 Copyright and License
 ---------------------
 
-See the file `LICENSE.txt` provided with this download for copyright and
+See the file `LICENSE.md` provided with this download for copyright and
 licensing information.
 
 
 Change Log
 ----------
 
-The change log is provided in the file `ChangeLog.txt` provided with this
+The change log is provided in the file `ChangeLog.md` provided with this
 download.
 
 
 Web page
 --------
 
-The program has a web page at http://www.delphidabbler.com/software/compfiledate
+The program has a web page at https://delphidabbler.com/software/compfiledate
