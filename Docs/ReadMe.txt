@@ -102,14 +102,14 @@ at https://github.com/delphidabbler/compfiledate
 Copyright and License
 ---------------------
 
-See the file `LICENSE.txt` provided with this download for copyright and
+See the file `LICENSE.md` provided with this download for copyright and
 licensing information.
 
 
 Change Log
 ----------
 
-The change log is provided in the file `ChangeLog.txt` provided with this
+The change log is provided in the file `ChangeLog.md` provided with this
 download.
 
 
