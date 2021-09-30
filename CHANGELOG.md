@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file.
 
 This change log begins with the first public release version of _CompFileDate_. Releases are listed in reverse version number order.
 
+## Release v2.1.0 of 30 September 2021
+
+* Replaced error message displayed when no files are provided on command line with a brief help message that prompts the use of the `--help` command. [[issue #6](https://github.com/delphidabbler/compfiledate/issues/6)]
+* Updated application manifest. [[issue #7](https://github.com/delphidabbler/compfiledate/issues/7)]
+* Converted change log and license files to markdown format. [[issue #8](https://github.com/delphidabbler/compfiledate/issues/8)] and [[issue #9](https://github.com/delphidabbler/compfiledate/issues/9)]
+* Fixed problem in `Makefile` where it was failing to find `Zip.exe` when not on the system path. [[issue #10](https://github.com/delphidabbler/compfiledate/issues/10)]
+* Updated many URLs in program and documentation.
+* Documentation updated re changes.
+
 ## Release v2.0.0 of 20 July 2014
 
 * Operator used in date comparison can now be specified using new --compare or -c commands. This enables user to choose whether date of 1st file is tested to be <, <=, >, >=, <> or = to date of second file. [[issue #1](https://github.com/delphidabbler/compfiledate/issues/1)]
