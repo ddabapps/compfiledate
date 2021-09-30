@@ -119,4 +119,4 @@ download.
 Web page
 --------
 
-The program has a web page at http://www.delphidabbler.com/software/compfiledate
+The program has a web page at https://delphidabbler.com/software/compfiledate

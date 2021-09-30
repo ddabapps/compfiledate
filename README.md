@@ -20,4 +20,4 @@ It's only a little utility, but any improvements are welcome. Just fork the repo
 License
 -------
 
-Licensed under the [Mozilla Public License v2.0](http://www.mozilla.org/MPL/2.0/).
+Licensed under the [Mozilla Public License v2.0](https://mozilla.org/MPL/2.0/).

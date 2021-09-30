@@ -82,7 +82,7 @@ const
 
 resourcestring
   // Messages written to console
-  sSignOn = 'CompFileDate by DelphiDabbler (www.delphidabbler.com)';
+  sSignOn = 'CompFileDate by DelphiDabbler (https://delphidabbler.com)';
 
   sError = 'Error: %s';
 

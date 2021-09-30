@@ -23,7 +23,7 @@ The following tools are required to build the program:
      suffice). The following instructions assume that `MAKE` is on the system
      path. If not you must specify the correct path when running `MAKE`
 + `VIEd.exe` (Version Information Editor by DelphiDabbler). See
-  http://delphidabbler.com/software/vied.
+  https://delphidabbler.com/software/vied.
 + `Zip.exe` This program is used to create CompFileDates's release file. You can
   get a Windows command line version at
   http://stahlforce.com/dev/index.php?tool=zipunzip.
