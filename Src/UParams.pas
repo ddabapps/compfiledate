@@ -17,7 +17,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  System.Classes,
   // Project
   UDateComparer, UDateExtractor;
 
@@ -83,7 +83,9 @@ implementation
 
 uses
   // Delphi
-  StrUtils, SysUtils, Windows {for inlining},
+  System.StrUtils,
+  System.SysUtils,
+  WinApi.Windows {for inlining},
   // Project
   UAppException;
 

@@ -40,7 +40,8 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows;
+  System.SysUtils,
+  WinApi.Windows;
 
 
 { TStdOutput }
@@ -64,7 +65,7 @@ begin
   Bytes := TEncoding.Default.GetBytes(Text);
   if Length(Bytes) = 0 then
     Exit;
-  Windows.WriteFile(
+  WinApi.Windows.WriteFile(
     GetHandle, Pointer(Bytes)^, Length(Bytes), Dummy, nil);
 end;
 
