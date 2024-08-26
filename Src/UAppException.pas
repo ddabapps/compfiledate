@@ -95,7 +95,7 @@ constructor EApplication.Create(const Msg: string; const Args: array of const;
     @param ExitCode [in] Program exit code associated with error.
   }
 begin
-  Create(Format(Msg, Args), fExitCode);
+  Create(Format(Msg, Args), ExitCode);
 end;
 
 end.
