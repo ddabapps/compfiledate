@@ -15,7 +15,7 @@ unit UFileInfo;
 interface
 
 uses
-  ShlObj;
+  WinApi.ShlObj;
 
 type
   TFileInfo = record
@@ -38,7 +38,9 @@ type
 implementation
 
 uses
-  SysUtils, ActiveX, Windows;
+  System.SysUtils,
+  WinApi.ActiveX,
+  WinApi.Windows;
 
 { TFileInfo }
 

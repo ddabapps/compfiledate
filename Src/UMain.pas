@@ -17,7 +17,8 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  System.SysUtils,
+  System.Classes,
   // Project
   UConsole, UFileInfo, UParams;
 
@@ -73,7 +74,8 @@ implementation
 
 uses
   // Delphi
-  Windows, DateUtils,
+  WinApi.Windows,
+  System.DateUtils,
   // Project
   UAppException, UDateComparer, UDateExtractor;
 
