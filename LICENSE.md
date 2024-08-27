@@ -8,4 +8,4 @@ The full license text can also be found in [`MPL-2.0.txt`][3]
 
 [1]: https://gravatar.com/delphidabbler
 [2]: https://mozilla.org/MPL/2.0/
-[3]: https://github.com/delphidabbler/compfiledate/blob/master/Docs/MPL-2.0.txt
+[3]: https://github.com/ddabapps/compfiledate/blob/master/Docs/MPL-2.0.txt
