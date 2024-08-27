@@ -1,7 +1,7 @@
 :: Deploy script for CompFileDate.
 ::
 :: This script compiles release versions of the 64 and 32 bit builds of
-:: CompFileDate and places then into a single zip file ready for release.
+:: CompFileDate and places then into zip files ready for release.
 ::
 :: This script uses MSBuild and InfoZip's zip.exe. The MSBuild project also
 :: requires DelphiDabbler Version Information Editor to be installed.

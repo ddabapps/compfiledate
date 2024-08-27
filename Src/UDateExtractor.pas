@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2014-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2014-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Static class that extracts a supported file date from a file.
 }

@@ -8,8 +8,8 @@ versions of Delphi may be suitable.
 Step 1: Download the Source
 ----------------------------
 
-The program's source code is maintained in the delphidabbler/compfiledate
-repository on GitHub. See https://github.com/delphidabbler/compfiledate
+The program's source code is maintained in the ddabapps/compfiledate repository
+on GitHub. See https://github.com/ddabapps/compfiledate
 
 Either clone or download the repo into a directory on your computer. The
 following directory structure will be created within your nominated directory:
