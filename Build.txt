@@ -1,57 +1,18 @@
 CompFileDate Build Instructions
 ===============================
 
-These instructions assume you are building the program using Delphi XE. Later
-versions of Delphi may be suitable with some minor changes to the make file.
+These instructions assume you are building the program using Delphi 12. Later
+versions of Delphi may be suitable.
 
 
-Dependencies
-------------
+Step 1: Download the Source
+----------------------------
 
-The program has no dependencies other than the Delphi VCL.
+The program's source code is maintained in the ddabapps/compfiledate repository
+on GitHub. See https://github.com/ddabapps/compfiledate
 
-
-Build Tools
------------
-
-The following tools are required to build the program:
-
-+ A Delphi XE or later installation. The following tools are required:
-  - `DCC32.exe` command line compiler.
-  - `BRCC32.exe` resource compiler.
-  - `MAKE.exe` the Borland / Embarcaero make utility (other make tools will not
-     suffice). The following instructions assume that `MAKE` is on the system
-     path. If not you must specify the correct path when running `MAKE`
-+ `VIEd.exe` (Version Information Editor by DelphiDabbler). See
-  https://delphidabbler.com/software/vied.
-+ `Zip.exe` This program is used to create CompFileDates's release file. You can
-  get a Windows command line version at
-  http://stahlforce.com/dev/index.php?tool=zipunzip.
-
-
-Environment Variables
----------------------
-
-The make file uses the following environment variables, which should be set
-before calling Make, or defined on the Make command line:
-
-+ `DELPHIROOT` - should be set to the install directory of the version of Delphi
-  being used. If not set it is assumed that Delphi is installed in the same
-  directory as `MAKE.exe`.
-+ `VIEDROOT` - set to the install directory of `VIEd.exe`. If not set then
-  `VIEd.exe` is assumed to be on the path.
-+ `ZIPROOT` - set to the install directory of `Zip.exe`. If not set then
-  `Zip.exe` is assumed to be on the path.
-
-
-Download the Source
--------------------
-
-The program's source code is maintained in the delphidabbler/compfiledate Git
-repository on GitHub. See https://github.com/delphidabbler/compfiledate
-
-Either clone or fork the repo into a directory on your computer. The following
-directory structure will be created within your nominated directory:
+Either clone or download the repo into a directory on your computer. The
+following directory structure will be created within your nominated directory:
 
     .
     |
@@ -62,48 +23,60 @@ directory structure will be created within your nominated directory:
         +-- Assets
 
 
-Build the Program
------------------
+Step 2: Configure the Build Environment
+---------------------------------------
 
-### Command Line
+The following tools must be installed to build CompFileDate:
 
-The program is built using the `Makefile` located in the `Src` directory.
++ Delphi 12.1 or later
 
-Open a command line console and navigate to the `Src` directory.
++ `VIEd.exe` (Version Information Editor by DelphiDabbler). See
+  https://delphidabbler.com/software/vied.
 
-First configure the source tree by running `Make config`. This creates a `Build`
-directory in the root that in turn contains `Bin`, `Exe` and `Release`
-sub-directories.
+The program will not compile without setting the VIEDROOT environment variable
+to the path where the VIEd binary is installed. By default this is in
+%ProgramFiles(x86)%\DelphiDabbler\VIEd on 64 bit Windows and 
+%ProgramFiles%\DelphiDabbler\VIEd on 32 bit Windows.
 
-The program can now be created simply by running `Make` with no parameters.
-Intermediate binary files will be placed in `Build\Bin` and the program
-executable will be written to `Build\Exe`.
-
-To create a release run `Make release` after running `Make`. This creates two
-zip files, one containing the executable code and the other the source code. The
-zip files are placed in the `Build\Release` directory.
-
-### Using the Delphi IDE
-
-The program can be built using the Delphi IDE. Before this can be done you
-should run `Make config` followed by `Make resources` to configure the source
-tree and create the binary resource files required to build the source.
-
-### Other Build Options
-
-There are other build options available. See the comments in `Makefile` for
-details.
+VIEDROOT can be set within the Delphi IDE. To do this choose the Tools | Options
+menu option to display the Options dialogue box. Then select the IDE |
+Environment Variables page and create the environment variable in the System
+Overides section of the page. Alternatively set the environment variable
+globally in Windows before starting Delphi.
 
 
-Contributing
-------------
+Step 3: Modify the Source
 
-Contributions are welcome. Please fork the GitHub repo and create a new feature
-branch off the `development` branch. Commit your changes to the feature branch.
-When ready create a pull request on the main GitHub repo.
+If you intend modifying and redistributing CompFileDate you must comply with
+CompFileDate's open source licence. See 
+https://github.com/ddabapps/compfiledate/blob/master/LICENSE.md for details.
 
 
-Licensing
----------
+Step 4: Compile
 
-See `LICENSE.md` for information about source code licenses.
+From the IDE you have the choice of building 32 or 64 bit versions of the
+program. Debug and release targets are both supported.
+
+Everything is compiled into a _build sub-directory of the directory where you
+copied the source. This directory is hidden from Git. 
+
+
+Step 5: Release (optional)
+
+Releases are created by running Deploy.bat from the command line, NOT from
+within the Delphi IDE. Deploy.bat has its own dependencies and requirements
+which are explained in the comments at the top of the script file.
+
+The script compiles release versions of both 32 and 64 bit versions of the
+program and parcels them up in zip files, along with the appropriate
+documentation.
+
+
+Step 6: Clean Up
+
+If you cloned the CompFileDate repo using Git you can clean up easily by opening
+a Git command line on directory where the clone was made. Then run:
+
+    git clean -fxd
+
+Make sure you have committed any new files that you need first!

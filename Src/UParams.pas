@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that parses command line and exposes results in properties.
 }
@@ -17,7 +17,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  System.Classes,
   // Project
   UDateComparer, UDateExtractor;
 
@@ -83,7 +83,9 @@ implementation
 
 uses
   // Delphi
-  StrUtils, SysUtils, Windows {for inlining},
+  System.StrUtils,
+  System.SysUtils,
+  WinApi.Windows {for inlining},
   // Project
   UAppException;
 

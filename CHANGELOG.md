@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file.
 
 This change log begins with the first public release version of _CompFileDate_. Releases are listed in reverse version number order.
 
+## Release v2.2.0 of 27 August 2024
+
+
+* Added 64 bit version of the program. [[issue #12](https://github.com/delphidabbler/compfiledate/issues/12)]
+* Fixed bug where no error code was returned by the program when a file name passed on the command line does not exist. [[issue #14](https://github.com/delphidabbler/compfiledate/issues/14)]
+* Refactoring: Delphi units are now referenced in source code by fully qualified unit scope names. [[issue #15](https://github.com/delphidabbler/compfiledate/issues/15)]
+* Changed build process:
+    * Updated program to compile with Delphi 12.1. [[issue #11](https://github.com/delphidabbler/compfiledate/issues/11)]
+    * MSBuild replaces use of Embarcadero Make. `Makefile` and `CompFileDate.cfg` were removed.
+    * A new `Deploy.bat` script is now used to create releases.
+    * Binaries are now created in the `_build` directory instead of `Build`.
+* Documentation updates:
+    * `Build.txt` rewritten re new build process.
+    * `Docs/ReadMe.txt` and `README.md` were revised re availability of 32 bit and 64 bit versions of the program along with other relevant changes.
+
 ## Release v2.1.0 of 30 September 2021
 
 * Replaced error message displayed when no files are provided on command line with a brief help message that prompts the use of the `--help` command. [[issue #6](https://github.com/delphidabbler/compfiledate/issues/6)]

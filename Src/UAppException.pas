@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Exception class for application errors. Stores error message and associated
  * error exit code.
@@ -18,7 +18,7 @@ interface
 
 uses
   // Delphi
-  SysUtils;
+  System.SysUtils;
 
 
 const
@@ -95,7 +95,7 @@ constructor EApplication.Create(const Msg: string; const Args: array of const;
     @param ExitCode [in] Program exit code associated with error.
   }
 begin
-  Create(Format(Msg, Args), fExitCode);
+  Create(Format(Msg, Args), ExitCode);
 end;
 
 end.

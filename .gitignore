@@ -10,4 +10,5 @@
 __history/
 
 # Project specific directories
-Build
+_build
+*.res

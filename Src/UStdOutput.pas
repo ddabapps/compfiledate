@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that writes to console's standard output stream.
 }
@@ -40,7 +40,8 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows;
+  System.SysUtils,
+  WinApi.Windows;
 
 
 { TStdOutput }
@@ -64,7 +65,7 @@ begin
   Bytes := TEncoding.Default.GetBytes(Text);
   if Length(Bytes) = 0 then
     Exit;
-  Windows.WriteFile(
+  WinApi.Windows.WriteFile(
     GetHandle, Pointer(Bytes)^, Length(Bytes), Dummy, nil);
 end;
 
