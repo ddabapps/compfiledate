@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that executes program.
 }
@@ -145,7 +145,8 @@ resourcestring
     + '  -h or -? or --help' + EOL
     + '    Displays help screen. Rest of command line ignored.' + EOL
     + '  -V or --version' + EOL
-    + '    Displays program version number. Rest of command line ignored.' + EOL
+    + '    Displays program version number and platform. Rest of command line '
+    + 'ignored.' + EOL
     + EOL
     + 'The program''s exit code is 1 if the comparison is true and 0 if it is '
     + 'false.' + EOL
@@ -352,9 +353,23 @@ begin
 end;
 
 procedure TMain.ShowVersion;
+
+  function ProgramPlatform: string;
+  begin
+    {$IF Defined(WIN32)}
+    Result := 'Windows 32 bit';
+    {$ELSEIF Defined(WIN64)}
+    Result := 'Windows 64 bit';
+    {$ELSE}
+    {$Message Fatal 'Unsupported platform'}
+    {$IFEND}
+  end;
+
 begin
   fConsole.Silent := False;
-  fConsole.WriteLn('v' + GetProductVersionStr);
+  fConsole.WriteLn(
+    Format('v%0:s (%1:s)', [GetProductVersionStr, ProgramPlatform])
+  );
 end;
 
 procedure TMain.SignOn;

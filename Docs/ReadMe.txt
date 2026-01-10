@@ -98,8 +98,8 @@ options are:
     Displays a help screen. Any file names and other options are ignored.
 
   -V or --version.
-    Displays the program's version number on standard output and halts. Any file
-    names and other options are ignored.
+    Displays the program's version number and platform on standard output and
+    halts. Any file names and other options are ignored.
 
 If no file names are provided on the command line and none of the help or
 version commands are used then a brief help message is displayed.
