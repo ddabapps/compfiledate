@@ -1,0 +1,13 @@
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at https://mozilla.org/MPL/2.0/
+#
+# Copyright (C) 2026, Peter Johnson (gravatar.com/delphidabbler).
+#
+# CompFileDate version information macros for including in .vi files.
+# These values are also used by Deploy.bat
+
+# Version & build numbers
+version=2.2.0
+build=5
+suffix=
