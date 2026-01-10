@@ -8,21 +8,18 @@
 ::
 :: Get zip.exe from https://delphidabbler.com/extras/info-zip
 :: Get Version Information Editor from https://delphidabbler.com/software/vied
-
-:: To use the script:
-::   1) Start the Embarcadero RAD Studio Command Prompt to set the required
-::      environment variables for MSBuild.
-::   2) Set the ZIPROOT environment variable to the directory where zip.exe is
-::      installed.
-::   3) Set the VIEDROOT environment variable to the directory where VIEd.exe is
-::      installed.
-::   3) Change directory to that where this script is located.
-::   4) Run the script.
 ::
-:: Usage:
-::   Deploy <version>
-:: where
-::   <version> is the version number of the release, e.g. 2.2.0 or 3.1.0-beta.
+:: To use the script:
+::  To use the script:
+::    1) Start the Embarcadero RAD Studio Command Prompt to set the required
+::       environment variables for MSBuild.
+::    2) Set the BDSBIN variable to %BDS%\bin (required by MSBuild/Delphi).
+::    3) Set the ZIPROOT environment variable to the directory where zip.exe is
+::       installed.
+::    4) Set the VIEDROOT environment variable to the directory where VIEd.exe 
+::       is installed.
+::    5) Change directory to that where this script is located.
+::    6) Run the script, without parameters
 
 @echo off
 
@@ -30,15 +27,42 @@ echo ------------------------------
 echo Deploying CompFileDate Release
 echo ------------------------------
 
-:: Check for required parameter
-if "%1"=="" goto paramerror
-
 :: Check for required environment variables
 if "%ZipRoot%"=="" goto envvarerror
 if "%VIEdRoot%"=="" goto envvarerror
 
+:: Get version info from Src\VERSION
+
+:: Set path to file containing version information
+set VerFile=.\Src\VERSION
+
+:: Undefine the variables used to collect version information
+set vernum=
+set suffix=
+
+:: Get the version number from the version info file - this MUST exist
+for /f "tokens=2 delims==" %%A in (
+  'findstr /rc:"^version" %VerFile%'
+) do (
+    set vernum=%%A
+  )
+)
+if not defined vernum (
+    goto badversionerror
+)
+
+:: Get the optional version number suffix from the version info file
+for /f "tokens=2 delims==" %%A in (
+  'findstr /rc:"^suffix" %VerFile%'
+) do (
+    set suffix=%%A
+)
+
+:: Record & report the build version
+set Version=%vernum%%suffix%
+echo Building release v%Version%
+
 :: Set variables
-set Version=%1
 set BuildRoot=.\_build
 set Win32Dir=%BuildRoot%\Win32\Release\exe
 set Win64Dir=%BuildRoot%\Win64\Release\exe
@@ -101,15 +125,15 @@ goto end
 
 :: Error messages
 
-:paramerror
+:envvarerror
 echo.
-echo ***ERROR: Please specify a version number as a parameter
+echo ***ERROR: ZipRoot or VIEdRoot environment variable not set
 echo.
 goto end
 
-:envvarerror
+:badversionerror
 echo.
-echo ***ERROR: ZipRoot environment variable not set
+echo ***ERROR: "version" field not set in %VerFile%
 echo.
 goto end
 
