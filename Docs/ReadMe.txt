@@ -115,8 +115,8 @@ is written to standard output. The error codes are:
   104 - one or both files cannot be found
   105 - no comparison type was specified for the -c or --compare option
   106 - an invalid comparison type was specified for the -c or --compare option
-  107 - no date type was specified for the -t or --datetype option
-  108 - an invalid date type was specified for the -t or --datetype option
+  107 - no date type was specified for the -d or --datetype option
+  108 - an invalid date type was specified for the -d or --datetype option
 
 
 4. Source Code
