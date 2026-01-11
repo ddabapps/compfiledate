@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that parses command line and exposes results in properties.
 }
@@ -134,7 +134,9 @@ begin
       else if fFileName2 = '' then
         fFileName2 := fParams[Idx]
       else
-        raise EApplication.Create(sAppErr2FilesNeeded, cAppErr2FilesNeeded);
+        raise EApplication.Create(
+          sAppErr2FilesNeeded, EApplication.Err2FilesNeeded
+        );
     end
     else
       ParseCommand(Idx);
@@ -148,9 +150,13 @@ begin
     else
     begin
       if (fFileName1 = '') or (fFileName2 = '') then
-        raise EApplication.Create(sAppErr2FilesNeeded, cAppErr2FilesNeeded);
+        raise EApplication.Create(
+          sAppErr2FilesNeeded, EApplication.Err2FilesNeeded
+        );
       if AnsiSameText(fFileName1, fFileName2) then
-        raise EApplication.Create(sAppErrFileNamesSame, cAppErrFileNamesSame);
+        raise EApplication.Create(
+          sAppErrFileNamesSame, EApplication.ErrFileNamesSame
+        );
     end;
   end;
 end;
@@ -210,14 +216,16 @@ begin
   end
   else
     raise EApplication.CreateFmt(
-      sAppErrBadSwitch, [fParams[Idx], cAppErrBadSwitch]
+      sAppErrBadSwitch, [fParams[Idx], EApplication.ErrBadSwitch]
     );
 end;
 
 procedure TParams.ParseCompareType(CT: string);
 begin
   if CT = '' then
-    raise EApplication.Create(sAppErrNoCompareType, cAppErrNoCompareType);
+    raise EApplication.Create(
+      sAppErrNoCompareType, EApplication.ErrNoCompareType
+    );
   CT := AnsiLowerCase(CT);
   if (CT = 'eq') or (CT = 'equal') or (CT = 'same') then
     fComparisonOp := TDateComparisonOp.EQ
@@ -233,13 +241,15 @@ begin
     or (CT = 'different') then
     fComparisonOp := TDateComparisonOp.NEQ
   else
-    raise EApplication.Create(sAppErrBadCompareType, cAppErrBadCompareType);
+    raise EApplication.Create(
+      sAppErrBadCompareType, EApplication.ErrBadCompareType
+    );
 end;
 
 procedure TParams.ParseDateType(DT: string);
 begin
   if DT = '' then
-    raise EApplication.Create(sAppErrNoDateType, cAppErrNoDateType);
+    raise EApplication.Create(sAppErrNoDateType, EApplication.ErrNoDateType);
   DT := AnsiLowerCase(DT);
   if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
     or (DT = 'modification') then
@@ -247,7 +257,7 @@ begin
   else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
     fDateType := TDateType.Created
   else
-    raise EApplication.Create(sAppErrBadDateType, cAppErrBadDateType);
+    raise EApplication.Create(sAppErrBadDateType, EApplication.ErrBadDateType);
 end;
 
 end.

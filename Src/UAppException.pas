@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Exception class for application errors. Stores error message and associated
  * error exit code.
@@ -20,18 +20,6 @@ uses
   // Delphi
   System.SysUtils;
 
-
-const
-  // Error exit codes
-  cAppErrUnknown = 100;
-  cAppErrBadSwitch = 101;
-  cAppErr2FilesNeeded = 102;
-  cAppErrFileNamesSame = 103;
-  cAppErrFileNameNotFound = 104;
-  cAppErrNoCompareType = 105;
-  cAppErrBadCompareType = 106;
-  cAppErrNoDateType = 107;
-  cAppErrBadDateType = 108;
 
 resourcestring
   // Error messages
@@ -54,6 +42,18 @@ type
   EApplication = class(Exception)
   strict private
     fExitCode: Integer; // Value of ExitCode property
+  public
+    const
+      // Error exit codes
+      ErrUnknown = 100;
+      ErrBadSwitch = 101;
+      Err2FilesNeeded = 102;
+      ErrFileNamesSame = 103;
+      ErrFileNameNotFound = 104;
+      ErrNoCompareType = 105;
+      ErrBadCompareType = 106;
+      ErrNoDateType = 107;
+      ErrBadDateType = 108;
   public
     constructor Create(const Msg: string; const ExitCode: Integer); overload;
       {Class constructor. Sets up exception object.

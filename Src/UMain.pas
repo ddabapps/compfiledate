@@ -273,7 +273,7 @@ begin
     on E: Exception do
     begin
       ReportError(E);
-      ExitCode := cAppErrUnknown;
+      ExitCode := EApplication.ErrUnknown;
     end;
   end;
 end;
