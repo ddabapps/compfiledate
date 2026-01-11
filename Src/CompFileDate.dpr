@@ -27,11 +27,11 @@ uses
   UFileInfo in 'UFileInfo.pas';
 
 begin
-  with TMain.Create do
-    try
-      Execute;
-    finally
-      Free;
-    end;
+  var App := TMain.Create;
+  try
+    App.Execute;
+  finally
+    App.Free;
+  end;
 end.
 
