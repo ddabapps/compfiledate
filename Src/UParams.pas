@@ -36,7 +36,7 @@ type
       fHelp: Boolean;
       fShortHelp: Boolean;
       fVersion: Boolean;
-      fComparisonOp: TDateComparisonOp;
+      fComparisonOp: TDateComparer.TOp;
       fDateType: TDateType;
       fFollowShortcuts: Boolean;
       fFileName2: string;
@@ -90,9 +90,9 @@ type
     ///  specified, <c>False</c> otherwise.</remarks>
     property Version: Boolean read fVersion;
     ///  <summary>Type of comparison to be applied to dates.</summary>
-    ///  <remarks>Defaults to <c>TDateComparisonOp.LT</c> unless either the -c
+    ///  <remarks>Defaults to <c>TDateComparer.TOp.LT</c> unless either the -c
     ///  or --compare commands are used to override this value.</remarks>
-    property ComparisonOp: TDateComparisonOp read fComparisonOp;
+    property ComparisonOp: TDateComparer.TOp read fComparisonOp;
     ///  <summary>Specifies whether to compare files' last-modified or creation
     ///  dates.</summary>
     ///  <remarks>Defaults to <c>TDateType.LastModified</c> unless either the -d
@@ -152,7 +152,7 @@ begin
   fVerbose := False;
   fFileName1 := '';
   fFileName2 := '';
-  fComparisonOp := TDateComparisonOp.LT;
+  fComparisonOp := TDateComparer.TOp.LT;
   fDateType := TDateType.LastModified;
   fFollowShortcuts := False;
 end;
@@ -267,18 +267,18 @@ begin
     raise EApplication.Create(sNoCompareType, EApplication.ErrNoCompareType);
   CT := AnsiLowerCase(CT);
   if (CT = 'eq') or (CT = 'equal') or (CT = 'same') then
-    fComparisonOp := TDateComparisonOp.EQ
+    fComparisonOp := TDateComparer.TOp.EQ
   else if (CT = 'gt') or (CT = 'newer') or (CT = 'later') then
-    fComparisonOp := TDateComparisonOp.GT
+    fComparisonOp := TDateComparer.TOp.GT
   else if (CT = 'gte') or (CT = 'not-older') or (CT = 'not-earlier') then
-    fComparisonOp := TDateComparisonOp.GTE
+    fComparisonOp := TDateComparer.TOp.GTE
   else if (CT = 'lt') or (CT = 'older') or (CT = 'earlier') then
-    fComparisonOp := TDateComparisonOp.LT
+    fComparisonOp := TDateComparer.TOp.LT
   else if (CT = 'lte') or (CT = 'not-newer') or (CT = 'not-later') then
-    fComparisonOp := TDateComparisonOp.LTE
+    fComparisonOp := TDateComparer.TOp.LTE
   else if (CT = 'neq') or (CT = 'not-equal') or (CT = 'not-same')
     or (CT = 'different') then
-    fComparisonOp := TDateComparisonOp.NEQ
+    fComparisonOp := TDateComparer.TOp.NEQ
   else
     raise EApplication.Create(sBadCompareType, EApplication.ErrBadCompareType);
 end;

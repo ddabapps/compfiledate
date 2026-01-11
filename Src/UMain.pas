@@ -179,10 +179,10 @@ resourcestring
   sDateTypeCreated = 'creation dates';
 
 const
-  TrueResponses: array[TDateComparisonOp] of string = (
+  TrueResponses: array[TDateComparer.TOp] of string = (
     sEQ, sLT, sGT, sLTE, sGTE, sNEQ
   );
-  FalseResponses: array[TDateComparisonOp] of string = (
+  FalseResponses: array[TDateComparer.TOp] of string = (
     sNEQ, sGTE, sLTE, sGT, sLT, SEQ
   );
   DateTypeResponses: array[TDateType] of string = (

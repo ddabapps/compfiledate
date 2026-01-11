@@ -16,35 +16,39 @@ interface
 
 
 type
-  {$SCOPEDENUMS ON}
-  ///  <summary>Type of comparison operator to be used when comparing two dates.
-  ///  </summary>
-  ///  <remarks>
-  ///  <para>Assuming dates Left and Right, the values are as follows:</para>
-  ///  <para>- EQ: check if the dates are equal.</para>
-  ///  <para>- LT: check if Left is less than Right.</para>
-  ///  <para>- GT: check if Left is greater than Right.</para>
-  ///  <para>- LTE: check if Left is less than or equal to Right.</para>
-  ///  <para>- GTE: check if Left is greater than or equal to Right.</para>
-  ///  <para>- NEQ: check if the dates are not equal.</para>
-  ///  </remarks>
-  TDateComparisonOp = (EQ, LT, GT, LTE, GTE, NEQ);
-  {$SCOPEDENUMS OFF}
-
   ///  <summary>Static class that exposes a method that performs date
-  ///  comparisons for all <c>TDateComparisonOp</c> values.</summary>
+  ///  comparisons for all supported date comparison operations.</summary>
   TDateComparer = class
+  public
+    type
+      {$SCOPEDENUMS ON}
+      ///  <summary>Type of comparison operator to be used when comparing two
+      ///  dates.</summary>
+      ///  <remarks>
+      ///  <para>Assuming dates Left and Right, the values are as follows:
+      ///  </para>
+      ///  <para>- <c>EQ</c>: check if the dates are equal.</para>
+      ///  <para>- <c>LT</c>: check if Left is less than Right.</para>
+      ///  <para>- <c>GT</c>: check if Left is greater than Right.</para>
+      ///  <para>- <c>LTE</c>: check if Left is less than or equal to Right.
+      ///  </para>
+      ///  <para>- <c>GTE</c>: check if Left is greater than or equal to Right.
+      ///  </para>
+      ///  <para>- <c>NEQ</c>: check if the dates are not equal.</para>
+      ///  </remarks>
+      TOp = (EQ, LT, GT, LTE, GTE, NEQ);
+      {$SCOPEDENUMS OFF}
   strict private
     type
       ///  <summary>Type of functions used to compare two <c>TDateTime</c>
       ///  values.</summary>
       TCompareFn = reference to function(const Left, Right: TDateTime): Boolean;
-      ///  <summary>Type of array that maps each <c>TDateComparisonOp</c> value
-      ///  to a function that implements the required comparison.</summary>
-      TComparerMap = array[TDateComparisonOp] of TCompareFn;
+      ///  <summary>Type of array that maps each <c>TOp</c> value to a function
+      ///  that implements the required comparison.</summary>
+      TComparerMap = array[TOp] of TCompareFn;
     class var
-      ///  <summary>Map of <c>TDateComparisonOp</c> values to their related
-      ///  comparison functions.</summary>
+      ///  <summary>Map of <c>TOp</c> values to their related comparison
+      ///  functions.</summary>
       fMap: TComparerMap;
   public
     ///  <summary>Class constructor. Intialises the map of comparison types to
@@ -63,8 +67,8 @@ type
     ///  operands.</param>
     ///  <returns><c>Boolean</c>. The return value of applying <c>Operation</c>
     ///  to the operands.</returns>
-    class function Compare(const Left, Right: TDateTime;
-      const Operation: TDateComparisonOp): Boolean;
+    class function Compare(const Left, Right: TDateTime; const Operation: TOp):
+      Boolean;
   end;
 
 
@@ -82,36 +86,36 @@ uses
 { TDateComparer }
 
 class function TDateComparer.Compare(const Left, Right: TDateTime;
-  const Operation: TDateComparisonOp): Boolean;
+  const Operation: TOp): Boolean;
 begin
   Result := fMap[Operation](Left, Right);
 end;
 
 class constructor TDateComparer.Create;
 begin
-  fMap[TDateComparisonOp.EQ] := function (const Left, Right: TDateTime): Boolean
+  fMap[TOp.EQ] := function (const Left, Right: TDateTime): Boolean
     begin
       Result := CompareDateTime(Left, Right) = EqualsValue;
     end;
-  fMap[TDateComparisonOp.LT] := function (const Left, Right: TDateTime): Boolean
+  fMap[TOp.LT] := function (const Left, Right: TDateTime): Boolean
     begin
       Result := CompareDateTime(Left, Right) = LessThanValue;
     end;
-  fMap[TDateComparisonOp.GT] := function (const Left, Right: TDateTime): Boolean
+  fMap[TOp.GT] := function (const Left, Right: TDateTime): Boolean
     begin
       Result := CompareDateTime(Left, Right) = GreaterThanValue;
     end;
-  fMap[TDateComparisonOp.LTE] := function (const Left, Right: TDateTime):
+  fMap[TOp.LTE] := function (const Left, Right: TDateTime):
     Boolean
     begin
       Result := CompareDateTime(Left, Right) <> GreaterThanValue;
     end;
-  fMap[TDateComparisonOp.GTE] := function (const Left, Right: TDateTime):
+  fMap[TOp.GTE] := function (const Left, Right: TDateTime):
     Boolean
     begin
       Result := CompareDateTime(Left, Right) <> LessThanValue;
     end;
-  fMap[TDateComparisonOp.NEQ] := function (const Left, Right: TDateTime):
+  fMap[TOp.NEQ] := function (const Left, Right: TDateTime):
     Boolean
     begin
       Result := CompareDateTime(Left, Right) <> EqualsValue;
