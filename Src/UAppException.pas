@@ -21,19 +21,6 @@ uses
   System.SysUtils;
 
 
-resourcestring
-  // Error messages
-  sAppErrBadSwitch = 'Invalid command "%s"';
-  sAppErr2FilesNeeded = 'Exactly two file names must be specified';
-  sAppErrFileNamesSame = 'File names must be different';
-  sAppErrFileNameNotFound = 'File "%s" not found';
-  sAppErrNoCompareType = 'No comparison type specified for -c or --compare '
-    + 'command';
-  sAppErrBadCompareType = 'Invalid comparison type in -c or --compare command';
-  sAppErrNoDateType = 'No date type specified for -t or --datetype command';
-  sAppErrBadDateType = 'Invalid date type in -t or --datetype command';
-
-
 type
   ///  <summary>Application error exception object.</summary>
   ///  <remarks>Contains an error code.</remarks>
@@ -48,7 +35,7 @@ type
       ErrUnknown = 100;
       ErrBadSwitch = 101;
       Err2FilesNeeded = 102;
-        ErrFileNamesSame = 103;
+      ErrFileNamesSame = 103;
       ErrFileNameNotFound = 104;
       ErrNoCompareType = 105;
       ErrBadCompareType = 106;

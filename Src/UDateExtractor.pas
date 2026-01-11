@@ -56,6 +56,11 @@ uses
   UAppException;
 
 
+resourcestring
+  // Error messages
+  sFileNameNotFound = 'File "%s" not found';
+
+
 { TDateExtractor }
 
 constructor TDateExtractor.Create;
@@ -70,7 +75,7 @@ var
 begin
   if not FileGetDateTimeInfo(FileName, DTI, False) then
     raise EApplication.Create(
-      sAppErrFileNameNotFound, [FileName], EApplication.ErrFileNameNotFound
+      sFileNameNotFound, [FileName], EApplication.ErrFileNameNotFound
     );
   case DateType of
     TDateType.LastModified:

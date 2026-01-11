@@ -124,6 +124,17 @@ uses
   UAppException;
 
 
+resourcestring
+  // Error messages
+  sBadSwitch = 'Invalid command "%s"';
+  s2FilesNeeded = 'Exactly two file names must be specified';
+  sFileNamesSame = 'File names must be different';
+  sNoCompareType = 'No comparison type specified for -c or --compare command';
+  sBadCompareType = 'Invalid comparison type in -c or --compare command';
+  sNoDateType = 'No date type specified for -t or --datetype command';
+  sBadDateType = 'Invalid date type in -t or --datetype command';
+
+
 { TParams }
 
 constructor TParams.Create;
@@ -168,9 +179,7 @@ begin
       else if fFileName2 = '' then
         fFileName2 := fParams[Idx]
       else
-        raise EApplication.Create(
-          sAppErr2FilesNeeded, EApplication.Err2FilesNeeded
-        );
+        raise EApplication.Create(s2FilesNeeded, EApplication.Err2FilesNeeded);
     end
     else
       ParseCommand(Idx);
@@ -184,12 +193,10 @@ begin
     else
     begin
       if (fFileName1 = '') or (fFileName2 = '') then
-        raise EApplication.Create(
-          sAppErr2FilesNeeded, EApplication.Err2FilesNeeded
-        );
+        raise EApplication.Create(s2FilesNeeded, EApplication.Err2FilesNeeded);
       if AnsiSameText(fFileName1, fFileName2) then
         raise EApplication.Create(
-          sAppErrFileNamesSame, EApplication.ErrFileNamesSame
+          sFileNamesSame, EApplication.ErrFileNamesSame
         );
     end;
   end;
@@ -250,16 +257,14 @@ begin
   end
   else
     raise EApplication.CreateFmt(
-      sAppErrBadSwitch, [fParams[Idx], EApplication.ErrBadSwitch]
+      sBadSwitch, [fParams[Idx], EApplication.ErrBadSwitch]
     );
 end;
 
 procedure TParams.ParseCompareType(CT: string);
 begin
   if CT = '' then
-    raise EApplication.Create(
-      sAppErrNoCompareType, EApplication.ErrNoCompareType
-    );
+    raise EApplication.Create(sNoCompareType, EApplication.ErrNoCompareType);
   CT := AnsiLowerCase(CT);
   if (CT = 'eq') or (CT = 'equal') or (CT = 'same') then
     fComparisonOp := TDateComparisonOp.EQ
@@ -275,15 +280,13 @@ begin
     or (CT = 'different') then
     fComparisonOp := TDateComparisonOp.NEQ
   else
-    raise EApplication.Create(
-      sAppErrBadCompareType, EApplication.ErrBadCompareType
-    );
+    raise EApplication.Create(sBadCompareType, EApplication.ErrBadCompareType);
 end;
 
 procedure TParams.ParseDateType(DT: string);
 begin
   if DT = '' then
-    raise EApplication.Create(sAppErrNoDateType, EApplication.ErrNoDateType);
+    raise EApplication.Create(sNoDateType, EApplication.ErrNoDateType);
   DT := AnsiLowerCase(DT);
   if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
     or (DT = 'modification') then
@@ -291,7 +294,7 @@ begin
   else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
     fDateType := TDateType.Created
   else
-    raise EApplication.Create(sAppErrBadDateType, EApplication.ErrBadDateType);
+    raise EApplication.Create(sBadDateType, EApplication.ErrBadDateType);
 end;
 
 end.
