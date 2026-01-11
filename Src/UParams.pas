@@ -24,57 +24,91 @@ uses
 
 type
 
-  {
-  TParams:
-    Class that parses command line and exposes results in properties.
-  }
+  ///  <summary>Class that parses the command line and exposes the results as
+  ///  properties.</summary>
   TParams = class(TObject)
   private
-    fParams: TStringList;             // List of command line parameters
-    fVerbose: Boolean;                // Value of Verbose property
-    fHelp: Boolean;                   // Value of Help property
-    fShortHelp: Boolean;              // Value of ShortHelp property
-    fVersion: Boolean;                // Value of Version property
-    fComparisonOp: TDateComparisonOp; // Value of ComparisonType property
-    fDateType: TDateType;             // Value of DateType property
-    fFollowShortcuts: Boolean;        // Value of FollowShortcuts property
-    fFileName2: string;               // Value of FileName1 property
-    fFileName1: string;               // Value of FileName2 property
+    var
+      // List of command line parameters
+      fParams: TStringList;
+      // Property values
+      fVerbose: Boolean;
+      fHelp: Boolean;
+      fShortHelp: Boolean;
+      fVersion: Boolean;
+      fComparisonOp: TDateComparisonOp;
+      fDateType: TDateType;
+      fFollowShortcuts: Boolean;
+      fFileName2: string;
+      fFileName1: string;
+    ///  <summary>Parses the command at a given index on the command line.
+    ///  </summary>
+    ///  <param name="Idx">[in/out] When called <c>Idx</c> is set to the index
+    ///  of the command to be parsed. On return <c>Idx</c> is updated to
+    ///  reference the next command.</param>
+    ///  <exception><c>EApplication</c> raised if the command is not valid.
+    ///  </exception>
     procedure ParseCommand(var Idx: Integer);
+    ///  <summary>Parses a comparison type from the command line and updates the
+    ///  <c>ComparisonOp</c> property accordingly.</summary>
+    ///  <param name="CT">[in] Parameter that names the comparison type.</param>
+    ///  <exception><c>EApplication</c> raised if <c>CT</c> is not a valid
+    ///  comparison name.</exception>
     procedure ParseCompareType(CT: string);
+    ///  <summary>Parses a date type from the command line and updates the
+    ///  <c>DateType</c> property accordingly.</summary>
+    ///  <param name="DT">[in] Parameter that names the date type.</param>
+    ///  <exception><c>EApplication</c> raised if <c>DT</c> is not a valid
+    ///  date type name.</exception>
     procedure ParseDateType(DT: string);
   public
+    ///  <summary>Object constructor.</summary>
     constructor Create;
-      {Constructs object instance.
-      }
+    ///  <summary>Object destructor.</summary>
     destructor Destroy; override;
-      {Destroys object instance.
-      }
+    ///  <summary>Parses the command line.</summary>
+    ///  <exception><c>EApplication</c> raised if any command line parameters
+    ///  are not valid.</exception>
     procedure Parse;
-      {Parses the command line.
-        @except Exception raised if error in command line.
-      }
+    ///  <summary>Specifies whether the program is to be run in verbose mode.
+    ///  </summary>
+    ///  <remarks><c>True</c> if either the -v or --verbose command has been
+    ///  specified, <c>False</c> if not.</remarks>
     property Verbose: Boolean read fVerbose;
-      {Flag true if -v or --verbose command has been provided on command line}
+    ///  <summary>Specifies whether help text is to be displayed.</summary>
+    ///  <remarks><c>True</c> if either the -h, -? or --help command has been
+    ///  specified, <c>False</c> if not.</remarks>
     property Help: Boolean read fHelp;
-      {Flag true if -h, -? or --help command has been provided on command line}
+    ///  <summary>Specifies whether short help text is to be displayed.
+    ///  </summary>
+    ///  <remarks><c>True</c> if the program started with no file names provided
+    ///  on the command line, <c>False</c> otherwise.</remarks>
     property ShortHelp: Boolean read fShortHelp;
-      {Flag true if program is started with no file names provided on command
-      line}
+    ///  <summary>Specifies whether the program's version information is to be
+    ///  displayed.</summary>
+    ///  <remarks><c>True</c> if either the -V or --version command has been
+    ///  specified, <c>False</c> otherwise.</remarks>
     property Version: Boolean read fVersion;
-      {Flag true if -V or --version command has been provided on command line}
+    ///  <summary>Type of comparison to be applied to dates.</summary>
+    ///  <remarks>Defaults to <c>TDateComparisonOp.LT</c> unless either the -c
+    ///  or --compare commands are used to override this value.</remarks>
     property ComparisonOp: TDateComparisonOp read fComparisonOp;
-      {Type of comparison to be applied to file dates}
+    ///  <summary>Specifies whether to compare files' last-modified or creation
+    ///  dates.</summary>
+    ///  <remarks>Defaults to <c>TDateType.LastModified</c> unless either the -d
+    ///  or --datetype command are used to override this value.</remarks>
     property DateType: TDateType read fDateType;
-      {Specifies which file date to read: last modified or creation date}
+    ///  <summary>Specifies if shortcut files are to be expanded before
+    ///  comparing dates.</summary>
+    ///  <remarks>When <c>True</c> the files targeted by any shortcut are used
+    ///  in the date comparison; when <c>False</c> the date of the shortcut file
+    ///  itself is used. Defaults to <c>False</c> unless the -s or
+    ///  --followshortcuts command has been specified.</remarks>
     property FollowShortcuts: Boolean read fFollowShortcuts;
-      {Specifies if shortcut files are to be followed. When True the files
-      targeted by any shortcut are used in the date comparison, otherwise the
-      date of the shortcut file itself is used}
+    ///  <summary>Name of the 1st file on the command line.</summary>
     property FileName1: string read fFileName1;
-      {First file name on command line}
+    ///  <summary>Name of the 2nd file on the command line.</summary>
     property FileName2: string read fFileName2;
-      {Second file name on command line}
   end;
 
 
@@ -120,13 +154,13 @@ end;
 
 procedure TParams.Parse;
 var
-  Idx: Integer;         // loops through all parameters on command line
+  Idx: Integer;  // loops through all parameters on command line
 begin
-  // Loop through all switches on command line
+  // Loop through all commands on command line
   Idx := 0;
   while Idx < fParams.Count do
   begin
-    // Check we have a switch
+    // Check we have a command
     if not AnsiStartsStr('-', fParams[Idx]) then
     begin
       if fFileName1 = '' then

@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2014-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Static class that extracts a supported file date from a file.
+ * Static class that extracts a file date from a file.
 }
 
 
@@ -25,9 +25,21 @@ type
   TDateType = (LastModified, Created);
   {$SCOPEDENUMS OFF}
 
+  ///  <summary>Static class that exposes a method that gets either the creation
+  ///  or last-modified date from a file.</summary>
   TDateExtractor = class
   public
+    ///  <summary>Object constructor that prevents object instances from being
+    ///  created.</summary>
+    ///  <exception><c>ENoConstructException</c> is always raised if the
+    ///  constructor is called.</exception>
     constructor Create;
+    ///  <summary>Gets either the creation or last-modified date from a file.
+    ///  </summary>
+    ///  <param name="FileName">[in] Name of the file to be examined.</param>
+    ///  <param name="DateType">[in] Specifies whether the last-modified or
+    ///  creation date is to be returned.</param>
+    ///  <returns><c>TDateTime</c>. The required file date.</returns>
     class function GetDate(const FileName: string; const DateType: TDateType):
       TDateTime;
   end;
@@ -42,6 +54,7 @@ uses
   System.RTLConsts,
   // Project
   UAppException;
+
 
 { TDateExtractor }
 
@@ -70,3 +83,4 @@ begin
 end;
 
 end.
+

@@ -33,42 +33,42 @@ resourcestring
   sAppErrNoDateType = 'No date type specified for -t or --datetype command';
   sAppErrBadDateType = 'Invalid date type in -t or --datetype command';
 
-type
 
-  {
-  EApplication:
-    Application error exception object. Contains an error code.
-  }
+type
+  ///  <summary>Application error exception object.</summary>
+  ///  <remarks>Contains an error code.</remarks>
   EApplication = class(Exception)
   strict private
-    fExitCode: Integer; // Value of ExitCode property
+    var
+      // Value of ExitCode property
+      fExitCode: Integer;
   public
     const
       // Error exit codes
       ErrUnknown = 100;
       ErrBadSwitch = 101;
       Err2FilesNeeded = 102;
-      ErrFileNamesSame = 103;
+        ErrFileNamesSame = 103;
       ErrFileNameNotFound = 104;
       ErrNoCompareType = 105;
       ErrBadCompareType = 106;
       ErrNoDateType = 107;
       ErrBadDateType = 108;
   public
+    ///  <summary>Object constructor.</summary>
+    ///  <param name="Msg">[in] Error message.</param>
+    ///  <param name="ExitCode">[in] Program exit code associated with the
+    ///  exception.</param>
     constructor Create(const Msg: string; const ExitCode: Integer); overload;
-      {Class constructor. Sets up exception object.
-        @param Msg [in] Error message.
-        @param ExitCode [in] Program exit code associated with error.
-      }
+    ///  <summary>Object constructor.</summary>
+    ///  <param name="Msg">[in] Format template for error message.</param>
+    ///  <param name="Args">[in] Values to include in formatted string.</param>
+    ///  <param name="ExitCode">[in] Program exit code associated with the
+    ///  exception.</param>
     constructor Create(const Msg: string; const Args: array of const;
       const ExitCode: Integer); overload;
-      {Class constructor. Sets up exception object.
-        @param Msg [in] Format template for error message.
-        @param Args [in] Values to be included in format template.
-        @param ExitCode [in] Program exit code associated with error.
-      }
+    ///  <summary>Program exit code associated with the object.</summary>
     property ExitCode: Integer read fExitCode;
-      {Program exit code associated with error}
   end;
 
 
@@ -78,10 +78,6 @@ implementation
 { EApplication }
 
 constructor EApplication.Create(const Msg: string; const ExitCode: Integer);
-  {Class constructor. Sets up exception object.
-    @param Msg [in] Error message.
-    @param ExitCode [in] Program exit code associated with error.
-  }
 begin
   inherited Create(Msg);
   fExitCode := ExitCode;
@@ -89,11 +85,6 @@ end;
 
 constructor EApplication.Create(const Msg: string; const Args: array of const;
   const ExitCode: Integer);
-  {Class constructor. Sets up exception object.
-    @param Msg [in] Format template for error message.
-    @param Args [in] Values to be included in format template.
-    @param ExitCode [in] Program exit code associated with error.
-  }
 begin
   Create(Format(Msg, Args), ExitCode);
 end;

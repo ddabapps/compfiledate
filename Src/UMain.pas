@@ -24,48 +24,51 @@ uses
 
 
 type
-  {
-  TMain:
-    Class that executes program.
-  }
+  ///  <summary>Class that executes program.</summary>
   TMain = class(TObject)
   strict private
-    fConsole: TConsole;   // Writes to console
-    fParams: TParams;     // Reads and parses parameters
-    fSignedOn: Boolean;   // Flag true if program has been signed on
+    var
+      // Writes to console
+      fConsole: TConsole;
+      // Reads and parses parameters
+      fParams: TParams;
+      // Flag true if program has been signed on
+      fSignedOn: Boolean;
+    ///  <summary>Writes a sign on message to standard output.</summary>
     procedure SignOn;
-      {Writes sign on message to console.
-      }
+    ///  <summary>Writes help text to standard output.</summary>
     procedure ShowHelp;
-      {Writes help text to console.
-      }
-    ///  <summary>Write short-form of help text to console.</summary>
+    ///  <summary>Writes short-form help text to standard output.</summary>
     procedure ShowShortHelp;
+    ///  <summary>Writes the program version to standard output.</summary>
     procedure ShowVersion;
-      {Writes program version to console.
-      }
+    ///  <summary>Writes an error message to standard error. In verbosity mode
+    ///  the sign on message is written to standard output.</summary>
+    ///  <param name="E">[in] Exception whose message is to be reported.</param>
     procedure ReportError(const E: Exception);
-      {Reports an error onto standard output.
-        @param E [in] Exception containing error message.
-      }
     ///  <summary>Compares modification dates of the two files passed on the
     ///  command line using the user's chosen comparison operation and returns
     ///  True if the comparison succeeds or False if not.</summary>
+    ///  <param name="File1">[in] Information about the file that is the left
+    ///  hand operand of the comparison.</param>
+    ///  <param name="File2">[in] Information about the file that is the right
+    ///  hand operand of the comparison.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the operation succeeds or
+    ///  <c>False</c> if not.</returns>
     function CompareFileDates(const File1, File2: TFileInfo): Boolean;
+    ///  <summary>Gets the program's product version number from version
+    ///  information resources.</summary>
+    ///  <returns><c>string</c>. Version number as a dot delimited string or
+    ///  an empty string if version information cannot be read.</returns>
+    ///  <remarks>*** This is a Windows specific method ***</remarks>
     class function GetProductVersionStr: string;
-      {Gets the program's product version number from version information.
-        @return Version number as a dot delimited string.
-      }
   public
+    ///  <summary>Object constructor.</summary>
     constructor Create;
-      {Class constructor. Sets up object.
-      }
+    ///  <summary>Object destructor.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
+    ///  <summary>Executes the program.</summary>
     procedure Execute;
-      {Executes program.
-      }
   end;
 
 
@@ -77,10 +80,14 @@ uses
   WinApi.Windows,
   System.DateUtils,
   // Project
-  UAppException, UDateComparer, UDateExtractor;
+  UAppException,
+  UDateComparer,
+  UDateExtractor;
+
 
 const
   EOL = #13#10;
+
 
 resourcestring
   // Messages written to console
@@ -194,8 +201,6 @@ begin
 end;
 
 constructor TMain.Create;
-  {Class constructor. Sets up object.
-  }
 begin
   fConsole := TConsole.Create;
   fParams := TParams.Create;
@@ -203,8 +208,6 @@ begin
 end;
 
 destructor TMain.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   FreeAndNil(fParams);
   FreeAndNil(fConsole);
@@ -212,8 +215,6 @@ begin
 end;
 
 procedure TMain.Execute;
-  {Executes program.
-  }
 var
   File1, File2: TFileInfo;
 begin
@@ -279,9 +280,6 @@ begin
 end;
 
 class function TMain.GetProductVersionStr: string;
-  {Gets the program's product version number from version information.
-    @return Version number as a dot delimited string.
-  }
 var
   Dummy: DWORD;           // unused variable required in API calls
   VerInfoSize: Integer;   // size of version information data
@@ -324,9 +322,6 @@ begin
 end;
 
 procedure TMain.ReportError(const E: Exception);
-  {Reports an error onto standard output.
-    @param E [in] Exception containing error message.
-  }
 begin
   // Sign on to stdout only if the verbosity flag is on
   SignOn;
@@ -336,8 +331,6 @@ begin
 end;
 
 procedure TMain.ShowHelp;
-  {Writes help text to console.
-  }
 begin
   fConsole.Silent := False;
   SignOn;
@@ -379,8 +372,6 @@ begin
 end;
 
 procedure TMain.SignOn;
-  {Writes sign on message to console.
-  }
 var
   Msg: string;  // sign on message text
 begin

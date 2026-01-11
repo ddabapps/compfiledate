@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2014-2024, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2014-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Static class for comparing dates using various equality operators.
 }
@@ -31,16 +31,38 @@ type
   TDateComparisonOp = (EQ, LT, GT, LTE, GTE, NEQ);
   {$SCOPEDENUMS OFF}
 
+  ///  <summary>Static class that exposes a method that performs date
+  ///  comparisons for all <c>TDateComparisonOp</c> values.</summary>
   TDateComparer = class
   strict private
     type
+      ///  <summary>Type of functions used to compare two <c>TDateTime</c>
+      ///  values.</summary>
       TCompareFn = reference to function(const Left, Right: TDateTime): Boolean;
+      ///  <summary>Type of array that maps each <c>TDateComparisonOp</c> value
+      ///  to a function that implements the required comparison.</summary>
       TComparerMap = array[TDateComparisonOp] of TCompareFn;
     class var
+      ///  <summary>Map of <c>TDateComparisonOp</c> values to their related
+      ///  comparison functions.</summary>
       fMap: TComparerMap;
   public
+    ///  <summary>Class constructor. Intialises the map of comparison types to
+    ///  the implementing functions.</summary>
     class constructor Create;
+    ///  <summary>Object constructor that prevents object instances from being
+    ///  created.</summary>
+    ///  <exception><c>ENoConstructException</c> is always raised if the
+    ///  constructor is called.</exception>
     constructor Create;
+    ///  <summary>Compares two <c>TDataTime</c> values using a given operator.
+    ///  </summary>
+    ///  <param name="Left">[in] Left hand operand.</param>
+    ///  <param name="Right">[in] Right hand operand.</param>
+    ///  <param name="Operation">[in] Boolean comparison operator applied to the
+    ///  operands.</param>
+    ///  <returns><c>Boolean</c>. The return value of applying <c>Operation</c>
+    ///  to the operands.</returns>
     class function Compare(const Left, Right: TDateTime;
       const Operation: TDateComparisonOp): Boolean;
   end;
@@ -102,3 +124,4 @@ begin
 end;
 
 end.
+

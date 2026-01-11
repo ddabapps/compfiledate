@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2009-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Class that writes text to console using standard output unless output is
- * inhibited.
+ * Class that writes text to standard output (unless output is inhibited) or
+ * standard error.
 }
 
 
@@ -17,38 +17,49 @@ interface
 
 
 type
-
-  {
-  TConsole:
-    Class that writes text to console using standard output unless told to be
-    silent when all output is swallowed.
-  }
+  ///  <summary>Class that writes text to the console using either standard
+  ///  output or standard error unless told to be silent, when all output is
+  ///  swallowed.</summary>
   TConsole = class(TObject)
   public
     type
+      ///  <summary>Enumeration used to select whether the output is sent to
+      ///  standard output (<c>StdOut</c>) or standard error (<c>StdErr</c>).
+      ///  </summary>
       TChannel = (StdOut, StdErr);
   strict private
     var
-      fSilent: Boolean; // Value of Silent property
+      // Value of Silent property
+      fSilent: Boolean;
+    ///  <summary>Get Windows handle associated with the given output channel.
+    ///  </summary>
+    ///  <remarks>*** This is a Windows specific method ***</remarks>
     function WinGetHandle(const AChannel: TChannel): THandle;
+    ///  <summary>Writes the given text to the Windows handle associated with
+    ///  the given output channel.</summary>
+    ///  <remarks>*** This is a Windows specific method ***</remarks>
     procedure WinWrite(const AChannel: TChannel; const AText: string);
   public
+    ///  <summary>Object constructor.</summary>
     constructor Create;
-      {Class constructor. Sets up object.
-      }
+    ///  <summary>Writes the given text to the given output channel.</summary>
+    ///  <param name="AChannel">[in] The channel to be written to.</param>
+    ///  <param name="Text">[in] Text to be written out.</param>
     procedure Write(const AChannel: TChannel; const Text: string);
-      {Write text to standard output unless silent.
-        @param Text [in] Text to be written.
-      }
+    ///  <summary>Writes the given text to the given output channel followed by
+    ///  a new line.</summary>
+    ///  <param name="AChannel">[in] The channel to be written to.</param>
+    ///  <param name="Text">[in] Text to be written out.</param>
     procedure WriteLn(const AChannel: TChannel; const Text: string); overload;
-      {Write text followed by new line to standard output unless silent.
-        @param Text [in] Text to be written.
-      }
+    ///  <summary>Writes a new line to the given output channel.</summary>
+    ///  <param name="AChannel">[in] The channel to be written to.</param>
     procedure WriteLn(const AChannel: TChannel); overload;
-      {Write a new line to standard output unless silent.
-      }
+    ///  <summary>Property that determines whether any text is to be output to
+    ///  <c>TChannel.StdOut</c>. When the property is <c>False</c> text is
+    ///  always written but when <c>True</c> no text is written. If the
+    ///  specified channel is <c>TChannel.StdErr</c> then the property is
+    ///  ignored and text is always written.</summary>
     property Silent: Boolean read fSilent write fSilent default False;
-      {Whether to be silent, i.e. write no output}
   end;
 
 
@@ -64,8 +75,6 @@ uses
 { TConsole }
 
 constructor TConsole.Create;
-  {Class constructor. Sets up object.
-  }
 begin
   inherited Create;
   fSilent := False;
@@ -99,25 +108,17 @@ begin
 end;
 
 procedure TConsole.Write(const AChannel: TChannel; const Text: string);
-  {Write text to standard output unless silent.
-    @param Text [in] Text to be written.
-  }
 begin
   if not fSilent or (AChannel <> TChannel.StdOut) then
     WinWrite(AChannel, Text);
 end;
 
 procedure TConsole.WriteLn(const AChannel: TChannel; const Text: string);
-  {Write text followed by new line to standard output unless silent.
-    @param Text [in] Text to be written.
-  }
 begin
   Write(AChannel, Text + sLineBreak);
 end;
 
 procedure TConsole.WriteLn(const AChannel: TChannel);
-  {Write a new line to standard output unless silent.
-  }
 begin
   WriteLn(AChannel, '');
 end;
