@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that writes text to console using standard output unless output is
  * inhibited.
@@ -24,21 +24,27 @@ type
     silent when all output is swallowed.
   }
   TConsole = class(TObject)
+  public
+    type
+      TChannel = (StdOut, StdErr);
   strict private
-    fSilent: Boolean; // Value of Silent property
+    var
+      fSilent: Boolean; // Value of Silent property
+    function WinGetHandle(const AChannel: TChannel): THandle;
+    procedure WinWrite(const AChannel: TChannel; const AText: string);
   public
     constructor Create;
       {Class constructor. Sets up object.
       }
-    procedure Write(const Text: string);
+    procedure Write(const AChannel: TChannel; const Text: string);
       {Write text to standard output unless silent.
         @param Text [in] Text to be written.
       }
-    procedure WriteLn(const Text: string); overload;
+    procedure WriteLn(const AChannel: TChannel; const Text: string); overload;
       {Write text followed by new line to standard output unless silent.
         @param Text [in] Text to be written.
       }
-    procedure WriteLn; overload;
+    procedure WriteLn(const AChannel: TChannel); overload;
       {Write a new line to standard output unless silent.
       }
     property Silent: Boolean read fSilent write fSilent default False;
@@ -50,8 +56,9 @@ implementation
 
 
 uses
-  // Project
-  UStdOutput;
+  // Delphi
+  System.SysUtils,
+  WinApi.Windows;
 
 
 { TConsole }
@@ -64,28 +71,55 @@ begin
   fSilent := False;
 end;
 
-procedure TConsole.Write(const Text: string);
+function TConsole.WinGetHandle(const AChannel: TChannel): THandle;
+begin
+  case AChannel of
+    TChannel.StdOut:
+      Result := WinApi.Windows.GetStdHandle(WinApi.Windows.STD_OUTPUT_HANDLE);
+    TChannel.StdErr:
+      Result := WinApi.Windows.GetStdHandle(WinApi.Windows.STD_ERROR_HANDLE);
+    else
+      raise EAssertionFailed.Create(
+        ClassName + '.GetHandle: Invalid value for AChannel'
+      );
+  end;
+end;
+
+procedure TConsole.WinWrite(const AChannel: TChannel; const AText: string);
+var
+  Dummy: Cardinal;  // Unused param for Windows.WriteFile
+  Bytes: TBytes;    // Bytes of Text in default ANSI encoding
+begin
+  Bytes := TEncoding.Default.GetBytes(AText);
+  if Length(Bytes) = 0 then
+    Exit;
+  WinApi.Windows.WriteFile(
+    WinGetHandle(AChannel), Pointer(Bytes)^, Length(Bytes), Dummy, nil
+  );
+end;
+
+procedure TConsole.Write(const AChannel: TChannel; const Text: string);
   {Write text to standard output unless silent.
     @param Text [in] Text to be written.
   }
 begin
-  if not fSilent then
-    TStdOutput.Write(Text);
+  if not fSilent or (AChannel <> TChannel.StdOut) then
+    WinWrite(AChannel, Text);
 end;
 
-procedure TConsole.WriteLn(const Text: string);
+procedure TConsole.WriteLn(const AChannel: TChannel; const Text: string);
   {Write text followed by new line to standard output unless silent.
     @param Text [in] Text to be written.
   }
 begin
-  Write(Text + #13#10);
+  Write(AChannel, Text + sLineBreak);
 end;
 
-procedure TConsole.WriteLn;
+procedure TConsole.WriteLn(const AChannel: TChannel);
   {Write a new line to standard output unless silent.
   }
 begin
-  WriteLn('');
+  WriteLn(AChannel, '');
 end;
 
 end.

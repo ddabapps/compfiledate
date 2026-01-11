@@ -235,9 +235,11 @@ begin
       if CompareFileDates(File1, File2) then
       begin
         fConsole.WriteLn(
+          TConsole.TChannel.StdOut,
           Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
         );
         fConsole.WriteLn(
+          TConsole.TChannel.StdOut,
           Format(
             TrueResponses[fParams.ComparisonOp],
             [File1.ResolvedFileName, File2.ResolvedFileName]
@@ -248,9 +250,11 @@ begin
       else
       begin
         fConsole.WriteLn(
+          TConsole.TChannel.StdOut,
           Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
         );
         fConsole.WriteLn(
+          TConsole.TChannel.StdOut,
           Format(
             FalseResponses[fParams.ComparisonOp],
             [File1.ResolvedFileName, File2.ResolvedFileName]
@@ -324,10 +328,11 @@ procedure TMain.ReportError(const E: Exception);
     @param E [in] Exception containing error message.
   }
 begin
-  // Errors always written to stdout regardless of verbosity flag
-  fConsole.Silent := False;
+  // Sign on to stdout only if the verbosity flag is on
   SignOn;
-  fConsole.WriteLn(Format(sError, [E.Message]));
+  // Errors always written to stderr regardless of verbosity flag
+  fConsole.Silent := False;
+  fConsole.WriteLn(TConsole.TChannel.StdErr, Format(sError, [E.Message]));
 end;
 
 procedure TMain.ShowHelp;
@@ -336,20 +341,20 @@ procedure TMain.ShowHelp;
 begin
   fConsole.Silent := False;
   SignOn;
-  fConsole.WriteLn;
-  fConsole.WriteLn(sUsage);
-  fConsole.WriteLn;
-  fConsole.WriteLn(sHelp);
+  fConsole.WriteLn(TConsole.TChannel.StdOut);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sUsage);
+  fConsole.WriteLn(TConsole.TChannel.StdOut);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelp);
 end;
 
 procedure TMain.ShowShortHelp;
 begin
   fConsole.Silent := False;
   SignOn;
-  fConsole.WriteLn;
-  fConsole.WriteLn(sUsage);
-  fConsole.WriteLn;
-  fConsole.WriteLn(sShortHelp);
+  fConsole.WriteLn(TConsole.TChannel.StdOut);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sUsage);
+  fConsole.WriteLn(TConsole.TChannel.StdOut);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sShortHelp);
 end;
 
 procedure TMain.ShowVersion;
@@ -368,6 +373,7 @@ procedure TMain.ShowVersion;
 begin
   fConsole.Silent := False;
   fConsole.WriteLn(
+    TConsole.TChannel.StdOut,
     Format('v%0:s (%1:s)', [GetProductVersionStr, ProgramPlatform])
   );
 end;
@@ -382,8 +388,8 @@ begin
     Exit;
   // Write underlined sign on message
   Msg := Format(sSignOn, [GetProductVersionStr]);
-  fConsole.WriteLn(sSignOn);
-  fConsole.WriteLn(StringOfChar('-', Length(Msg)));
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sSignOn);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, StringOfChar('-', Length(Msg)));
   // Record that we've signed on
   fSignedOn := True;
 end;

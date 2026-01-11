@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2024, Peter Johnson (https://delphidabbler.com).
+ * Copyright (C) 2009-2026, Peter Johnson (https://delphidabbler.com).
  *
  * Main project file.
 }
@@ -22,7 +22,6 @@ uses
   UConsole in 'UConsole.pas',
   UMain in 'UMain.pas',
   UParams in 'UParams.pas',
-  UStdOutput in 'UStdOutput.pas',
   UDateComparer in 'UDateComparer.pas',
   UDateExtractor in 'UDateExtractor.pas',
   UFileInfo in 'UFileInfo.pas';
