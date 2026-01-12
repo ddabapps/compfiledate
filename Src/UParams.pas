@@ -19,7 +19,8 @@ uses
   // Delphi
   System.Classes,
   // Project
-  UDateComparer, UDateExtractor;
+  UDateComparer,
+  UDateExtractor;
 
 
 type

@@ -20,7 +20,9 @@ uses
   System.SysUtils,
   System.Classes,
   // Project
-  UConsole, UFileInfo, UParams;
+  UConsole,
+  UFileInfo,
+  UParams;
 
 
 type
