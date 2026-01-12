@@ -27,7 +27,7 @@ type
   ///  <summary>Class that parses the command line and exposes the results as
   ///  properties.</summary>
   TParams = class(TObject)
-  private
+  strict private
     var
       // List of command line parameters
       fParams: TStringList;
