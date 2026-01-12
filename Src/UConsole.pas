@@ -23,10 +23,12 @@ type
   TConsole = class(TObject)
   public
     type
+      {$SCOPEDENUMS ON}
       ///  <summary>Enumeration used to select whether the output is sent to
       ///  standard output (<c>StdOut</c>) or standard error (<c>StdErr</c>).
       ///  </summary>
       TChannel = (StdOut, StdErr);
+      {$SCOPEDENUMS OFF}
   strict private
     var
       // Value of Silent property
