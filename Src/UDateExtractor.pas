@@ -72,9 +72,8 @@ end;
 
 class function TDateExtractor.GetDate(const FileName: string;
   const DateType: TDateType): TDateTime;
-var
-  DTI: TDateTimeInfoRec;
 begin
+  var DTI: TDateTimeInfoRec;
   if not FileGetDateTimeInfo(FileName, DTI, False) then
     raise EApplication.Create(
       sFileNameNotFound, [FileName], EApplication.ErrFileNameNotFound

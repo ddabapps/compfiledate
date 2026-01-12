@@ -109,8 +109,6 @@ begin
 end;
 
 class function TFileInfo.LoadShellLink(const LinkFileName: string): IShellLink;
-var
-  PF: IPersistFile; // persistent file interface to shell link object
 begin
   // Create shell link object
   if Succeeded(
@@ -124,7 +122,7 @@ begin
   ) then
   begin
     // Try to load the shell link: succeeds only if the file is a shell link
-    PF := Result as IPersistFile;
+    var PF := Result as IPersistFile;
     if Failed(
       PF.Load(PWideChar(WideString(LinkFileName)), STGM_READ)
     ) then
@@ -136,19 +134,16 @@ end;
 
 class function TFileInfo.TryFileFromShellLink(const LinkFileName: string;
   out TargetFileName: string): Boolean;
-var
-  SL: IShellLink;            // shell link object
-  ResolvedFileBuf: array[0..MAX_PATH] of Char;
-                             // buffer to receive linked file name
-  FindData: TWin32FindData;  // dummy required for IShellLink.GetPath()
 begin
   // Assume can't get name of file
   Result := False;
   // Try to get interface to shell link: fails if file is not shell link
-  SL := LoadShellLink(LinkFileName);
+  var SL: IShellLink := LoadShellLink(LinkFileName);
   if not Assigned(SL) then
     Exit;
   // Get file path from link object and exit if this fails
+  var ResolvedFileBuf: array[0..MAX_PATH] of Char;  // receives target file name
+  var FindData: TWin32FindData; // dummy required for IShellLink.GetPath call
   if Failed(
     SL.GetPath(ResolvedFileBuf, MAX_PATH, FindData, 0)
   ) then

@@ -192,11 +192,13 @@ const
 { TMain }
 
 function TMain.CompareFileDates(const File1, File2: TFileInfo): Boolean;
-var
-  FileDate1, FileDate2: TDateTime;  // required file dates
 begin
-  FileDate1 := TDateExtractor.GetDate(File1.ResolvedFileName, fParams.DateType);
-  FileDate2 := TDateExtractor.GetDate(File2.ResolvedFileName, fParams.DateType);
+  var FileDate1 := TDateExtractor.GetDate(
+    File1.ResolvedFileName, fParams.DateType
+  );
+  var FileDate2 := TDateExtractor.GetDate(
+    File2.ResolvedFileName, fParams.DateType
+  );
   Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
 end;
 
@@ -215,8 +217,6 @@ begin
 end;
 
 procedure TMain.Execute;
-var
-  File1, File2: TFileInfo;
 begin
   try
     fParams.Parse;
@@ -231,8 +231,8 @@ begin
       // Normal execution
       fConsole.Silent := not fParams.Verbose;
       SignOn;
-      File1 := TFileInfo.Create(fParams.FileName1, fParams.FollowShortcuts);
-      File2 := TFileInfo.Create(fParams.FileName2, fParams.FollowShortcuts);
+      var File1 := TFileInfo.Create(fParams.FileName1, fParams.FollowShortcuts);
+      var File2 := TFileInfo.Create(fParams.FileName2, fParams.FollowShortcuts);
       if CompareFileDates(File1, File2) then
       begin
         fConsole.WriteLn(
@@ -280,30 +280,29 @@ begin
 end;
 
 class function TMain.GetProductVersionStr: string;
-var
-  Dummy: DWORD;           // unused variable required in API calls
-  VerInfoSize: Integer;   // size of version information data
-  VerInfoBuf: Pointer;    // buffer holding version information
-  ValPtr: Pointer;        // pointer to a version information value
-  FFI: TVSFixedFileInfo;  // fixed file information from version info
 begin
   Result := '';
   // Get fixed file info from program's version info
   // get size of version info
-  VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), Dummy);
+  var UnusedHandle: DWORD;  // Set to 0 by GetFileVersionInfoSize (unused)
+  var VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), UnusedHandle);
   if VerInfoSize > 0 then
   begin
     // create buffer and read version info into it
+    var VerInfoBuf: Pointer;
     GetMem(VerInfoBuf, VerInfoSize);
     try
+      var IgnoredHandle: DWORD := 0;  // param ignored by GetFileVersionInfo
       if GetFileVersionInfo(
-        PChar(ParamStr(0)), Dummy, VerInfoSize, VerInfoBuf
+        PChar(ParamStr(0)), IgnoredHandle, VerInfoSize, VerInfoBuf
       ) then
       begin
         // get fixed file info from version info (ValPtr points to it)
-        if VerQueryValue(VerInfoBuf, '\', ValPtr, Dummy) then
+        var BufSize: UINT; // Set by VerQueryValue to size of data (unused)
+        var ValPtr: Pointer;  // pointer to value from VerQueryValue
+        if VerQueryValue(VerInfoBuf, '\', ValPtr, BufSize) then
         begin
-          FFI := PVSFixedFileInfo(ValPtr)^;
+          var FFI: TVSFixedFileInfo := PVSFixedFileInfo(ValPtr)^;
           // Build version info string from product version field of FFI
           Result := Format(
             '%d.%d.%d',
@@ -372,13 +371,11 @@ begin
 end;
 
 procedure TMain.SignOn;
-var
-  Msg: string;  // sign on message text
 begin
   if fSignedOn then
     Exit;
   // Write underlined sign on message
-  Msg := Format(sSignOn, [GetProductVersionStr]);
+  var Msg := Format(sSignOn, [GetProductVersionStr]);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sSignOn);
   fConsole.WriteLn(TConsole.TChannel.StdOut, StringOfChar('-', Length(Msg)));
   // Record that we've signed on

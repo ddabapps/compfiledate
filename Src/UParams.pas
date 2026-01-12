@@ -139,13 +139,11 @@ resourcestring
 { TParams }
 
 constructor TParams.Create;
-var
-  Idx: Integer; // loops through all parameters
 begin
   inherited Create;
   // Stores program parameters
   fParams := TStringList.Create;
-  for Idx := 1 to ParamCount do
+  for var Idx := 1 to ParamCount do
     fParams.Add(Trim(ParamStr(Idx)));
   // Set defaults
   fHelp := False;
@@ -165,11 +163,9 @@ begin
 end;
 
 procedure TParams.Parse;
-var
-  Idx: Integer;  // loops through all parameters on command line
 begin
   // Loop through all commands on command line
-  Idx := 0;
+  var Idx: Integer := 0;
   while Idx < fParams.Count do
   begin
     // Check we have a command
@@ -204,11 +200,8 @@ begin
 end;
 
 procedure TParams.ParseCommand(var Idx: Integer);
-var
-  Command: string;
-  EqualsPos: Integer;
 begin
-  Command := fParams[Idx];
+  var Command := fParams[Idx];
   Assert(AnsiStartsStr('-', Command));
   if (Command = '-h') or (Command = '-?') or (Command = '--help') then
   begin
@@ -242,7 +235,7 @@ begin
   end
   else if AnsiStartsStr('--compare', Command) then
   begin
-    EqualsPos := AnsiPos('=', Command);
+    var EqualsPos := AnsiPos('=', Command);
     if EqualsPos > 0 then
       ParseCompareType(AnsiRightStr(Command, Length(Command) - EqualsPos))
     else
@@ -250,7 +243,7 @@ begin
   end
   else if AnsiStartsStr('--datetype', Command) then
   begin
-    EqualsPos := AnsiPos('=', Command);
+    var EqualsPos := AnsiPos('=', Command);
     if EqualsPos > 0 then
       ParseDateType(AnsiRightStr(Command, Length(Command) - EqualsPos))
     else

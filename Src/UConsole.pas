@@ -97,13 +97,11 @@ begin
 end;
 
 procedure TConsole.WinWrite(const AChannel: TChannel; const AText: string);
-var
-  Dummy: Cardinal;  // Unused param for Windows.WriteFile
-  Bytes: TBytes;    // Bytes of Text in default ANSI encoding
 begin
-  Bytes := TEncoding.Default.GetBytes(AText);
+  var Bytes := TEncoding.Default.GetBytes(AText);
   if Length(Bytes) = 0 then
     Exit;
+  var Dummy: Cardinal;
   WinApi.Windows.WriteFile(
     WinGetHandle(AChannel), Pointer(Bytes)^, Length(Bytes), Dummy, nil
   );
