@@ -185,7 +185,7 @@ const
   FalseResponses: array[TDateComparer.TOp] of string = (
     sNEQ, sGTE, sLTE, sGT, sLT, SEQ
   );
-  DateTypeResponses: array[TDateType] of string = (
+  DateTypeResponses: array[TDateExtractor.TDateType] of string = (
     sDateTypeModified, sDateTypeCreated
   );
 

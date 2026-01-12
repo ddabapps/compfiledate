@@ -16,18 +16,20 @@ interface
 
 
 type
-  {$SCOPEDENUMS ON}
-  ///  <summary>Type of date to be extracted from a file.</summary>
-  ///  <remarks>
-  ///  <para>- LastModified - get date file was last modified.</para>
-  ///  <para>- Created - get date file was created.</para>
-  ///  </remarks>
-  TDateType = (LastModified, Created);
-  {$SCOPEDENUMS OFF}
 
   ///  <summary>Static class that exposes a method that gets either the creation
   ///  or last-modified date from a file.</summary>
   TDateExtractor = class
+  public
+    type
+      {$SCOPEDENUMS ON}
+      ///  <summary>Type of date to be extracted from a file.</summary>
+      ///  <remarks>
+      ///  <para>- LastModified - get date file was last modified.</para>
+      ///  <para>- Created - get date file was created.</para>
+      ///  </remarks>
+      TDateType = (LastModified, Created);
+      {$SCOPEDENUMS OFF}
   public
     ///  <summary>Object constructor that prevents object instances from being
     ///  created.</summary>
@@ -83,7 +85,7 @@ begin
     TDateType.Created:
       Result := DTI.CreationTime;
   else
-    raise Exception.Create('Invalid TDateType value');
+    raise Exception.Create('Invalid TDateExtractor.TDateType value');
   end;
 end;
 

@@ -37,7 +37,7 @@ type
       fShortHelp: Boolean;
       fVersion: Boolean;
       fComparisonOp: TDateComparer.TOp;
-      fDateType: TDateType;
+      fDateType: TDateExtractor.TDateType;
       fFollowShortcuts: Boolean;
       fFileName2: string;
       fFileName1: string;
@@ -95,9 +95,10 @@ type
     property ComparisonOp: TDateComparer.TOp read fComparisonOp;
     ///  <summary>Specifies whether to compare files' last-modified or creation
     ///  dates.</summary>
-    ///  <remarks>Defaults to <c>TDateType.LastModified</c> unless either the -d
-    ///  or --datetype command are used to override this value.</remarks>
-    property DateType: TDateType read fDateType;
+    ///  <remarks>Defaults to <c>TDateExtractor.TDateType.LastModified</c>
+    ///  unless either the -d or --datetype command are used to override this
+    ///  value.</remarks>
+    property DateType: TDateExtractor.TDateType read fDateType;
     ///  <summary>Specifies if shortcut files are to be expanded before
     ///  comparing dates.</summary>
     ///  <remarks>When <c>True</c> the files targeted by any shortcut are used
@@ -153,7 +154,7 @@ begin
   fFileName1 := '';
   fFileName2 := '';
   fComparisonOp := TDateComparer.TOp.LT;
-  fDateType := TDateType.LastModified;
+  fDateType := TDateExtractor.TDateType.LastModified;
   fFollowShortcuts := False;
 end;
 
@@ -290,9 +291,9 @@ begin
   DT := AnsiLowerCase(DT);
   if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
     or (DT = 'modification') then
-    fDateType := TDateType.LastModified
+    fDateType := TDateExtractor.TDateType.LastModified
   else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
-    fDateType := TDateType.Created
+    fDateType := TDateExtractor.TDateType.Created
   else
     raise EApplication.Create(sBadDateType, EApplication.ErrBadDateType);
 end;
