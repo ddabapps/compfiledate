@@ -87,83 +87,68 @@ uses
   UDateExtractor;
 
 
-const
-  EOL = #13#10;
-
-
 resourcestring
   // Messages written to console
   sSignOn = 'CompFileDate by DelphiDabbler (https://delphidabbler.com)';
 
   sError = 'Error: %s';
 
-  sUsage =
-      'Usage: CompFileDate filename1 filename2 [options]'
-    + EOL
-    + '  or   CompFileDate -h | -? | --help'
-    + EOL
-    + '  or   CompFileDate -V | --version';
+  sUsage = '''
+  Usage: CompFileDate filename1 filename2 [options]
+    or   CompFileDate -h | -? | --help
+    or   CompFileDate -V | --version
+  ''';
 
-  sHelp =
-      'filename1' + EOL
-    + '  Name of first file to be compared.' + EOL
-    + 'filename2' + EOL
-    + '  Name of second file to be compared.' + EOL
-    + EOL
-    + 'Options are:' + EOL
-    + '  -c <op> or --compare=<op>' + EOL
-    + '    Defines the compare operation to use. <op> must be one of the '
-    + 'following:' + EOL
-    + '      eq, equal, same:' + EOL
-    + '        Check if file dates are the same.' + EOL
-    + '      gt, newer, later:' + EOL
-    + '        Check if 1st file date is later than 2nd file date.' + EOL
-    + '      gte, not-older, not-earlier' + EOL
-    + '        Check if 1st file date is no earlier than 2nd file date.' + EOL
-    + '      lt, older, earlier' + EOL
-    + '        Check if 1st file date is earlier than 2nd file date (default '
-    + 'if option' + EOL
-    + '        is not provided).' + EOL
-    + '      lte, not-newer, not-later' + EOL
-    + '        Check if 1st file date is no later than 2nd file date.' + EOL
-    + '      neq, not-equal, not-same, different' + EOL
-    + '        Check if file dates are different.' + EOL
-    + '  -d <type> or --datetype=<type>' + EOL
-    + '    Determines whether last modification or creation dates are '
-    + 'compared. <type>' + EOL
-    + '    must be one of the following:' + EOL
-    + '      m, modified, last-modified, modification:' + EOL
-    + '        Use date files were last modified (default if option is not '
-    + 'provided).' + EOL
-    + '      c, created, creation:' + EOL
-    + '        Use date files were created.' + EOL
-    + '  -s or --followshortcuts' + EOL
-    + '    Indicates that if either filename1 or filename2 is a shortcut file '
-    + 'then the' + EOL
-    + '    date of the target file will be used in comparisons. If neither '
-    + 'option is' + EOL
-    + '    specified then shortcuts are not followed and the date of '
-    + 'the shortcut file' + EOL
-    + '    itself is used.' + EOL
-    + '  -v or --verbose' + EOL
-    + '    Verbose: writes output to standard output. No output if option is '
-    + 'not' + EOL
-    + '    provided. Output is always written when an error occurs or when '
-    + 'help or' + EOL
-    + '    version number are requested.' + EOL
-    + '  -h or -? or --help' + EOL
-    + '    Displays help screen. Rest of command line ignored.' + EOL
-    + '  -V or --version' + EOL
-    + '    Displays program version number and platform. Rest of command line '
-    + 'ignored.' + EOL
-    + EOL
-    + 'The program''s exit code is 1 if the comparison is true and 0 if it is '
-    + 'false.' + EOL
-    + EOL
-    + 'If an error occurs then an error code >= 100 is returned and an error '
-    + 'message' + EOL
-    + 'is written to standard output. See documentation for details of error '
-    + 'codes.';
+  sHelp = '''
+  filename1
+    Name of first file to be compared.
+  filename2
+    Name of second file to be compared.
+
+  Options are:
+    -c <op> or --compare=<op>'
+      Defines the compare operation to use. <op> must be one of the
+      following:
+        eq, equal, same:
+          Check if file dates are the same.
+        gt, newer, later:
+          Check if 1st file date is later than 2nd file date.
+        gte, not-older, not-earlier:
+          Check if 1st file date is no earlier than 2nd file date.
+        lt, older, earlier:
+          Check if 1st file date is earlier than 2nd file date (default if
+          option is not provided).
+        lte, not-newer, not-later:
+          Check if 1st file date is no later than 2nd file date.
+        neq, not-equal, not-same, different:
+          Check if file dates are different.
+    -d <type> or --datetype=<type>
+      Determines whether last modification or creation dates are compared.
+      <type> must be one of the following:
+        m, modified, last-modified, modification:
+          Use date files were last modified (default if option is not provided).
+        c, created, creation:
+          Use date files were created.
+    -s or --followshortcuts
+      Indicates that if either filename1 or filename2 is a shortcut file then
+      the date of the target file will be used in comparisons. If neither option
+      is specified then shortcuts are not followed and the date of the shortcut
+      file itself is used.
+    -v or --verbose
+      Verbose: writes output to standard output. No output if option is not
+      provided. Output is always written when an error occurs or when help or
+      version number are requested.
+    -h or -? or --help
+      Displays help screen. Rest of command line ignored.
+    -V or --version
+      Displays program version number and platform. Rest of command line
+      ignored.
+
+  The program''s exit code is 1 if the comparison is true and 0 if it is false.
+
+  If an error occurs then an error code >= 100 is returned and an error message
+  is written to standard output. See documentation for details of error codes.
+  ''';
 
   sShortHelp = 'For further help use CompFileDate --help';
 
