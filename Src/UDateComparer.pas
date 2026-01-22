@@ -95,30 +95,30 @@ class constructor TDateComparer.Create;
 begin
   fMap[TOp.EQ] := function (const Left, Right: TDateTime): Boolean
     begin
-      Result := CompareDateTime(Left, Right) = EqualsValue;
+      Result := Left.CompareDateTime(Right) = EqualsValue;
     end;
   fMap[TOp.LT] := function (const Left, Right: TDateTime): Boolean
     begin
-      Result := CompareDateTime(Left, Right) = LessThanValue;
+      Result := Left.CompareDateTime(Right) = LessThanValue;
     end;
   fMap[TOp.GT] := function (const Left, Right: TDateTime): Boolean
     begin
-      Result := CompareDateTime(Left, Right) = GreaterThanValue;
+      Result := Left.CompareDateTime(Right) = GreaterThanValue;
     end;
   fMap[TOp.LTE] := function (const Left, Right: TDateTime):
     Boolean
     begin
-      Result := CompareDateTime(Left, Right) <> GreaterThanValue;
+      Result := Left.CompareDateTime(Right) <> GreaterThanValue;
     end;
   fMap[TOp.GTE] := function (const Left, Right: TDateTime):
     Boolean
     begin
-      Result := CompareDateTime(Left, Right) <> LessThanValue;
+      Result := Left.CompareDateTime(Right) <> LessThanValue;
     end;
   fMap[TOp.NEQ] := function (const Left, Right: TDateTime):
     Boolean
     begin
-      Result := CompareDateTime(Left, Right) <> EqualsValue;
+      Result := Left.CompareDateTime(Right) <> EqualsValue;
     end;
 end;
 

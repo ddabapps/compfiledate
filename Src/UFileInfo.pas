@@ -85,6 +85,7 @@ implementation
 uses
   // Delphi
   System.SysUtils,
+  System.IOUtils,
   WinApi.ActiveX,
   WinApi.Windows;
 
@@ -102,7 +103,7 @@ function TFileInfo.GetResolvedFileName: string;
 begin
   if not ResolveShortcuts then
     Exit(FileName);
-  if not AnsiSameStr(ExtractFileExt(FileName), '.lnk') then
+  if TPath.GetExtension(FileName).CompareTo('.lnk') <> 0 then
     Exit(FileName);
   if not TryFileFromShellLink(FileName, Result) then
     Exit(FileName);

@@ -224,11 +224,11 @@ begin
       begin
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
-          Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
+          string.Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
         );
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
-          Format(
+          string.Format(
             TrueResponses[fParams.ComparisonOp],
             [File1.ResolvedFileName, File2.ResolvedFileName]
           )
@@ -239,11 +239,11 @@ begin
       begin
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
-          Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
+          string.Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
         );
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
-          Format(
+          string.Format(
             FalseResponses[fParams.ComparisonOp],
             [File1.ResolvedFileName, File2.ResolvedFileName]
           )
@@ -291,7 +291,7 @@ begin
         begin
           var FFI: TVSFixedFileInfo := PVSFixedFileInfo(ValPtr)^;
           // Build version info string from product version field of FFI
-          Result := Format(
+          Result := string.Format(
             '%d.%d.%d',
             [
               HiWord(FFI.dwProductVersionMS),
@@ -313,7 +313,9 @@ begin
   SignOn;
   // Errors always written to stderr regardless of verbosity flag
   fConsole.Silent := False;
-  fConsole.WriteLn(TConsole.TChannel.StdErr, Format(sError, [E.Message]));
+  fConsole.WriteLn(
+    TConsole.TChannel.StdErr, string.Format(sError, [E.Message])
+  );
 end;
 
 procedure TMain.ShowHelp;
@@ -353,7 +355,7 @@ begin
   fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdOut,
-    Format('v%0:s (%1:s)', [GetProductVersionStr, ProgramPlatform])
+    string.Format('v%0:s (%1:s)', [GetProductVersionStr, ProgramPlatform])
   );
 end;
 
@@ -362,7 +364,7 @@ begin
   if fSignedOn then
     Exit;
   // Write underlined sign on message
-  var Msg := Format(sSignOn, [GetProductVersionStr]);
+  var Msg := string.Format(sSignOn, [GetProductVersionStr]);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sSignOn);
   fConsole.WriteLn(TConsole.TChannel.StdOut, StringOfChar('-', Length(Msg)));
   // Record that we've signed on

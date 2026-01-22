@@ -73,7 +73,7 @@ end;
 constructor EApplication.Create(const Msg: string; const Args: array of const;
   const ExitCode: Integer);
 begin
-  Create(Format(Msg, Args), ExitCode);
+  Create(string.Format(Msg, Args), ExitCode);
 end;
 
 end.

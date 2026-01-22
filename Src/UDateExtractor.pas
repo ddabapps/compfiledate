@@ -54,6 +54,7 @@ uses
   // Delphi
   System.SysUtils,
   System.RTLConsts,
+  System.IOUtils,
   // Project
   UAppException;
 
@@ -73,16 +74,15 @@ end;
 class function TDateExtractor.GetDate(const FileName: string;
   const DateType: TDateType): TDateTime;
 begin
-  var DTI: TDateTimeInfoRec;
-  if not FileGetDateTimeInfo(FileName, DTI, False) then
+  if not TFile.Exists(FileName) then
     raise EApplication.Create(
       sFileNameNotFound, [FileName], EApplication.ErrFileNameNotFound
     );
   case DateType of
     TDateType.LastModified:
-      Result := DTI.TimeStamp;
+      Result := TFile.GetLastWriteTime(FileName);
     TDateType.Created:
-      Result := DTI.CreationTime;
+      Result := TFile.GetCreationTime(FileName);
   else
     raise Exception.Create('Invalid TDateExtractor.TDateType value');
   end;

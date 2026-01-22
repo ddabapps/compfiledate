@@ -150,8 +150,8 @@ begin
   fHelp := False;
   fVersion := False;
   fVerbose := False;
-  fFileName1 := '';
-  fFileName2 := '';
+  fFileName1 := string.Empty;
+  fFileName2 := string.Empty;
   fComparisonOp := TDateComparer.TOp.LT;
   fDateType := TDateExtractor.TDateType.LastModified;
   fFollowShortcuts := False;
@@ -170,11 +170,11 @@ begin
   while Idx < fParams.Count do
   begin
     // Check we have a command
-    if not AnsiStartsStr('-', fParams[Idx]) then
+    if not fParams[Idx].StartsWith('-') then
     begin
-      if fFileName1 = '' then
+      if fFileName1.IsEmpty then
         fFileName1 := fParams[Idx]
-      else if fFileName2 = '' then
+      else if fFileName2.IsEmpty then
         fFileName2 := fParams[Idx]
       else
         raise EApplication.Create(s2FilesNeeded, EApplication.Err2FilesNeeded);
@@ -186,13 +186,13 @@ begin
   end;
   if not Help and not Version then
   begin
-    if (fFileName1 = '') and (fFileName2 = '') then
+    if fFileName1.IsEmpty and fFileName2.IsEmpty then
       fShortHelp := True
     else
     begin
-      if (fFileName1 = '') or (fFileName2 = '') then
+      if fFileName1.IsEmpty or fFileName2.IsEmpty then
         raise EApplication.Create(s2FilesNeeded, EApplication.Err2FilesNeeded);
-      if AnsiSameText(fFileName1, fFileName2) then
+      if fFileName1.CompareTo(fFileName2) = 0 then
         raise EApplication.Create(
           sFileNamesSame, EApplication.ErrFileNamesSame
         );
@@ -203,7 +203,7 @@ end;
 procedure TParams.ParseCommand(var Idx: Integer);
 begin
   var Command := fParams[Idx];
-  Assert(AnsiStartsStr('-', Command));
+  Assert(Command.StartsWith('-'));
   if (Command = '-h') or (Command = '-?') or (Command = '--help') then
   begin
     if not fVersion then
@@ -224,7 +224,7 @@ begin
     if Idx < fParams.Count then
       ParseCompareType(fParams[Idx])
     else
-      ParseCompareType('');   // reports error
+      ParseCompareType(string.Empty);   // reports error
   end
   else if (Command = '-d') then
   begin
@@ -232,23 +232,23 @@ begin
     if Idx < fParams.Count then
       ParseDateType(fParams[Idx])
     else
-      ParseDateType('');      // reports error
+      ParseDateType(string.Empty);      // reports error
   end
-  else if AnsiStartsStr('--compare', Command) then
+  else if Command.StartsWith('--compare') then
   begin
-    var EqualsPos := AnsiPos('=', Command);
+    var EqualsPos := Command.IndexOf('=') + 1;
     if EqualsPos > 0 then
-      ParseCompareType(AnsiRightStr(Command, Length(Command) - EqualsPos))
+      ParseCompareType(Command.Substring(EqualsPos))
     else
-      ParseCompareType('');   // reports error
+      ParseCompareType(string.Empty);   // reports error
   end
-  else if AnsiStartsStr('--datetype', Command) then
+  else if Command.StartsWith('--datetype') then
   begin
-    var EqualsPos := AnsiPos('=', Command);
+    var EqualsPos := Command.IndexOf('=') + 1;
     if EqualsPos > 0 then
-      ParseDateType(AnsiRightStr(Command, Length(Command) - EqualsPos))
+      ParseDateType(Command.Substring(EqualsPos))
     else
-      ParseDateType('');   // reports error
+      ParseDateType(string.Empty);      // reports error
   end
   else
     raise EApplication.CreateFmt(
@@ -258,9 +258,9 @@ end;
 
 procedure TParams.ParseCompareType(CT: string);
 begin
-  if CT = '' then
+  if CT.IsEmpty then
     raise EApplication.Create(sNoCompareType, EApplication.ErrNoCompareType);
-  CT := AnsiLowerCase(CT);
+  CT := CT.ToLower;
   if (CT = 'eq') or (CT = 'equal') or (CT = 'same') then
     fComparisonOp := TDateComparer.TOp.EQ
   else if (CT = 'gt') or (CT = 'newer') or (CT = 'later') then
@@ -280,9 +280,9 @@ end;
 
 procedure TParams.ParseDateType(DT: string);
 begin
-  if DT = '' then
+  if DT.IsEmpty then
     raise EApplication.Create(sNoDateType, EApplication.ErrNoDateType);
-  DT := AnsiLowerCase(DT);
+  DT := DT.ToLower;
   if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
     or (DT = 'modification') then
     fDateType := TDateExtractor.TDateType.LastModified
