@@ -17,7 +17,6 @@ program CompFileDate;
 {$RESOURCE VerInfo.res}     // version information
 
 uses
-  System.SysUtils,
   UAppException in 'UAppException.pas',
   UConsole in 'UConsole.pas',
   UMain in 'UMain.pas',

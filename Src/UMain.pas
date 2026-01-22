@@ -18,7 +18,6 @@ interface
 uses
   // Delphi
   System.SysUtils,
-  System.Classes,
   // Project
   UConsole,
   UFileInfo,

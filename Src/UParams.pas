@@ -119,9 +119,7 @@ implementation
 
 uses
   // Delphi
-  System.StrUtils,
   System.SysUtils,
-  WinApi.Windows {for inlining},
   // Project
   UAppException;
 
