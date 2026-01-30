@@ -18,54 +18,58 @@ interface
 uses
   // Delphi
   System.SysUtils,
-  System.Classes,
   // Project
-  UConsole, UFileInfo, UParams;
+  UConsole,
+  UFileInfo,
+  UParams;
 
 
 type
-  {
-  TMain:
-    Class that executes program.
-  }
+  ///  <summary>Class that executes program.</summary>
   TMain = class(TObject)
   strict private
-    fConsole: TConsole;   // Writes to console
-    fParams: TParams;     // Reads and parses parameters
-    fSignedOn: Boolean;   // Flag true if program has been signed on
+    var
+      // Writes to console
+      fConsole: TConsole;
+      // Reads and parses parameters
+      fParams: TParams;
+      // Flag true if program has been signed on
+      fSignedOn: Boolean;
+    ///  <summary>Writes a sign on message to standard output.</summary>
     procedure SignOn;
-      {Writes sign on message to console.
-      }
+    ///  <summary>Writes help text to standard output.</summary>
     procedure ShowHelp;
-      {Writes help text to console.
-      }
-    ///  <summary>Write short-form of help text to console.</summary>
+    ///  <summary>Writes short-form help text to standard output.</summary>
     procedure ShowShortHelp;
+    ///  <summary>Writes the program version to standard output.</summary>
     procedure ShowVersion;
-      {Writes program version to console.
-      }
+    ///  <summary>Writes an error message to standard error. In verbosity mode
+    ///  the sign on message is written to standard output.</summary>
+    ///  <param name="E">[in] Exception whose message is to be reported.</param>
     procedure ReportError(const E: Exception);
-      {Reports an error onto standard output.
-        @param E [in] Exception containing error message.
-      }
     ///  <summary>Compares modification dates of the two files passed on the
     ///  command line using the user's chosen comparison operation and returns
     ///  True if the comparison succeeds or False if not.</summary>
+    ///  <param name="File1">[in] Information about the file that is the left
+    ///  hand operand of the comparison.</param>
+    ///  <param name="File2">[in] Information about the file that is the right
+    ///  hand operand of the comparison.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the operation succeeds or
+    ///  <c>False</c> if not.</returns>
     function CompareFileDates(const File1, File2: TFileInfo): Boolean;
+    ///  <summary>Gets the program's product version number from version
+    ///  information resources.</summary>
+    ///  <returns><c>string</c>. Version number as a dot delimited string or
+    ///  an empty string if version information cannot be read.</returns>
+    ///  <remarks>*** This is a Windows specific method ***</remarks>
     class function GetProductVersionStr: string;
-      {Gets the program's product version number from version information.
-        @return Version number as a dot delimited string.
-      }
   public
+    ///  <summary>Object constructor.</summary>
     constructor Create;
-      {Class constructor. Sets up object.
-      }
+    ///  <summary>Object destructor.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
+    ///  <summary>Executes the program.</summary>
     procedure Execute;
-      {Executes program.
-      }
   end;
 
 
@@ -77,10 +81,10 @@ uses
   WinApi.Windows,
   System.DateUtils,
   // Project
-  UAppException, UDateComparer, UDateExtractor;
+  UAppException,
+  UDateComparer,
+  UDateExtractor;
 
-const
-  EOL = #13#10;
 
 resourcestring
   // Messages written to console
@@ -88,73 +92,62 @@ resourcestring
 
   sError = 'Error: %s';
 
-  sUsage =
-      'Usage: CompFileDate filename1 filename2 [options]'
-    + EOL
-    + '  or   CompFileDate -h | -? | --help'
-    + EOL
-    + '  or   CompFileDate -V | --version';
+  sUsage = '''
+  Usage: CompFileDate filename1 filename2 [options]
+    or   CompFileDate -h | -? | --help
+    or   CompFileDate -V | --version
+  ''';
 
-  sHelp =
-      'filename1' + EOL
-    + '  Name of first file to be compared.' + EOL
-    + 'filename2' + EOL
-    + '  Name of second file to be compared.' + EOL
-    + EOL
-    + 'Options are:' + EOL
-    + '  -c <op> or --compare=<op>' + EOL
-    + '    Defines the compare operation to use. <op> must be one of the '
-    + 'following:' + EOL
-    + '      eq, equal, same:' + EOL
-    + '        Check if file dates are the same.' + EOL
-    + '      gt, newer, later:' + EOL
-    + '        Check if 1st file date is later than 2nd file date.' + EOL
-    + '      gte, not-older, not-earlier' + EOL
-    + '        Check if 1st file date is no earlier than 2nd file date.' + EOL
-    + '      lt, older, earlier' + EOL
-    + '        Check if 1st file date is earlier than 2nd file date (default '
-    + 'if option' + EOL
-    + '        is not provided).' + EOL
-    + '      lte, not-newer, not-later' + EOL
-    + '        Check if 1st file date is no later than 2nd file date.' + EOL
-    + '      neq, not-equal, not-same, different' + EOL
-    + '        Check if file dates are different.' + EOL
-    + '  -d <type> or --datetype=<type>' + EOL
-    + '    Determines whether last modification or creation dates are '
-    + 'compared. <type>' + EOL
-    + '    must be one of the following:' + EOL
-    + '      m, modified, last-modified, modification:' + EOL
-    + '        Use date files were last modified (default if option is not '
-    + 'provided).' + EOL
-    + '      c, created, creation:' + EOL
-    + '        Use date files were created.' + EOL
-    + '  -s or --followshortcuts' + EOL
-    + '    Indicates that if either filename1 or filename2 is a shortcut file '
-    + 'then the' + EOL
-    + '    date of the target file will be used in comparisons. If neither '
-    + 'option is' + EOL
-    + '    specified then shortcuts are not followed and the date of '
-    + 'the shortcut file' + EOL
-    + '    itself is used.' + EOL
-    + '  -v or --verbose' + EOL
-    + '    Verbose: writes output to standard output. No output if option is '
-    + 'not' + EOL
-    + '    provided. Output is always written when an error occurs or when '
-    + 'help or' + EOL
-    + '    version number are requested.' + EOL
-    + '  -h or -? or --help' + EOL
-    + '    Displays help screen. Rest of command line ignored.' + EOL
-    + '  -V or --version' + EOL
-    + '    Displays program version number and platform. Rest of command line '
-    + 'ignored.' + EOL
-    + EOL
-    + 'The program''s exit code is 1 if the comparison is true and 0 if it is '
-    + 'false.' + EOL
-    + EOL
-    + 'If an error occurs then an error code >= 100 is returned and an error '
-    + 'message' + EOL
-    + 'is written to standard output. See documentation for details of error '
-    + 'codes.';
+  sHelp = '''
+  filename1
+    Name of first file to be compared.
+  filename2
+    Name of second file to be compared.
+
+  Options are:
+    -c <op> or --compare=<op>'
+      Defines the compare operation to use. <op> must be one of the
+      following:
+        eq, equal, same:
+          Check if file dates are the same.
+        gt, newer, later:
+          Check if 1st file date is later than 2nd file date.
+        gte, not-older, not-earlier:
+          Check if 1st file date is no earlier than 2nd file date.
+        lt, older, earlier:
+          Check if 1st file date is earlier than 2nd file date (default if
+          option is not provided).
+        lte, not-newer, not-later:
+          Check if 1st file date is no later than 2nd file date.
+        neq, not-equal, not-same, different:
+          Check if file dates are different.
+    -d <type> or --datetype=<type>
+      Determines whether last modification or creation dates are compared.
+      <type> must be one of the following:
+        m, modified, last-modified, modification:
+          Use date files were last modified (default if option is not provided).
+        c, created, creation:
+          Use date files were created.
+    -s or --followshortcuts
+      Indicates that if either filename1 or filename2 is a shortcut file then
+      the date of the target file will be used in comparisons. If neither option
+      is specified then shortcuts are not followed and the date of the shortcut
+      file itself is used.
+    -v or --verbose
+      Verbose: writes output to standard output. No output if option is not
+      provided. Output is always written when an error occurs or when help or
+      version number are requested.
+    -h or -? or --help
+      Displays help screen. Rest of command line ignored.
+    -V or --version
+      Displays program version number and platform. Rest of command line
+      ignored.
+
+  The program''s exit code is 1 if the comparison is true and 0 if it is false.
+
+  If an error occurs then an error code >= 100 is returned and an error message
+  is written to standard output. See documentation for details of error codes.
+  ''';
 
   sShortHelp = 'For further help use CompFileDate --help';
 
@@ -172,30 +165,30 @@ resourcestring
   sDateTypeCreated = 'creation dates';
 
 const
-  TrueResponses: array[TDateComparisonOp] of string = (
+  TrueResponses: array[TDateComparer.TOp] of string = (
     sEQ, sLT, sGT, sLTE, sGTE, sNEQ
   );
-  FalseResponses: array[TDateComparisonOp] of string = (
+  FalseResponses: array[TDateComparer.TOp] of string = (
     sNEQ, sGTE, sLTE, sGT, sLT, SEQ
   );
-  DateTypeResponses: array[TDateType] of string = (
+  DateTypeResponses: array[TDateExtractor.TDateType] of string = (
     sDateTypeModified, sDateTypeCreated
   );
 
 { TMain }
 
 function TMain.CompareFileDates(const File1, File2: TFileInfo): Boolean;
-var
-  FileDate1, FileDate2: TDateTime;  // required file dates
 begin
-  FileDate1 := TDateExtractor.GetDate(File1.ResolvedFileName, fParams.DateType);
-  FileDate2 := TDateExtractor.GetDate(File2.ResolvedFileName, fParams.DateType);
+  var FileDate1 := TDateExtractor.GetDate(
+    File1.ResolvedFileName, fParams.DateType
+  );
+  var FileDate2 := TDateExtractor.GetDate(
+    File2.ResolvedFileName, fParams.DateType
+  );
   Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
 end;
 
 constructor TMain.Create;
-  {Class constructor. Sets up object.
-  }
 begin
   fConsole := TConsole.Create;
   fParams := TParams.Create;
@@ -203,19 +196,13 @@ begin
 end;
 
 destructor TMain.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
-  FreeAndNil(fParams);
-  FreeAndNil(fConsole);
+  fParams.Free;
+  fConsole.Free;
   inherited;
 end;
 
 procedure TMain.Execute;
-  {Executes program.
-  }
-var
-  File1, File2: TFileInfo;
 begin
   try
     fParams.Parse;
@@ -230,17 +217,17 @@ begin
       // Normal execution
       fConsole.Silent := not fParams.Verbose;
       SignOn;
-      File1 := TFileInfo.Create(fParams.FileName1, fParams.FollowShortcuts);
-      File2 := TFileInfo.Create(fParams.FileName2, fParams.FollowShortcuts);
+      var File1 := TFileInfo.Create(fParams.FileName1, fParams.FollowShortcuts);
+      var File2 := TFileInfo.Create(fParams.FileName2, fParams.FollowShortcuts);
       if CompareFileDates(File1, File2) then
       begin
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
-          Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
+          string.Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
         );
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
-          Format(
+          string.Format(
             TrueResponses[fParams.ComparisonOp],
             [File1.ResolvedFileName, File2.ResolvedFileName]
           )
@@ -251,11 +238,11 @@ begin
       begin
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
-          Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
+          string.Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
         );
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
-          Format(
+          string.Format(
             FalseResponses[fParams.ComparisonOp],
             [File1.ResolvedFileName, File2.ResolvedFileName]
           )
@@ -273,41 +260,37 @@ begin
     on E: Exception do
     begin
       ReportError(E);
-      ExitCode := cAppErrUnknown;
+      ExitCode := EApplication.ErrUnknown;
     end;
   end;
 end;
 
 class function TMain.GetProductVersionStr: string;
-  {Gets the program's product version number from version information.
-    @return Version number as a dot delimited string.
-  }
-var
-  Dummy: DWORD;           // unused variable required in API calls
-  VerInfoSize: Integer;   // size of version information data
-  VerInfoBuf: Pointer;    // buffer holding version information
-  ValPtr: Pointer;        // pointer to a version information value
-  FFI: TVSFixedFileInfo;  // fixed file information from version info
 begin
   Result := '';
   // Get fixed file info from program's version info
   // get size of version info
-  VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), Dummy);
+  var UnusedHandle: DWORD;  // Set to 0 by GetFileVersionInfoSize (unused)
+  var VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), UnusedHandle);
   if VerInfoSize > 0 then
   begin
     // create buffer and read version info into it
+    var VerInfoBuf: Pointer;
     GetMem(VerInfoBuf, VerInfoSize);
     try
+      var IgnoredHandle: DWORD := 0;  // param ignored by GetFileVersionInfo
       if GetFileVersionInfo(
-        PChar(ParamStr(0)), Dummy, VerInfoSize, VerInfoBuf
+        PChar(ParamStr(0)), IgnoredHandle, VerInfoSize, VerInfoBuf
       ) then
       begin
         // get fixed file info from version info (ValPtr points to it)
-        if VerQueryValue(VerInfoBuf, '\', ValPtr, Dummy) then
+        var BufSize: UINT; // Set by VerQueryValue to size of data (unused)
+        var ValPtr: Pointer;  // pointer to value from VerQueryValue
+        if VerQueryValue(VerInfoBuf, '\', ValPtr, BufSize) then
         begin
-          FFI := PVSFixedFileInfo(ValPtr)^;
+          var FFI: TVSFixedFileInfo := PVSFixedFileInfo(ValPtr)^;
           // Build version info string from product version field of FFI
-          Result := Format(
+          Result := string.Format(
             '%d.%d.%d',
             [
               HiWord(FFI.dwProductVersionMS),
@@ -324,20 +307,17 @@ begin
 end;
 
 procedure TMain.ReportError(const E: Exception);
-  {Reports an error onto standard output.
-    @param E [in] Exception containing error message.
-  }
 begin
   // Sign on to stdout only if the verbosity flag is on
   SignOn;
   // Errors always written to stderr regardless of verbosity flag
   fConsole.Silent := False;
-  fConsole.WriteLn(TConsole.TChannel.StdErr, Format(sError, [E.Message]));
+  fConsole.WriteLn(
+    TConsole.TChannel.StdErr, string.Format(sError, [E.Message])
+  );
 end;
 
 procedure TMain.ShowHelp;
-  {Writes help text to console.
-  }
 begin
   fConsole.Silent := False;
   SignOn;
@@ -374,20 +354,16 @@ begin
   fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdOut,
-    Format('v%0:s (%1:s)', [GetProductVersionStr, ProgramPlatform])
+    string.Format('v%0:s (%1:s)', [GetProductVersionStr, ProgramPlatform])
   );
 end;
 
 procedure TMain.SignOn;
-  {Writes sign on message to console.
-  }
-var
-  Msg: string;  // sign on message text
 begin
   if fSignedOn then
     Exit;
   // Write underlined sign on message
-  Msg := Format(sSignOn, [GetProductVersionStr]);
+  var Msg := string.Format(sSignOn, [GetProductVersionStr]);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sSignOn);
   fConsole.WriteLn(TConsole.TChannel.StdOut, StringOfChar('-', Length(Msg)));
   // Record that we've signed on
