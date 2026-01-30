@@ -131,8 +131,8 @@ resourcestring
   sFileNamesSame = 'File names must be different';
   sNoCompareType = 'No comparison type specified for -c or --compare command';
   sBadCompareType = 'Invalid comparison type in -c or --compare command';
-  sNoDateType = 'No date type specified for -t or --datetype command';
-  sBadDateType = 'Invalid date type in -t or --datetype command';
+  sNoDateType = 'No date type specified for -d or --datetype command';
+  sBadDateType = 'Invalid date type in -d or --datetype command';
 
 
 { TParams }
