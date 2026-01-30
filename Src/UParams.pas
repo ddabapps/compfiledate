@@ -219,34 +219,28 @@ begin
   else if (Command = '-c') then
   begin
     Inc(Idx);
-    if Idx < fParams.Count then
-      ParseCompareType(fParams[Idx])
-    else
-      ParseCompareType(string.Empty);   // reports error
+    ParseCompareType(
+      if Idx < fParams.Count then fParams[Idx] else string.Empty
+    );
   end
   else if (Command = '-d') then
   begin
     Inc(Idx);
-    if Idx < fParams.Count then
-      ParseDateType(fParams[Idx])
-    else
-      ParseDateType(string.Empty);      // reports error
+    ParseDateType(if Idx < fParams.Count then fParams[Idx] else string.Empty);
   end
   else if Command.StartsWith('--compare') then
   begin
     var EqualsPos := Command.IndexOf('=') + 1;
-    if EqualsPos > 0 then
-      ParseCompareType(Command.Substring(EqualsPos))
-    else
-      ParseCompareType(string.Empty);   // reports error
+    ParseCompareType(
+      if EqualsPos > 0 then Command.Substring(EqualsPos) else string.Empty
+    );
   end
   else if Command.StartsWith('--datetype') then
   begin
     var EqualsPos := Command.IndexOf('=') + 1;
-    if EqualsPos > 0 then
-      ParseDateType(Command.Substring(EqualsPos))
-    else
-      ParseDateType(string.Empty);      // reports error
+    ParseDateType(
+      if EqualsPos > 0 then Command.Substring(EqualsPos) else string.Empty
+    );
   end
   else
     raise EApplication.CreateFmt(
