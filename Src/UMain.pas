@@ -363,9 +363,10 @@ begin
   if fSignedOn then
     Exit;
   // Write underlined sign on message
-  var Msg := string.Format(sSignOn, [GetProductVersionStr]);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sSignOn);
-  fConsole.WriteLn(TConsole.TChannel.StdOut, StringOfChar('-', Length(Msg)));
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, StringOfChar('-', Length(sSignOn))
+  );
   // Record that we've signed on
   fSignedOn := True;
 end;
