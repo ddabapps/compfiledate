@@ -197,8 +197,8 @@ end;
 
 destructor TMain.Destroy;
 begin
-  FreeAndNil(fParams);
-  FreeAndNil(fConsole);
+  fParams.Free;
+  fConsole.Free;
   inherited;
 end;
 
