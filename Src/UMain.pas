@@ -134,9 +134,10 @@ resourcestring
       is specified then shortcuts are not followed and the date of the shortcut
       file itself is used.
     -v or --verbose
-      Verbose: writes output to standard output. No output if option is not
-      provided. Output is always written when an error occurs or when help or
-      version number are requested.
+      Verbose: writes output to standard output. No output is written if the 
+      option is not provided. Output is always written to standard error when an
+      error occurs or to standard output when help or the program''s version
+      number are requested.
     -h or -? or --help
       Displays help screen. Rest of command line ignored.
     -V or --version
@@ -146,7 +147,7 @@ resourcestring
   The program''s exit code is 1 if the comparison is true and 0 if it is false.
 
   If an error occurs then an error code >= 100 is returned and an error message
-  is written to standard output. See documentation for details of error codes.
+  is written to standard error. See documentation for details of error codes.
   ''';
 
   sShortHelp = 'For further help use CompFileDate --help';
