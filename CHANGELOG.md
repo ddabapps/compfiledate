@@ -8,12 +8,11 @@ This change log begins with the first public release version of _CompFileDate_. 
 
 ## Release v2.2.0 of 27 August 2024
 
-
-* Added 64 bit version of the program. [[issue #12](https://github.com/delphidabbler/compfiledate/issues/12)]
-* Fixed bug where no error code was returned by the program when a file name passed on the command line does not exist. [[issue #14](https://github.com/delphidabbler/compfiledate/issues/14)]
-* Refactoring: Delphi units are now referenced in source code by fully qualified unit scope names. [[issue #15](https://github.com/delphidabbler/compfiledate/issues/15)]
+* Added 64 bit version of the program. [[issue #12](https://github.com/ddabapps/compfiledate/issues/12)]
+* Fixed bug where no error code was returned by the program when a file name passed on the command line does not exist. [[issue #14](https://github.com/ddabapps/compfiledate/issues/14)]
+* Refactoring: Delphi units are now referenced in source code by fully qualified unit scope names. [[issue #15](https://github.com/ddabapps/compfiledate/issues/15)]
 * Changed build process:
-    * Updated program to compile with Delphi 12.1. [[issue #11](https://github.com/delphidabbler/compfiledate/issues/11)]
+    * Updated program to compile with Delphi 12.1. [[issue #11](https://github.com/ddabapps/compfiledate/issues/11)]
     * MSBuild replaces use of Embarcadero Make. `Makefile` and `CompFileDate.cfg` were removed.
     * A new `Deploy.bat` script is now used to create releases.
     * Binaries are now created in the `_build` directory instead of `Build`.
@@ -23,20 +22,20 @@ This change log begins with the first public release version of _CompFileDate_. 
 
 ## Release v2.1.0 of 30 September 2021
 
-* Replaced error message displayed when no files are provided on command line with a brief help message that prompts the use of the `--help` command. [[issue #6](https://github.com/delphidabbler/compfiledate/issues/6)]
-* Updated application manifest. [[issue #7](https://github.com/delphidabbler/compfiledate/issues/7)]
-* Converted change log and license files to markdown format. [[issue #8](https://github.com/delphidabbler/compfiledate/issues/8)] and [[issue #9](https://github.com/delphidabbler/compfiledate/issues/9)]
-* Fixed problem in `Makefile` where it was failing to find `Zip.exe` when not on the system path. [[issue #10](https://github.com/delphidabbler/compfiledate/issues/10)]
+* Replaced error message displayed when no files are provided on command line with a brief help message that prompts the use of the `--help` command. [[issue #6](https://github.com/ddabapps/compfiledate/issues/6)]
+* Updated application manifest. [[issue #7](https://github.com/ddabapps/compfiledate/issues/7)]
+* Converted change log and license files to markdown format. [[issue #8](https://github.com/ddabapps/compfiledate/issues/8)] and [[issue #9](https://github.com/ddabapps/compfiledate/issues/9)]
+* Fixed problem in `Makefile` where it was failing to find `Zip.exe` when not on the system path. [[issue #10](https://github.com/ddabapps/compfiledate/issues/10)]
 * Updated many URLs in program and documentation.
 * Documentation updated re changes.
 
 ## Release v2.0.0 of 20 July 2014
 
-* Operator used in date comparison can now be specified using new --compare or -c commands. This enables user to choose whether date of 1st file is tested to be <, <=, >, >=, <> or = to date of second file. [[issue #1](https://github.com/delphidabbler/compfiledate/issues/1)]
-* Comparison can now operate on either creation or last modification date of files. This is specified with new --datetype or -d commands. [[issue #2](https://github.com/delphidabbler/compfiledate/issues/2)]
-* When comparing the dates of shortcut files the date of the shortcut's target file can now be compared by using the new --followshortcuts or -s commands. [[issue #3](https://github.com/delphidabbler/compfiledate/issues/3)]
-* Program version number can now be displayed using the new --version or -V commands. Version is no longer displayed in normal program output. [[issue #5](https://github.com/delphidabbler/compfiledate/issues/5)]
-* Long forms of -v and -h commands added: --verbose and --help respectively. [[issue #4](https://github.com/delphidabbler/compfiledate/issues/4)]
+* Operator used in date comparison can now be specified using new --compare or -c commands. This enables user to choose whether date of 1st file is tested to be <, <=, >, >=, <> or = to date of second file. [[issue #1](https://github.com/ddabapps/compfiledate/issues/1)]
+* Comparison can now operate on either creation or last modification date of files. This is specified with new --datetype or -d commands. [[issue #2](https://github.com/ddabapps/compfiledate/issues/2)]
+* When comparing the dates of shortcut files the date of the shortcut's target file can now be compared by using the new --followshortcuts or -s commands. [[issue #3](https://github.com/ddabapps/compfiledate/issues/3)]
+* Program version number can now be displayed using the new --version or -V commands. Version is no longer displayed in normal program output. [[issue #5](https://github.com/ddabapps/compfiledate/issues/5)]
+* Long forms of -v and -h commands added: --verbose and --help respectively. [[issue #4](https://github.com/ddabapps/compfiledate/issues/4)]
 * Help screen revised re changes.
 * Now compiled with Delphi XE.
 * Updated and rationalised documentation re changes.
