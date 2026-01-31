@@ -136,7 +136,7 @@ resourcestring
     -v or --verbose
       Verbose: writes output to standard output. No output is written if the 
       option is not provided. Output is always written to standard error when an
-      error occurs or to standard output when help or the program''s version
+      error occurs or to standard output when help or the program's version
       number are requested.
     -h or -? or --help
       Displays help screen. Rest of command line ignored.
@@ -144,7 +144,7 @@ resourcestring
       Displays program version number and platform. Rest of command line
       ignored.
 
-  The program''s exit code is 1 if the comparison is true and 0 if it is false.
+  The program's exit code is 1 if the comparison is true and 0 if it is false.
 
   If an error occurs then an error code >= 100 is returned and an error message
   is written to standard error. See documentation for details of error codes.
