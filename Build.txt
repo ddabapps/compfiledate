@@ -1,7 +1,7 @@
 CompFileDate Build Instructions
 ===============================
 
-These instructions assume you are building the program using Delphi 12. Later
+These instructions assume you are building the program using Delphi 13. Later
 versions of Delphi may be suitable.
 
 
@@ -28,7 +28,7 @@ Step 2: Configure the Build Environment
 
 The following tools must be installed to build CompFileDate:
 
-+ Delphi 12.1 or later
++ Delphi 13 or later
 
 + `VIEd.exe` (Version Information Editor by DelphiDabbler). See
   https://delphidabbler.com/software/vied.
