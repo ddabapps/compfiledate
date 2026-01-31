@@ -90,23 +90,24 @@ options are:
     shortcut file itself is used in the comparison.
 
   -v or --verbose
-    Verbose: writes output to standard output. No output is generated if this
-    option is not provided. Output is always written when an error occurs or
-    when help or the program's version number are requested.
+      Verbose: writes output to standard output. No output is written if the 
+      option is not provided. Output is always written to standard error when an
+      error occurs or to standard output when help or the program's version
+      number are requested.
 
   -h or -? or --help
     Displays a help screen. Any file names and other options are ignored.
 
   -V or --version.
-    Displays the program's version number on standard output and halts. Any file
-    names and other options are ignored.
+    Displays the program's version number and platform on standard output and
+    halts. Any file names and other options are ignored.
 
 If no file names are provided on the command line and none of the help or
 version commands are used then a brief help message is displayed.
 
 The program's exit code is 1 if the comparison is true and 0 if it is false.
 If an error occurs then an error code >= 100 is returned and an error message
-is written to standard output. The error codes are:
+is written to standard error. The error codes are:
 
   100 - unknown error
   101 - invalid command or option
@@ -115,8 +116,8 @@ is written to standard output. The error codes are:
   104 - one or both files cannot be found
   105 - no comparison type was specified for the -c or --compare option
   106 - an invalid comparison type was specified for the -c or --compare option
-  107 - no date type was specified for the -t or --datetype option
-  108 - an invalid date type was specified for the -t or --datetype option
+  107 - no date type was specified for the -d or --datetype option
+  108 - an invalid date type was specified for the -d or --datetype option
 
 
 4. Source Code

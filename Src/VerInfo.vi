@@ -2,13 +2,16 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at https://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
+; Copyright (C) 2009-2026, Peter Johnson (gravatar.com/delphidabbler).
 ;
 ; Version information description file used to create VerInfo.res resource file.
 
+[Macros]
+Import:version=.\VERSION
+
 [Fixed File Info]
-File Version #=2, 2, 0, 5
-Product Version #=2, 2, 0, 0
+File Version #=<%version.version>.<%version.build>
+Product Version #=<%version.version>
 File OS=4
 File Type=1
 File Sub-Type=0
@@ -23,17 +26,17 @@ Character Set=1252
 Comments=Licensed under the Mozilla Public License v2.0 - see https://mozilla.org/MPL/2.0/
 Company Name=DelphiDabbler
 File Description=File Date Comparison Utility
-File Version=<#F1>.<#F2>.<#F3> build <#F4>
+File Version=v<#F1>.<#F2>.<#F3> build <#F4>
 Internal Name=<SHORTFNAME>
 Legal Copyright=Copyright (C) P.D.Johnson, 2009-<YEAR>.
-Legal Trademark=    
+Legal Trademark=
 Original File Name=CompFileDate.exe
 Private Build=
 Product Name=DelphiDabbler File Date Comparison Utility
-Product Version=Release <#P1>.<#P2>.<#P3>
+Product Version=v<#P1>.<#P2>.<#P3><%version.suffix>
 Special Build=
 
 [Configuration Details]
 Identifier=
 NumRCComments=0
-
+FileVersion=3
