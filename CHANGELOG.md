@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 This change log begins with the first public release version of _CompFileDate_. Releases are listed in reverse version number order.
 
+## Release v2.3.0 of 31 January 2026
+
+* Error messages are now written to standard error instead of standard output [[issue #13](https://github.com/ddabapps/compfiledate/issues/13)].
+* Modified the `--version` / `-V` command line option to so that, in addition to the program version number, information about whether the program was built as either a 32 bit or 64 bit Windows application is displayed [[issue #23](https://github.com/ddabapps/compfiledate/issues/23)].
+* Updated the program to compile with Delphi 13 [[issue #22](https://github.com/ddabapps/compfiledate/issues/22)]. 
+* Corrected errors in some error messages [[issue #26](https://github.com/ddabapps/compfiledate/issues/26)].
+* Refactorings:
+    * The source code was refactored and re-arranged, in large part to take advantage of modern compiler features [[issue #17](https://github.com/ddabapps/compfiledate/issues/17)] & [[issue #25](https://github.com/ddabapps/compfiledate/issues/25)].
+    * The program release version is no longer hard coded in `VerInfo.vi` but is instead obtained from a new `VERSION` file.
+    * Redundant code was removed [[issue #27](https://github.com/ddabapps/compfiledate/issues/27)].
+* Updated the `Deploy.bat` release creation script:
+    * Fixed a typo that was causing a potential bug [[issue #18](https://github.com/ddabapps/compfiledate/issues/18)].
+    * The user no longer has to pass the program version as a parameter when calling `Deploy.bat`. The script now gets the information by reading the `VERSION` file [[issue #21](https://github.com/ddabapps/compfiledate/issues/21)].
+* Updated documentation re the changes:
+    * Fixed errors in the description of error codes in `Docs/ReadMe.txt` [[issue #24](https://github.com/ddabapps/compfiledate/issues/24)].
+    * Source code commenting was changed to use the XMLDoc format [[issue #17](https://github.com/ddabapps/compfiledate/issues/17)].
+    * The program's help screen and the help section of `Docs/ReadMe.txt` were updated re the change to writing error messages to standard error.
+    * `Build.txt` was updated re the change to using Delphi 13.
+    * Updated the URLs of issues in `CHANGELOG.md` to reference the `ddabapps/compfiledate` GitHub repo instead of the old `delphidabbler/compfiledate` repo.
+
 ## Release v2.2.0 of 27 August 2024
 
 * Added 64 bit version of the program. [[issue #12](https://github.com/ddabapps/compfiledate/issues/12)]
