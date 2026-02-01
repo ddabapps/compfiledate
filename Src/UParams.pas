@@ -133,6 +133,8 @@ resourcestring
   sBadCompareType = 'Invalid comparison type in -c or --compare command';
   sNoDateType = 'No date type specified for -d or --datetype command';
   sBadDateType = 'Invalid date type in -d or --datetype command';
+  sNoShortcutsOnLinux =
+    'The -s or --followshortcuts command is not supported on Linux';
 
 
 { TParams }
@@ -215,7 +217,12 @@ begin
   else if (Command = '-v') or (Command = '--verbose') then
     fVerbose := True
   else if (Command = '-s') or (Command = '--followshortcuts') then
+    {$IF Defined(MSWINDOWS)}
     fFollowShortcuts := True
+    {$ENDIF}
+    {$IF Defined(LINUX)}
+    raise EApplication.Create(sNoShortcutsOnLinux, EApplication.ErrBadSwitch)
+    {$ENDIF}
   else if (Command = '-c') then
   begin
     Inc(Idx);

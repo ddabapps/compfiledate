@@ -92,13 +92,16 @@ resourcestring
     or   CompFileDate -V | --version
   ''';
 
-  sHelp = '''
+  sHelpIntro = '''
   filename1
     Name of first file to be compared.
   filename2
     Name of second file to be compared.
 
   Options are:
+  ''';
+
+  sHelpCompareCmd = '''
     -c <op> or --compare=<op>'
       Defines the compare operation to use. <op> must be one of the
       following:
@@ -115,6 +118,9 @@ resourcestring
           Check if 1st file date is no later than 2nd file date.
         neq, not-equal, not-same, different:
           Check if file dates are different.
+  ''';
+
+  sHelpDateTypeCmd = '''
     -d <type> or --datetype=<type>
       Determines whether last modification or creation dates are compared.
       <type> must be one of the following:
@@ -122,21 +128,43 @@ resourcestring
           Use date files were last modified (default if option is not provided).
         c, created, creation:
           Use date files were created.
+  ''';
+
+  {$IF Defined(MSWINDOWS)}
+  sHelpFollowShortcutsCmd = '''
     -s or --followshortcuts
       Indicates that if either filename1 or filename2 is a shortcut file then
       the date of the target file will be used in comparisons. If neither option
       is specified then shortcuts are not followed and the date of the shortcut
       file itself is used.
+  ''';
+  {$ELSEIF Defined(LINUX)}
+  sHelpFollowShortcutsCmd = '''
+    -s or --followshortcuts
+      <<Not supported on Linux>>. Reports an error if used.
+  ''';
+  {$ENDIF}
+
+  sHelpVerboseCmd = '''
     -v or --verbose
-      Verbose: writes output to standard output. No output is written if the 
+      Verbose: writes output to standard output. No output is written if the
       option is not provided. Output is always written to standard error when an
       error occurs or to standard output when help or the program's version
       number are requested.
+  ''';
+
+  sHelpHelpCmd = '''
     -h or -? or --help
       Displays help screen. Rest of command line ignored.
+  ''';
+
+  sHelpVersionCmd = '''
     -V or --version
       Displays program version number and platform. Rest of command line
       ignored.
+  ''';
+
+  sHelpOutro = '''
 
   The program's exit code is 1 if the comparison is true and 0 if it is false.
 
@@ -276,10 +304,19 @@ procedure TMain.ShowHelp;
 begin
   fConsole.Silent := False;
   SignOn;
+
   fConsole.WriteLn(TConsole.TChannel.StdOut);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sUsage);
   fConsole.WriteLn(TConsole.TChannel.StdOut);
-  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelp);
+
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpIntro);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpCompareCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateTypeCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowShortcutsCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVerboseCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpHelpCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVersionCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpOutro);
 end;
 
 procedure TMain.ShowShortHelp;
