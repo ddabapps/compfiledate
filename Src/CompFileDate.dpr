@@ -24,7 +24,8 @@ uses
   UDateComparer in 'UDateComparer.pas',
   UDateExtractor in 'UDateExtractor.pas',
   UFileInfo in 'UFileInfo.pas',
-  UAppInfo in 'UAppInfo.pas';
+  UAppInfo in 'UAppInfo.pas',
+  UWinShellLink in 'UWinShellLink.pas';
 
 begin
   var App := TMain.Create;
