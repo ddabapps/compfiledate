@@ -57,12 +57,6 @@ type
     ///  <returns><c>Boolean</c>. <c>True</c> if the operation succeeds or
     ///  <c>False</c> if not.</returns>
     function CompareFileDates(const File1, File2: TFileInfo): Boolean;
-    ///  <summary>Gets the program's product version number from version
-    ///  information resources.</summary>
-    ///  <returns><c>string</c>. Version number as a dot delimited string or
-    ///  an empty string if version information cannot be read.</returns>
-    ///  <remarks>*** This is a Windows specific method ***</remarks>
-    class function GetProductVersionStr: string;
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -78,10 +72,10 @@ implementation
 
 uses
   // Delphi
-  WinApi.Windows,
   System.DateUtils,
   // Project
   UAppException,
+  UAppInfo,
   UDateComparer,
   UDateExtractor;
 
@@ -176,6 +170,7 @@ const
     sDateTypeModified, sDateTypeCreated
   );
 
+
 { TMain }
 
 function TMain.CompareFileDates(const File1, File2: TFileInfo): Boolean;
@@ -266,47 +261,6 @@ begin
   end;
 end;
 
-class function TMain.GetProductVersionStr: string;
-begin
-  Result := '';
-  // Get fixed file info from program's version info
-  // get size of version info
-  var UnusedHandle: DWORD;  // Set to 0 by GetFileVersionInfoSize (unused)
-  var VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), UnusedHandle);
-  if VerInfoSize > 0 then
-  begin
-    // create buffer and read version info into it
-    var VerInfoBuf: Pointer;
-    GetMem(VerInfoBuf, VerInfoSize);
-    try
-      var IgnoredHandle: DWORD := 0;  // param ignored by GetFileVersionInfo
-      if GetFileVersionInfo(
-        PChar(ParamStr(0)), IgnoredHandle, VerInfoSize, VerInfoBuf
-      ) then
-      begin
-        // get fixed file info from version info (ValPtr points to it)
-        var BufSize: UINT; // Set by VerQueryValue to size of data (unused)
-        var ValPtr: Pointer;  // pointer to value from VerQueryValue
-        if VerQueryValue(VerInfoBuf, '\', ValPtr, BufSize) then
-        begin
-          var FFI: TVSFixedFileInfo := PVSFixedFileInfo(ValPtr)^;
-          // Build version info string from product version field of FFI
-          Result := string.Format(
-            '%d.%d.%d',
-            [
-              HiWord(FFI.dwProductVersionMS),
-              LoWord(FFI.dwProductVersionMS),
-              HiWord(FFI.dwProductVersionLS)
-            ]
-          );
-        end
-      end;
-    finally
-      FreeMem(VerInfoBuf);
-    end;
-  end;
-end;
-
 procedure TMain.ReportError(const E: Exception);
 begin
   // Sign on to stdout only if the verbosity flag is on
@@ -339,23 +293,13 @@ begin
 end;
 
 procedure TMain.ShowVersion;
-
-  function ProgramPlatform: string;
-  begin
-    {$IF Defined(WIN32)}
-    Result := 'Windows 32 bit';
-    {$ELSEIF Defined(WIN64)}
-    Result := 'Windows 64 bit';
-    {$ELSE}
-    {$Message Fatal 'Unsupported platform'}
-    {$IFEND}
-  end;
-
 begin
   fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdOut,
-    string.Format('v%0:s (%1:s)', [GetProductVersionStr, ProgramPlatform])
+    string.Format(
+      'v%0:s (%1:s)',
+      [TAppInfo.Version, TAppInfo.OSPlatform])
   );
 end;
 
