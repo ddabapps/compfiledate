@@ -20,22 +20,26 @@ Contents
 CompFileDate.exe compares the dates of two files whose names are passed on the
 command line and returns an exit code that indicates the result.
 
-The program is available 64 and 32 bit Windows versions. Users of 64 bit Windows
-SHOULD use the 64 bit version but the 32 bit version will work. 32 bit Windows
-users MUST use the 32 bit version.
+Versions of the program are available for Windows and Linux.
+
+For Windows the program is available in 64 and 32 bit versions. Users of 64 bit
+Windows SHOULD use the 64 bit version but the 32 bit version will work. 32 bit
+Windows users MUST use the 32 bit version.
+
+Only 64 bit Linux is supported.
 
 
 2. Installation
 ---------------
 
-IMPORTANT: make sure you have downloaded the correct version of CompFileDate for
-your operating system before proceeding.
+IMPORTANT: There are separate downloads for 64 bit Windows, 32 bit Windows and
+64 bit Linux. Make sure you have downloaded the correct version of CompFileDate
+before proceeding.
 
-Copy the provided executable file to the required location. No further
-installation is required.
-
-You may want to modify the Windows PATH environment variable to include the
-location of the program.
+All downloads are compressed archives. Extract the files from the archive then
+copy the provided executable file to the required location. On Windows no
+further installation is required. On Linux you may need make the program 
+executable with `chmod +x CompFileDate`.
 
 To uninstall simply delete the program. It makes no changes to your system.
 
@@ -84,10 +88,16 @@ options are:
         Use the date the files were created.
 
   -s or --followshortcuts
-    Indicates that if either filename1 or filename2 is a shortcut file then the
-    date of the shortcut's target file will be used in comparisons. If neither
-    option is specified then shortcuts are not followed and the date of the
-    shortcut file itself is used in the comparison.
+    Windows:
+      Indicates that if either filename1 or filename2 is a shortcut (.lnk)
+      file then the date of the shortcut's target file will be used in
+      comparisons. If neither option is specified then shortcuts are not
+      followed and the date of the shortcut file itself is used in the
+      comparison.
+    Linux:
+      Not supported because Linux does not support the Windows .lnk shortcut
+      file format. The program fails with exit code 101 if either of the options
+      is specified.
 
   -v or --verbose
       Verbose: writes output to standard output. No output is written if the 
@@ -104,6 +114,8 @@ options are:
 
 If no file names are provided on the command line and none of the help or
 version commands are used then a brief help message is displayed.
+
+File names are case sensitive on Linux and case insensitive on Windows.
 
 The program's exit code is 1 if the comparison is true and 0 if it is false.
 If an error occurs then an error code >= 100 is returned and an error message

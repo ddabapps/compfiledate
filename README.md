@@ -3,7 +3,7 @@ File Date Comparison Utility
 
 _CompFileDate_ is a command line utility for Windows that compares the dates of two files whose names are passed on the command line and returns an exit code that indicates the result.
 
-The program is available in both 64 bit and 32 bit versions.
+The program is available for Windows and Linux. There are separate Windows 32 bit and 64 bit builds. The only Linux build is 64 bit.
 
 Usage
 -----
