@@ -39,7 +39,7 @@ before proceeding.
 All downloads are compressed archives. Extract the files from the archive then
 copy the provided executable file to the required location. On Windows no
 further installation is required. On Linux you may need make the program 
-executable with `chmod +x CompFileDate`.
+executable with `chmod u+x CompFileDate`.
 
 To uninstall simply delete the program. It makes no changes to your system.
 
@@ -65,25 +65,28 @@ options are:
   -c <op> or --compare=<op>
     Defines the compare operation to use. <op> must be one of the following:
       eq, equal, same:
-        Checks if the dates of the files are the same.
+        Checks if the dates of the files are equal.
       gt, newer, later:
-        Checks if the 1st file date is later than the 2nd file date.
+        Checks if the 1st file date is greater than (i.e. later than) the 2nd 
+        file date.
       gte, not-older, not-earlier
-        Checks if the 1st file date is no earlier than the 2nd file date.
+        Checks if the 1st file date is greater than or equal to (i.e. no older
+        than) the 2nd file date.
       lt, older, earlier
-        Checks if the 1st file date is earlier than the 2nd file date (default
-        used if this option is not provided).
+        Checks if the 1st file date is less than (i.e. earlier than) the 2nd
+        file date. This is the default used if this option is not provided.
       lte, not-newer, not-later
-        Checks if the 1st file date is no later than the 2nd file date.
+        Checks if the 1st file date is less than or equal to (i.e. no newer
+        than) the 2nd file date.
       neq, not-equal, not-same, different
-        Checks if the dates of the files are different.
+        Checks if the dates of the files are not equal.
 
   -d <type> or --datetype=<type>
     Determines whether the last modification or creation dates of the files are
     compared. <type> must be one of the following:
       m, modified, last-modified, modification:
-        Use the date the files were last modified (default used if the option is
-        not provided).
+        Use the date the files were last modified. This is the default used if
+        this option is not provided.
       c, created, creation:
         Use the date the files were created.
 
@@ -100,10 +103,10 @@ options are:
       is specified.
 
   -v or --verbose
-      Verbose: writes output to standard output. No output is written if the 
-      option is not provided. Output is always written to standard error when an
-      error occurs or to standard output when help or the program's version
-      number are requested.
+    Verbose: writes output to standard output. No output is written if the
+    option is not provided. Output is always written to standard error when an
+    error occurs or to standard output when help or the program's version number
+    are requested.
 
   -h or -? or --help
     Displays a help screen. Any file names and other options are ignored.
@@ -135,21 +138,21 @@ is written to standard error. The error codes are:
 4. Source Code
 --------------
 
-The program's source code is available on GitHub. See delphidabbler/compfiledate
-at https://github.com/delphidabbler/compfiledate
+The program's source code is available on GitHub. See ddabapps/compfiledate
+at https://github.com/ddabapps/compfiledate
 
 
 5. Copyright and License
 ------------------------
 
-See the file `LICENSE.md` provided with this download for copyright and
+See the file `LICENSE.md` provided with the download for copyright and
 licensing information.
 
 
 6. Change Log
 -------------
 
-The change log is provided in the file `CHANGELOG.md` provided with this
+The change log is provided in the file `CHANGELOG.md` provided with the
 download.
 
 
