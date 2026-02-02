@@ -38,9 +38,6 @@ type
     ///  <param name="AChannel">[in] The channel to be written to.</param>
     ///  <param name="AText">[in] Text to be written out.</param>
     ///  <remarks>
-    ///  <para>This method converts the text into a byte stream using the system
-    ///  default encoding then calls an OS specific class to write the byte
-    ///  stream to the console.</para>
     ///  <para>The text if not written if the <c>Silent</c> property is
     ///  <c>True</c> AND <c>AChannel</c> = <c>TChannel.StdOut</c>.</para>
     ///  <para>All public methods of this class must ultimately call this
@@ -76,21 +73,7 @@ implementation
 
 uses
   // Delphi
-  System.SysUtils,
-  WinApi.Windows;
-
-
-type
-  ///  <summary>Class that writes bytes to a Windows console.</summary>
-  TWinConsole = class(TObject)
-  public
-    ///  <summary>Writes a sequence of bytes to a console channel.</summary>
-    ///  <param name="AChannel">[in] The channel to be written to.</param>
-    ///  <param name="ABytes">[in] Array of byytes to be written out.</param>
-    ///  <remarks>*** This is a Windows specific method ***</remarks>
-    class procedure Write(const AChannel: TConsole.TChannel;
-      const ABytes: TBytes);
-  end;
+  System.SysUtils;
 
 
 { TConsole }
@@ -105,10 +88,14 @@ procedure TConsole.InternalWrite(const AChannel: TChannel; const AText: string);
 begin
   if fSilent and (AChannel = TChannel.StdOut) then
     Exit;
-  var Bytes := TEncoding.Default.GetBytes(AText);
-  if Length(Bytes) = 0 then
+  if AText.IsEmpty then
     Exit;
-  TWinConsole.Write(AChannel, Bytes);
+  case AChannel of
+    TConsole.TChannel.StdOut:
+      System.Write(Output, AText);
+    TConsole.TChannel.StdErr:
+      System.Write(ErrOutput, AText);
+  end;
 end;
 
 procedure TConsole.Write(const AChannel: TChannel; const Text: string);
@@ -123,26 +110,7 @@ end;
 
 procedure TConsole.WriteLn(const AChannel: TChannel);
 begin
-  WriteLn(AChannel, '');
-end;
-
-{ TWinConsole }
-
-class procedure TWinConsole.Write(const AChannel: TConsole.TChannel;
-  const ABytes: TBytes);
-const
-  ChannelMap: array[TConsole.TChannel] of WinApi.Windows.DWORD = (
-    WinApi.Windows.STD_OUTPUT_HANDLE, WinApi.Windows.STD_ERROR_HANDLE
-  );
-begin
-  var BytesWritten: WinApi.Windows.DWORD; // number of bytes written (unused)
-  WinApi.Windows.WriteFile(
-    WinApi.Windows.GetStdHandle(ChannelMap[AChannel]),
-    Pointer(ABytes)^,
-    Length(ABytes),
-    BytesWritten,
-    nil
-  );
+  WriteLn(AChannel, string.Empty);
 end;
 
 end.

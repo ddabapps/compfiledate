@@ -6,10 +6,12 @@
 *.projdata
 *.tvsconfig
 *.dsk
+*.deployproj
 *.~*
 __history/
 __recovery/
 
-# Project specific directories
-_build
+# Project specific items
+_build/
+Src/AutoGen/
 *.res

@@ -5,7 +5,7 @@
 # Copyright (C) 2026, Peter Johnson (gravatar.com/delphidabbler).
 #
 # CompFileDate version information macros for including in .vi files.
-# These values are also used by Deploy.bat
+# These values are also used by Deploy.bat and Tools/MakeAllTargets.bat
 
 # Version & build numbers
 version=2.3.0
