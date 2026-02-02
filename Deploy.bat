@@ -85,31 +85,31 @@ set LicenseFile=LICENSE.md
 set ChangeLogFile=CHANGELOG.md
 
 :: Make a clean directory structure
-if exist %BuildRoot% rmdir /S /Q %BuildRoot%
+if exist "%BuildRoot%" rmdir /S /Q "%BuildRoot%"
 
-mkdir %ReleaseDir%
+mkdir "%ReleaseDir%"
 
 setlocal
 
 :: Build Pascal
-cd %SrcDir%
+cd "%SrcDir%"
 
 echo.
 echo Building Windows 32 bit version
 echo.
-msbuild %PrgBaseName%.dproj /p:config=Release /p:platform=Win32
+msbuild "%PrgBaseName%.dproj" /p:config=Release /p:platform=Win32
 echo.
 
 echo.
 echo Building Windows 64 bit version
 echo.
-msbuild %PrgBaseName%.dproj /p:config=Release /p:platform=Win64
+msbuild "%PrgBaseName%.dproj" /p:config=Release /p:platform=Win64
 echo.
 
 echo.
 echo Building Linux 64 bit version
 echo.
-msbuild %PrgBaseName%.dproj /p:config=Release /p:platform=Linux64
+msbuild "%PrgBaseName%.dproj" /p:config=Release /p:platform=Linux64
 echo.
 
 endlocal
@@ -117,14 +117,14 @@ endlocal
 :: Create zip files for Windows builds
 echo.
 echo Creating zip files for Windows builds
-%ZipRoot%\zip.exe -j -9 %OutFileWin32% %Win32Dir%\%PrgBaseName%.exe
-%ZipRoot%\zip.exe -j -9 %OutFileWin64% %Win64Dir%\%PrgBaseName%.exe
-%ZipRoot%\zip.exe -j -9 %OutFileWin32% %ReadMeFile%
-%ZipRoot%\zip.exe -j -9 %OutFileWin64% %ReadMeFile%
-%ZipRoot%\zip.exe -j -9 %OutFileWin32% %LicenseFile%
-%ZipRoot%\zip.exe -j -9 %OutFileWin64% %LicenseFile%
-%ZipRoot%\zip.exe -j -9 %OutFileWin32% %ChangeLogFile%
-%ZipRoot%\zip.exe -j -9 %OutFileWin64% %ChangeLogFile%
+"%ZipRoot%\zip.exe" -j -9 "%OutFileWin32%" "%Win32Dir%\%PrgBaseName%.exe"
+"%ZipRoot%\zip.exe" -j -9 "%OutFileWin64%" "%Win64Dir%\%PrgBaseName%.exe"
+"%ZipRoot%\zip.exe" -j -9 "%OutFileWin32%" "%ReadMeFile%"
+"%ZipRoot%\zip.exe" -j -9 "%OutFileWin64%" "%ReadMeFile%"
+"%ZipRoot%\zip.exe" -j -9 "%OutFileWin32%" "%LicenseFile%"
+"%ZipRoot%\zip.exe" -j -9 "%OutFileWin64%" "%LicenseFile%"
+"%ZipRoot%\zip.exe" -j -9 "%OutFileWin32%" "%ChangeLogFile%"
+"%ZipRoot%\zip.exe" -j -9 "%OutFileWin64%" "%ChangeLogFile%"
 
 :: Create tar.gz file for Linux build
 echo.
