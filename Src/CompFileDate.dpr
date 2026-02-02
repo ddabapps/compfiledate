@@ -23,7 +23,6 @@ uses
   UParams in 'UParams.pas',
   UDateComparer in 'UDateComparer.pas',
   UDateExtractor in 'UDateExtractor.pas',
-  UFileInfo in 'UFileInfo.pas',
   UAppInfo in 'UAppInfo.pas',
   UWinShellLink in 'UWinShellLink.pas';
 

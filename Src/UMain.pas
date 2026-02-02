@@ -20,7 +20,6 @@ uses
   System.SysUtils,
   // Project
   UConsole,
-  UFileInfo,
   UParams;
 
 
@@ -47,6 +46,16 @@ type
     ///  the sign on message is written to standard output.</summary>
     ///  <param name="E">[in] Exception whose message is to be reported.</param>
     procedure ReportError(const E: Exception);
+    ///  <summary>Adjusts the given file name if necessary according to target
+    ///  OS and command line options and return the adjusted file name or the
+    ///  unchanged file name if no adjustment is necessary.</summary>
+    ///  <remarks>The ONLY case where a file name is adjusted is when ALL of the
+    ///  following conditions apply: (1) Windows is the target OS, (2) the user
+    ///  has specified the follow shortcuts option, (3) the file is a shortcut
+    ///  (.lnk) file and (4) the shortcut file references a valid file.
+    ///  </remarks>
+    function AdjustFileName(const AFileName: string): string;
+      {$IF not Defined(MSWINDOWS)}inline;{$ENDIF}
     ///  <summary>Compares modification dates of the two files passed on the
     ///  command line using the user's chosen comparison operation and returns
     ///  True if the comparison succeeds or False if not.</summary>
@@ -56,7 +65,7 @@ type
     ///  hand operand of the comparison.</param>
     ///  <returns><c>Boolean</c>. <c>True</c> if the operation succeeds or
     ///  <c>False</c> if not.</returns>
-    function CompareFileDates(const File1, File2: TFileInfo): Boolean;
+    function CompareFileDates(const FileName1, FileName2: string): Boolean;
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -73,11 +82,16 @@ implementation
 uses
   // Delphi
   System.DateUtils,
+  System.IOUtils,
   // Project
-  UAppException,
-  UAppInfo,
-  UDateComparer,
-  UDateExtractor;
+  UAppException
+  , UAppInfo
+  , UDateComparer
+  , UDateExtractor
+  {$IF Defined(MSWINDOWS)}
+  , UWinShellLink
+  {$ENDIF}
+  ;
 
 
 resourcestring
@@ -201,14 +215,30 @@ const
 
 { TMain }
 
-function TMain.CompareFileDates(const File1, File2: TFileInfo): Boolean;
+function TMain.AdjustFileName(const AFileName: string): string;
 begin
-  var FileDate1 := TDateExtractor.GetDate(
-    File1.ResolvedFileName, fParams.DateType
-  );
-  var FileDate2 := TDateExtractor.GetDate(
-    File2.ResolvedFileName, fParams.DateType
-  );
+  {$IF Defined(MSWINDOWS)}
+  // Shortcut files are only supported on Windows
+  if not fParams.FollowShortcuts then
+    // not following shortcut file: return AFileName unchanged
+    Exit(AFileName);
+  if TPath.GetExtension(AFileName).CompareTo('.lnk') <> 0 then
+    // AFileName is not a shortcut file: return it unchanged
+    Exit(AFileName);
+  // AFileName is a shortcut file. Try to get file it points to in Result, but
+  // if this fails return AFileName unchanged.
+  if not TWinShellLink.TryResolveShortcut(AFileName, Result) then
+    Exit(AFileName);
+  {$ELSE}
+  // Windows shortcut files are not supported: just return AFileName unchaged
+  Result := AFileName;
+  {$ENDIF}
+end;
+
+function TMain.CompareFileDates(const FileName1, FileName2: string): Boolean;
+begin
+  var FileDate1 := TDateExtractor.GetDate(FileName1, fParams.DateType);
+  var FileDate2 := TDateExtractor.GetDate(FileName2, fParams.DateType);
   Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
 end;
 
@@ -241,9 +271,9 @@ begin
       // Normal execution
       fConsole.Silent := not fParams.Verbose;
       SignOn;
-      var File1 := TFileInfo.Create(fParams.FileName1, fParams.FollowShortcuts);
-      var File2 := TFileInfo.Create(fParams.FileName2, fParams.FollowShortcuts);
-      if CompareFileDates(File1, File2) then
+      var FileName1 := AdjustFileName(fParams.FileName1);
+      var FileName2 := AdjustFileName(fParams.FileName2);
+      if CompareFileDates(FileName1, FileName2) then
       begin
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
@@ -253,7 +283,7 @@ begin
           TConsole.TChannel.StdOut,
           string.Format(
             TrueResponses[fParams.ComparisonOp],
-            [File1.ResolvedFileName, File2.ResolvedFileName]
+            [FileName1, FileName2]
           )
         );
         ExitCode := 1;
@@ -268,7 +298,7 @@ begin
           TConsole.TChannel.StdOut,
           string.Format(
             FalseResponses[fParams.ComparisonOp],
-            [File1.ResolvedFileName, File2.ResolvedFileName]
+            [FileName1, FileName2]
           )
         );
         ExitCode := 0;

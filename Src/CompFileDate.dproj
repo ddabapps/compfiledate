@@ -134,7 +134,6 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCCReference Include="UParams.pas"/>
         <DCCReference Include="UDateComparer.pas"/>
         <DCCReference Include="UDateExtractor.pas"/>
-        <DCCReference Include="UFileInfo.pas"/>
         <DCCReference Include="UAppInfo.pas"/>
         <DCCReference Include="UWinShellLink.pas"/>
         <BuildConfiguration Include="Base">
