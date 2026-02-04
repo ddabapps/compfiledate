@@ -16,9 +16,9 @@ interface
 
 
 type
-  ///  <summary>Static class that exposes a method that performs date
+  ///  <summary>Method only record that exposes a method that performs date
   ///  comparisons for all supported date comparison operations.</summary>
-  TDateComparer = class
+  TDateComparer = record
   public
     type
       {$SCOPEDENUMS ON}
@@ -54,11 +54,6 @@ type
     ///  <summary>Class constructor. Intialises the map of comparison types to
     ///  the implementing functions.</summary>
     class constructor Create;
-    ///  <summary>Object constructor that prevents object instances from being
-    ///  created.</summary>
-    ///  <exception><c>ENoConstructException</c> is always raised if the
-    ///  constructor is called.</exception>
-    constructor Create;
     ///  <summary>Compares two <c>TDataTime</c> values using a given operator.
     ///  </summary>
     ///  <param name="Left">[in] Left hand operand.</param>
@@ -68,7 +63,7 @@ type
     ///  <returns><c>Boolean</c>. The return value of applying <c>Operation</c>
     ///  to the operands.</returns>
     class function Compare(const Left, Right: TDateTime; const Operation: TOp):
-      Boolean;
+      Boolean; static;
   end;
 
 
@@ -120,11 +115,6 @@ begin
     begin
       Result := Left.CompareDateTime(Right) <> EqualsValue;
     end;
-end;
-
-constructor TDateComparer.Create;
-begin
-  raise ENoConstructException.CreateFmt(sNoConstruct, [ClassName]);
 end;
 
 end.

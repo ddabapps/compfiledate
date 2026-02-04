@@ -17,9 +17,9 @@ interface
 
 type
 
-  ///  <summary>Static class that exposes a method that gets either the creation
-  ///  or last-modified date from a file.</summary>
-  TDateExtractor = class
+  ///  <summary>Method only record that exposes a method that gets either the
+  ///  creation or last-modified date from a file.</summary>
+  TDateExtractor = record
   public
     type
       {$SCOPEDENUMS ON}
@@ -31,11 +31,6 @@ type
       TDateType = (LastModified, Created);
       {$SCOPEDENUMS OFF}
   public
-    ///  <summary>Object constructor that prevents object instances from being
-    ///  created.</summary>
-    ///  <exception><c>ENoConstructException</c> is always raised if the
-    ///  constructor is called.</exception>
-    constructor Create;
     ///  <summary>Gets either the creation or last-modified date from a file.
     ///  </summary>
     ///  <param name="FileName">[in] Name of the file to be examined.</param>
@@ -43,7 +38,7 @@ type
     ///  creation date is to be returned.</param>
     ///  <returns><c>TDateTime</c>. The required file date.</returns>
     class function GetDate(const FileName: string; const DateType: TDateType):
-      TDateTime;
+      TDateTime; static;
   end;
 
 
@@ -65,11 +60,6 @@ resourcestring
 
 
 { TDateExtractor }
-
-constructor TDateExtractor.Create;
-begin
-  raise ENoConstructException.CreateFmt(sNoConstruct, [ClassName]);
-end;
 
 class function TDateExtractor.GetDate(const FileName: string;
   const DateType: TDateType): TDateTime;
