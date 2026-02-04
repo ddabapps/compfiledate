@@ -88,13 +88,13 @@ Releases are created by running Deploy.bat from the command line, NOT from
 within the Delphi IDE. Deploy.bat has its own dependencies and requirements
 which are explained in the comments at the top of the script file.
 
-The script compiles release versions of both 32 and 64 bit Windows versions of
-the program, which are parcelled up in zip files and the 64 bit Linux version
-which is parcelled up in a .tar.gz file.
+The script compiles release versions of the 32 and 64 bit Windows and 64 bit 
+Linux versions of the program. Each release version is bundled up in both zip
+and tar/gzip archives.
 
-Documentation is also included in the zip or .tar.gz files. Plain text files
-that are included in the Linux 64 bit release have their line end characters
-converted from Windows' CRLF format to Linux's LF format.
+Documentation is also included in the archives. Plain text files that are
+included in the Linux 64 bit release have their line end characters converted
+from Windows' CRLF format to Linux's LF format.
 
 
 Step 6: Clean Up
