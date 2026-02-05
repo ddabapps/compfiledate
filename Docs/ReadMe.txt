@@ -110,13 +110,15 @@ options are:
         Checks if the dates of the files are not equal.
 
   -d <type> or --datetype=<type>
-    Determines whether the last modification or creation dates of the files are
-    compared. <type> must be one of the following:
+    Determines whether the last modification, last accessed, or creation dates 
+    of the files are compared. <type> must be one of the following:
       m, modified, last-modified, modification:
         Use the date the files were last modified. This is the default used if
         this option is not provided.
       c, created, creation:
         Use the date the files were created.
+      a, access, accessed, last-accessed:
+        Use the date the files were last accessed.
 
   -s or --followshortcuts
     Windows:

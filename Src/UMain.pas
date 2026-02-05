@@ -136,12 +136,15 @@ resourcestring
 
   sHelpDateTypeCmd = '''
     -d <type> or --datetype=<type>
-      Determines whether last modification or creation dates are compared.
+      Determines whether last modification, last accessed or creation dates are
+      compared.
       <type> must be one of the following:
         m, modified, last-modified, modification:
           Use date files were last modified (default if option is not provided).
         c, created, creation:
           Use date files were created.
+        a, access, accessed, last-accessed:
+          Use date files were last accessed.
   ''';
 
   {$IF Defined(MSWINDOWS)}
