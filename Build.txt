@@ -28,14 +28,15 @@ Step 2: Configure the Build Environment
 
 The following tools must be installed to build CompFileDate:
 
-+ Delphi 13 or later. The 32 bit IDE is used.
+    + Delphi 13 or later. The 32 bit IDE is used.
 
-+ `VIEd.exe` (Version Information Editor by DelphiDabbler). See
-  https://delphidabbler.com/software/vied. Version 2.17.0 or later is required.
+    + `VIEd.exe` (Version Information Editor by DelphiDabbler). See
+      https://delphidabbler.com/software/vied. Version 2.17.0 or later is
+      required.
 
 The program will not compile without setting the VIEDROOT environment variable
 to the path where the VIEd binary is installed. By default this is in
-%ProgramFiles(x86)%\DelphiDabbler\VIEd on 64 bit Windows and 
+%ProgramFiles(x86)%\DelphiDabbler\VIEd on 64 bit Windows and
 %ProgramFiles%\DelphiDabbler\VIEd on 32 bit Windows.
 
 VIEDROOT can be set in two ways:
@@ -53,7 +54,7 @@ Step 3: Modify the Source
 -------------------------
 
 If you intend modifying and redistributing CompFileDate you must comply with
-CompFileDate's open source licence. See 
+CompFileDate's open source licence. See
 https://github.com/ddabapps/compfiledate/blob/master/LICENSE.md for details.
 
 
@@ -62,33 +63,33 @@ Step 4: Compile
 
 From the IDE you have the choice of building Windows 32 bit, Windows 64 bit or
 Linux 64 bit operating systems. Debug and Release build configurations are
-supported for each target OS. 
+supported for each target OS.
 
 To build a required target OS and build configuration select them in the IDE's
 Projects window before performing a full build.
 
-Everything is compiled into a _build sub-directory of the directory where you
+Everything is compiled into a `_build` sub-directory of the directory where you
 copied the source. This directory is hidden from Git. There is a sub-directory
-of _build named for each target OS that has been built. Within the target OS's
+of `_build` named for each target OS that has been built. Within the target OS's
 directory there will be a further sub-directory for each build configuration
-that has been built. These are Debug and Release. Within those directories
-intermediate binaries are stored in a bin sub-directory while executable
-programs can be found in an exe directory.
+that has been built. These are `Debug` and `Release`. Within those directories
+intermediate binaries are stored in a `bin` sub-directory while executable
+programs can be found in an `exe` directory.
 
-To assist in building for all target OSs you can use the MakeAllTargets.bat
-script located in the Tools directory. This script runs a full Debug build for
-each target OS. See the comments at the top of MakeAllTargets.bat for details of
-how to use the script.
+To assist in building for all target OSs you can use the `MakeAllTargets.bat`
+script located in the `Tools` directory. This script runs a full Debug build for
+each target OS. See the comments at the top of `MakeAllTargets.bat` for details
+of how to use the script.
 
 
 Step 5: Release (optional)
 --------------------------
 
-Releases are created by running Deploy.bat from the command line, NOT from
-within the Delphi IDE. Deploy.bat has its own dependencies and requirements
+Releases are created by running `Deploy.bat` from the command line, NOT from
+within the Delphi IDE. `Deploy.bat` has its own dependencies and requirements
 which are explained in the comments at the top of the script file.
 
-The script compiles release versions of the 32 and 64 bit Windows and 64 bit 
+The script compiles release versions of the 32 and 64 bit Windows and 64 bit
 Linux versions of the program. Each release version is bundled up in both zip
 and tar/gzip archives.
 
