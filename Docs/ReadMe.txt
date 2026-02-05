@@ -17,8 +17,9 @@ Contents
 1. About CompFileDate
 ---------------------
 
-CompFileDate.exe compares the dates of two files whose names are passed on the
-command line and returns an exit code that indicates the result.
+CompFileDate is a console application that compares the dates of two files whose
+names are passed on the command line. The result of the comparison is given by
+the program's exit code.
 
 Versions of the program are available for Windows and Linux.
 
@@ -29,19 +30,46 @@ Windows users MUST use the 32 bit version.
 Only 64 bit Linux is supported.
 
 
-2. Installation
----------------
+2. Download & Installation
+--------------------------
 
-IMPORTANT: There are separate downloads for 64 bit Windows, 32 bit Windows and
-64 bit Linux. Make sure you have downloaded the correct version of CompFileDate
-before proceeding.
+CompFileDate can be downloaded from
+https://github.com/ddabapps/compfiledate/releases. You should always download
+the latest version.
 
-All downloads are compressed archives. Extract the files from the archive then
-copy the provided executable file to the required location. On Windows no
-further installation is required. On Linux you may need make the program 
-executable with `chmod u+x CompFileDate`.
+All downloads are compressed archives that contain the CompFileDate executable
+along with some documentation files. There are separate archives for each
+target operating system. All archive files are available in both zip and
+tar/gzip format.
 
-To uninstall simply delete the program. It makes no changes to your system.
+Make sure you download the correct file for your operating system. Files names
+have the following format:
+
+    CompFileDate-<os>-<version>.<ext>
+
+where
+
+    <os>
+      Specifies the operating system. It will be "linux64", "win32" or "win64".
+    <version>
+      The release version number, for example "2.4.0".
+    <ext>
+      The archive file type. This will either be "zip" or "tar.gz"
+
+Extract the files from the archive then copy the provided executable file
+to the directory from which you wish to execute it. There is no installation
+program. For Windows the executable is named CompFileDate.exe and for Linux it
+is CompFileDate.
+
+On Windows no further installation is required.
+
+On Linux you need make the program executable using the Bash command:
+
+    chmod u+x CompFileDate
+
+To uninstall simply delete the program.
+
+CompFileDate makes no changes to your system.
 
 
 3. Program Usage
@@ -67,7 +95,7 @@ options are:
       eq, equal, same:
         Checks if the dates of the files are equal.
       gt, newer, later:
-        Checks if the 1st file date is greater than (i.e. later than) the 2nd 
+        Checks if the 1st file date is greater than (i.e. later than) the 2nd
         file date.
       gte, not-older, not-earlier
         Checks if the 1st file date is greater than or equal to (i.e. no older
@@ -109,14 +137,15 @@ options are:
     are requested.
 
   -h or -? or --help
-    Displays a help screen. Any file names and other options are ignored.
+    Displays a help screen on standard output and halts. Any file names and
+    other options are ignored.
 
   -V or --version.
     Displays the program's version number and platform on standard output and
     halts. Any file names and other options are ignored.
 
-If no file names are provided on the command line and none of the help or
-version commands are used then a brief help message is displayed.
+If no file names are provided on the command line and neither the help nor
+version commands are specified then a brief help message is displayed.
 
 File names are case sensitive on Linux and case insensitive on Windows.
 
