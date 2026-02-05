@@ -287,6 +287,9 @@ begin
     fDateType := TDateExtractor.TDateType.LastModified
   else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
     fDateType := TDateExtractor.TDateType.Created
+  else if (DT = 'a') or (DT = 'accessed') or (DT = 'last-accessed')
+    or (DT = 'access') then
+    fDateType := TDateExtractor.TDateType.LastAccessed
   else
     raise EApplication.Create(sBadDateType, EApplication.ErrBadDateType);
 end;

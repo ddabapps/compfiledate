@@ -18,7 +18,7 @@ interface
 type
 
   ///  <summary>Method only record that exposes a method that gets either the
-  ///  creation or last-modified date from a file.</summary>
+  ///  creation, last-accessed or last-modified date from a file.</summary>
   TDateExtractor = record
   public
     type
@@ -27,15 +27,16 @@ type
       ///  <remarks>
       ///  <para>- LastModified - get date file was last modified.</para>
       ///  <para>- Created - get date file was created.</para>
+      ///  <para>- LastAccessed - get date file was last accessed.</para>
       ///  </remarks>
-      TDateType = (LastModified, Created);
+      TDateType = (LastModified, Created, LastAccessed);
       {$SCOPEDENUMS OFF}
   public
-    ///  <summary>Gets either the creation or last-modified date from a file.
-    ///  </summary>
+    ///  <summary>Gets either creation, last-modified or last-accessed date from
+    ///  a file.</summary>
     ///  <param name="FileName">[in] Name of the file to be examined.</param>
-    ///  <param name="DateType">[in] Specifies whether the last-modified or
-    ///  creation date is to be returned.</param>
+    ///  <param name="DateType">[in] Specifies whether the last-modified,
+    ///  last-accessed or creation date is to be returned.</param>
     ///  <returns><c>TDateTime</c>. The required file date.</returns>
     class function GetDate(const FileName: string; const DateType: TDateType):
       TDateTime; static;
@@ -73,6 +74,8 @@ begin
       Result := TFile.GetLastWriteTime(FileName);
     TDateType.Created:
       Result := TFile.GetCreationTime(FileName);
+    TDateType.LastAccessed:
+      Result := TFile.GetLastAccessTime(FileName);
   else
     raise Exception.Create('Invalid TDateExtractor.TDateType value');
   end;

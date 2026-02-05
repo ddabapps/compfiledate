@@ -56,9 +56,9 @@ type
     ///  </remarks>
     function AdjustFileName(const AFileName: string): string;
       {$IF not Defined(MSWINDOWS)}inline;{$ENDIF}
-    ///  <summary>Compares modification dates of the two files passed on the
-    ///  command line using the user's chosen comparison operation and returns
-    ///  True if the comparison succeeds or False if not.</summary>
+    ///  <summary>Compares dates of the two files passed on the command line
+    ///  using the user's chosen comparison operation and returns True if the
+    ///  comparison succeeds or False if not.</summary>
     ///  <param name="File1">[in] Information about the file that is the left
     ///  hand operand of the comparison.</param>
     ///  <param name="File2">[in] Information about the file that is the right
@@ -200,6 +200,7 @@ resourcestring
 
   sDateTypeModified = 'last modification dates';
   sDateTypeCreated = 'creation dates';
+  sDateTypeAccessed = 'last access dates';
 
 const
   TrueResponses: array[TDateComparer.TOp] of string = (
@@ -209,7 +210,7 @@ const
     sNEQ, sGTE, sLTE, sGT, sLT, SEQ
   );
   DateTypeResponses: array[TDateExtractor.TDateType] of string = (
-    sDateTypeModified, sDateTypeCreated
+    sDateTypeModified, sDateTypeCreated, sDateTypeAccessed
   );
 
 
