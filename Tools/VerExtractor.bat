@@ -68,11 +68,15 @@ for /f "tokens=2 delims==" %%A in (
 :: Build the full program version string
 set Version=%vernum%%suffix%
 
-:: Ensure the directory that receives the include file exists and is empty
-if exist "%IncDir%" (
-  rmdir /S /Q "%IncDir%" 
+:: Create the directory that receives the include file if it doesn't exist
+if not exist "%IncDir%" (
+  mkdir "%IncDir%"
 )
-mkdir "%IncDir%"
+
+:: Delete any existing copy of the include file
+if exist "%IncFile%" (
+  del "%IncFile%"
+)
 
 :: Write the include file
 echo const VERSION_STRING = '%Version%'; >"%IncFile%"
