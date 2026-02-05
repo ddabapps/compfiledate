@@ -28,51 +28,78 @@ Step 2: Configure the Build Environment
 
 The following tools must be installed to build CompFileDate:
 
-+ Delphi 13 or later
+    + Delphi 13 or later. The 32 bit IDE is used.
 
-+ `VIEd.exe` (Version Information Editor by DelphiDabbler). See
-  https://delphidabbler.com/software/vied.
+    + `VIEd.exe` (Version Information Editor by DelphiDabbler). See
+      https://delphidabbler.com/software/vied. Version 2.17.0 or later is
+      required.
 
 The program will not compile without setting the VIEDROOT environment variable
 to the path where the VIEd binary is installed. By default this is in
-%ProgramFiles(x86)%\DelphiDabbler\VIEd on 64 bit Windows and 
+%ProgramFiles(x86)%\DelphiDabbler\VIEd on 64 bit Windows and
 %ProgramFiles%\DelphiDabbler\VIEd on 32 bit Windows.
 
-VIEDROOT can be set within the Delphi IDE. To do this choose the Tools | Options
-menu option to display the Options dialogue box. Then select the IDE |
-Environment Variables page and create the environment variable in the System
-Overides section of the page. Alternatively set the environment variable
-globally in Windows before starting Delphi.
+VIEDROOT can be set in two ways:
+
+    1. From within the Delphi IDE. To do this choose the Tools | Options menu
+       option to display the Options dialogue box. Then select the IDE |
+       Environment Variables page and create the environment variable in the
+       System Overides section of the page.
+
+    2. By setting the environment variable using Windows Settings. This must be
+       done before starting the Delphi IDE.
 
 
 Step 3: Modify the Source
+-------------------------
 
 If you intend modifying and redistributing CompFileDate you must comply with
-CompFileDate's open source licence. See 
+CompFileDate's open source licence. See
 https://github.com/ddabapps/compfiledate/blob/master/LICENSE.md for details.
 
 
 Step 4: Compile
+---------------
 
-From the IDE you have the choice of building 32 or 64 bit versions of the
-program. Debug and release targets are both supported.
+From the IDE you have the choice of building Windows 32 bit, Windows 64 bit or
+Linux 64 bit operating systems. Debug and Release build configurations are
+supported for each target OS.
 
-Everything is compiled into a _build sub-directory of the directory where you
-copied the source. This directory is hidden from Git. 
+To build a required target OS and build configuration select them in the IDE's
+Projects window before performing a full build.
+
+Everything is compiled into a `_build` sub-directory of the directory where you
+copied the source. This directory is hidden from Git. There is a sub-directory
+of `_build` named for each target OS that has been built. Within the target OS's
+directory there will be a further sub-directory for each build configuration
+that has been built. These are `Debug` and `Release`. Within those directories
+intermediate binaries are stored in a `bin` sub-directory while executable
+programs can be found in an `exe` directory.
+
+To assist in building for all target OSs you can use the `MakeAllTargets.bat`
+script located in the `Tools` directory. This script runs a full Debug build for
+each target OS. See the comments at the top of `MakeAllTargets.bat` for details
+of how to use the script.
 
 
 Step 5: Release (optional)
+--------------------------
 
-Releases are created by running Deploy.bat from the command line, NOT from
-within the Delphi IDE. Deploy.bat has its own dependencies and requirements
+Releases are created by running `Deploy.bat` from the command line, NOT from
+within the Delphi IDE. `Deploy.bat` has its own dependencies and requirements
 which are explained in the comments at the top of the script file.
 
-The script compiles release versions of both 32 and 64 bit versions of the
-program and parcels them up in zip files, along with the appropriate
-documentation.
+The script compiles release versions of the 32 and 64 bit Windows and 64 bit
+Linux versions of the program. Each release version is bundled up in both zip
+and tar/gzip archives.
+
+Documentation is also included in the archives. Plain text files that are
+included in the Linux 64 bit release have their line end characters converted
+from Windows' CRLF format to Linux's LF format.
 
 
 Step 6: Clean Up
+----------------
 
 If you cloned the CompFileDate repo using Git you can clean up easily by opening
 a Git command line on directory where the clone was made. Then run:

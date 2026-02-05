@@ -6,6 +6,26 @@ All notable changes to this project are documented in this file.
 
 This change log begins with the first public release version of _CompFileDate_. Releases are listed in reverse version number order.
 
+## Release v2.4.0 of 5 February 2026
+
+* Added 64 bit Linux support [[issue #28](https://github.com/ddabapps/compfiledate/issues/28)]. The Linux version works identically to the Windows versions except that the `--followshortcuts` (`-s`) command is not supported.
+* Fixed typos in the program help screen [[issue #29](https://github.com/ddabapps/compfiledate/issues/29)]. Also updated re changes relating to the Linux release.
+* Refactored code:
+    * Extracted Windows specific code into a separate unit that is not compiled into the Linux build.
+    * Change some static classes into records with methods [[issue #36](https://github.com/ddabapps/compfiledate/issues/36)].
+* Archive files containing releases are now available in tar/gzip format in addition to zip format [[issue #35](https://github.com/ddabapps/compfiledate/issues/35)].
+* Deploy script, `Deploy.bat`, was updated:
+    * Fixed potential path errors that could occur if any path contains spaces [[issue #32](https://github.com/ddabapps/compfiledate/issues/32)].
+    * Heavily revised to support generation of Linux releases.
+    * Revised to generate tar/gzip release archive files [[issue #35](https://github.com/ddabapps/compfiledate/issues/35)].
+    * Rationalised the use of environment variables [[issue #34](https://github.com/ddabapps/compfiledate/issues/34)].
+* Added new helper script (`Tools\MakeAllTargets.bat`) that builds Debug releases for all supported target OSs.
+* Added new script that is called as a Delphi build event (`Tools\VerExtractor`) that generates an include file containing the release version number.
+* Updated documentation:
+    * Read-me files and build documentation were updated re changes in this release.
+    * Various corrections and clarifications were made in `Docs\ReadMe.txt` and `Build.txt`.
+    * Corrected copyright date in `LICENSE.md` [[issue #30](https://github.com/ddabapps/compfiledate/issues/30)].
+
 ## Release v2.3.0 of 31 January 2026
 
 * Error messages are now written to standard error instead of standard output [[issue #13](https://github.com/ddabapps/compfiledate/issues/13)].

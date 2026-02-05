@@ -20,7 +20,6 @@ uses
   System.SysUtils,
   // Project
   UConsole,
-  UFileInfo,
   UParams;
 
 
@@ -47,6 +46,16 @@ type
     ///  the sign on message is written to standard output.</summary>
     ///  <param name="E">[in] Exception whose message is to be reported.</param>
     procedure ReportError(const E: Exception);
+    ///  <summary>Adjusts the given file name if necessary according to target
+    ///  OS and command line options and return the adjusted file name or the
+    ///  unchanged file name if no adjustment is necessary.</summary>
+    ///  <remarks>The ONLY case where a file name is adjusted is when ALL of the
+    ///  following conditions apply: (1) Windows is the target OS, (2) the user
+    ///  has specified the follow shortcuts option, (3) the file is a shortcut
+    ///  (.lnk) file and (4) the shortcut file references a valid file.
+    ///  </remarks>
+    function AdjustFileName(const AFileName: string): string;
+      {$IF not Defined(MSWINDOWS)}inline;{$ENDIF}
     ///  <summary>Compares modification dates of the two files passed on the
     ///  command line using the user's chosen comparison operation and returns
     ///  True if the comparison succeeds or False if not.</summary>
@@ -56,13 +65,7 @@ type
     ///  hand operand of the comparison.</param>
     ///  <returns><c>Boolean</c>. <c>True</c> if the operation succeeds or
     ///  <c>False</c> if not.</returns>
-    function CompareFileDates(const File1, File2: TFileInfo): Boolean;
-    ///  <summary>Gets the program's product version number from version
-    ///  information resources.</summary>
-    ///  <returns><c>string</c>. Version number as a dot delimited string or
-    ///  an empty string if version information cannot be read.</returns>
-    ///  <remarks>*** This is a Windows specific method ***</remarks>
-    class function GetProductVersionStr: string;
+    function CompareFileDates(const FileName1, FileName2: string): Boolean;
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -78,12 +81,17 @@ implementation
 
 uses
   // Delphi
-  WinApi.Windows,
   System.DateUtils,
+  System.IOUtils,
   // Project
-  UAppException,
-  UDateComparer,
-  UDateExtractor;
+  UAppException
+  , UAppInfo
+  , UDateComparer
+  , UDateExtractor
+  {$IF Defined(MSWINDOWS)}
+  , UWinShellLink
+  {$ENDIF}
+  ;
 
 
 resourcestring
@@ -98,13 +106,16 @@ resourcestring
     or   CompFileDate -V | --version
   ''';
 
-  sHelp = '''
+  sHelpIntro = '''
   filename1
     Name of first file to be compared.
   filename2
     Name of second file to be compared.
 
   Options are:
+  ''';
+
+  sHelpCompareCmd = '''
     -c <op> or --compare=<op>'
       Defines the compare operation to use. <op> must be one of the
       following:
@@ -121,6 +132,9 @@ resourcestring
           Check if 1st file date is no later than 2nd file date.
         neq, not-equal, not-same, different:
           Check if file dates are different.
+  ''';
+
+  sHelpDateTypeCmd = '''
     -d <type> or --datetype=<type>
       Determines whether last modification or creation dates are compared.
       <type> must be one of the following:
@@ -128,23 +142,45 @@ resourcestring
           Use date files were last modified (default if option is not provided).
         c, created, creation:
           Use date files were created.
+  ''';
+
+  {$IF Defined(MSWINDOWS)}
+  sHelpFollowShortcutsCmd = '''
     -s or --followshortcuts
       Indicates that if either filename1 or filename2 is a shortcut file then
       the date of the target file will be used in comparisons. If neither option
       is specified then shortcuts are not followed and the date of the shortcut
       file itself is used.
+  ''';
+  {$ELSEIF Defined(LINUX)}
+  sHelpFollowShortcutsCmd = '''
+    -s or --followshortcuts
+      <<Not supported on Linux>>. Reports an error if used.
+  ''';
+  {$ENDIF}
+
+  sHelpVerboseCmd = '''
     -v or --verbose
-      Verbose: writes output to standard output. No output is written if the 
+      Verbose: writes output to standard output. No output is written if the
       option is not provided. Output is always written to standard error when an
-      error occurs or to standard output when help or the program''s version
+      error occurs or to standard output when help or the program's version
       number are requested.
+  ''';
+
+  sHelpHelpCmd = '''
     -h or -? or --help
       Displays help screen. Rest of command line ignored.
+  ''';
+
+  sHelpVersionCmd = '''
     -V or --version
       Displays program version number and platform. Rest of command line
       ignored.
+  ''';
 
-  The program''s exit code is 1 if the comparison is true and 0 if it is false.
+  sHelpOutro = '''
+
+  The program's exit code is 1 if the comparison is true and 0 if it is false.
 
   If an error occurs then an error code >= 100 is returned and an error message
   is written to standard error. See documentation for details of error codes.
@@ -176,16 +212,33 @@ const
     sDateTypeModified, sDateTypeCreated
   );
 
+
 { TMain }
 
-function TMain.CompareFileDates(const File1, File2: TFileInfo): Boolean;
+function TMain.AdjustFileName(const AFileName: string): string;
 begin
-  var FileDate1 := TDateExtractor.GetDate(
-    File1.ResolvedFileName, fParams.DateType
-  );
-  var FileDate2 := TDateExtractor.GetDate(
-    File2.ResolvedFileName, fParams.DateType
-  );
+  {$IF Defined(MSWINDOWS)}
+  // Shortcut files are only supported on Windows
+  if not fParams.FollowShortcuts then
+    // not following shortcut file: return AFileName unchanged
+    Exit(AFileName);
+  if TPath.GetExtension(AFileName).CompareTo('.lnk') <> 0 then
+    // AFileName is not a shortcut file: return it unchanged
+    Exit(AFileName);
+  // AFileName is a shortcut file. Try to get file it points to in Result, but
+  // if this fails return AFileName unchanged.
+  if not TWinShellLink.TryResolveShortcut(AFileName, Result) then
+    Exit(AFileName);
+  {$ELSE}
+  // Windows shortcut files are not supported: just return AFileName unchaged
+  Result := AFileName;
+  {$ENDIF}
+end;
+
+function TMain.CompareFileDates(const FileName1, FileName2: string): Boolean;
+begin
+  var FileDate1 := TDateExtractor.GetDate(FileName1, fParams.DateType);
+  var FileDate2 := TDateExtractor.GetDate(FileName2, fParams.DateType);
   Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
 end;
 
@@ -218,9 +271,9 @@ begin
       // Normal execution
       fConsole.Silent := not fParams.Verbose;
       SignOn;
-      var File1 := TFileInfo.Create(fParams.FileName1, fParams.FollowShortcuts);
-      var File2 := TFileInfo.Create(fParams.FileName2, fParams.FollowShortcuts);
-      if CompareFileDates(File1, File2) then
+      var FileName1 := AdjustFileName(fParams.FileName1);
+      var FileName2 := AdjustFileName(fParams.FileName2);
+      if CompareFileDates(FileName1, FileName2) then
       begin
         fConsole.WriteLn(
           TConsole.TChannel.StdOut,
@@ -230,7 +283,7 @@ begin
           TConsole.TChannel.StdOut,
           string.Format(
             TrueResponses[fParams.ComparisonOp],
-            [File1.ResolvedFileName, File2.ResolvedFileName]
+            [FileName1, FileName2]
           )
         );
         ExitCode := 1;
@@ -245,7 +298,7 @@ begin
           TConsole.TChannel.StdOut,
           string.Format(
             FalseResponses[fParams.ComparisonOp],
-            [File1.ResolvedFileName, File2.ResolvedFileName]
+            [FileName1, FileName2]
           )
         );
         ExitCode := 0;
@@ -266,47 +319,6 @@ begin
   end;
 end;
 
-class function TMain.GetProductVersionStr: string;
-begin
-  Result := '';
-  // Get fixed file info from program's version info
-  // get size of version info
-  var UnusedHandle: DWORD;  // Set to 0 by GetFileVersionInfoSize (unused)
-  var VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), UnusedHandle);
-  if VerInfoSize > 0 then
-  begin
-    // create buffer and read version info into it
-    var VerInfoBuf: Pointer;
-    GetMem(VerInfoBuf, VerInfoSize);
-    try
-      var IgnoredHandle: DWORD := 0;  // param ignored by GetFileVersionInfo
-      if GetFileVersionInfo(
-        PChar(ParamStr(0)), IgnoredHandle, VerInfoSize, VerInfoBuf
-      ) then
-      begin
-        // get fixed file info from version info (ValPtr points to it)
-        var BufSize: UINT; // Set by VerQueryValue to size of data (unused)
-        var ValPtr: Pointer;  // pointer to value from VerQueryValue
-        if VerQueryValue(VerInfoBuf, '\', ValPtr, BufSize) then
-        begin
-          var FFI: TVSFixedFileInfo := PVSFixedFileInfo(ValPtr)^;
-          // Build version info string from product version field of FFI
-          Result := string.Format(
-            '%d.%d.%d',
-            [
-              HiWord(FFI.dwProductVersionMS),
-              LoWord(FFI.dwProductVersionMS),
-              HiWord(FFI.dwProductVersionLS)
-            ]
-          );
-        end
-      end;
-    finally
-      FreeMem(VerInfoBuf);
-    end;
-  end;
-end;
-
 procedure TMain.ReportError(const E: Exception);
 begin
   // Sign on to stdout only if the verbosity flag is on
@@ -322,10 +334,19 @@ procedure TMain.ShowHelp;
 begin
   fConsole.Silent := False;
   SignOn;
+
   fConsole.WriteLn(TConsole.TChannel.StdOut);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sUsage);
   fConsole.WriteLn(TConsole.TChannel.StdOut);
-  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelp);
+
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpIntro);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpCompareCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateTypeCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowShortcutsCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVerboseCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpHelpCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVersionCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpOutro);
 end;
 
 procedure TMain.ShowShortHelp;
@@ -339,23 +360,13 @@ begin
 end;
 
 procedure TMain.ShowVersion;
-
-  function ProgramPlatform: string;
-  begin
-    {$IF Defined(WIN32)}
-    Result := 'Windows 32 bit';
-    {$ELSEIF Defined(WIN64)}
-    Result := 'Windows 64 bit';
-    {$ELSE}
-    {$Message Fatal 'Unsupported platform'}
-    {$IFEND}
-  end;
-
 begin
   fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdOut,
-    string.Format('v%0:s (%1:s)', [GetProductVersionStr, ProgramPlatform])
+    string.Format(
+      'v%0:s (%1:s)',
+      [TAppInfo.Version, TAppInfo.OSPlatform])
   );
 end;
 
