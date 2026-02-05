@@ -8,6 +8,6 @@
 # These values are also used by Deploy.bat and Tools/MakeAllTargets.bat
 
 # Version & build numbers
-version=2.3.0
-build=6
+version=2.4.0
+build=7
 suffix=
