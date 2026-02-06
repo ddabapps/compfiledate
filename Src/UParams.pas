@@ -42,6 +42,8 @@ type
       fFollowShortcuts: Boolean;
       fFileName2: string;
       fFileName1: string;
+      // List of warnings
+      fWarnings: TStrings;
     ///  <summary>Parses the command at a given index on the command line.
     ///  </summary>
     ///  <param name="Idx">[in/out] When called <c>Idx</c> is set to the index
@@ -62,6 +64,8 @@ type
     ///  <exception><c>EApplication</c> raised if <c>DT</c> is not a valid
     ///  date type name.</exception>
     procedure ParseDateType(DT: string);
+    ///  <summary>Read accessor for <c>Warnings</c> property.</summary>
+    function GetWarnings: TArray<string>;
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -111,6 +115,8 @@ type
     property FileName1: string read fFileName1;
     ///  <summary>Name of the 2nd file on the command line.</summary>
     property FileName2: string read fFileName2;
+    ///  <summary>Array of any warnings generated while parsing parameters
+    property Warnings: TArray<string> read GetWarnings;
   end;
 
 
@@ -155,12 +161,19 @@ begin
   fComparisonOp := TDateComparer.TOp.LT;
   fDateType := TDateExtractor.TDateType.LastModified;
   fFollowShortcuts := False;
+  fWarnings := TStringList.Create;
 end;
 
 destructor TParams.Destroy;
 begin
+  fWarnings.Free;
   fParams.Free;
   inherited;
+end;
+
+function TParams.GetWarnings: TArray<string>;
+begin
+  Result := fWarnings.ToStringArray;
 end;
 
 procedure TParams.Parse;

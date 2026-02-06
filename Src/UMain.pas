@@ -205,6 +205,8 @@ resourcestring
   sDateTypeCreated = 'creation dates';
   sDateTypeAccessed = 'last access dates';
 
+  sWarning = 'WARNING: %s';
+
 const
   TrueResponses: array[TDateComparer.TOp] of string = (
     sEQ, sLT, sGT, sLTE, sGTE, sNEQ
@@ -385,6 +387,11 @@ begin
   );
   // Record that we've signed on
   fSignedOn := True;
+  // Report any warnings
+  for var Warning in fParams.Warnings do
+    fConsole.WriteLn(
+      TConsole.TChannel.StdErr, string.Format(sWarning, [Warning])
+    );
 end;
 
 end.
