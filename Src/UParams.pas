@@ -29,6 +29,40 @@ type
   ///  properties.</summary>
   TParams = class(TObject)
   strict private
+    const
+      // Valid values of date type command
+      DateTypeCreateValues: array of string = [
+        'c', 'created', 'creation'
+      ];
+      DateTypeModifyValues: array of string = [
+        'm', 'modified', 'last-modified', 'modification'
+      ];
+      DateTypeAccessValues: array of string = [
+        'a', 'accessed', 'last-accessed', 'access'
+      ];
+      DateTypeStatusChangeValues: array of string = [
+        's', 'status-changed', 'last-status-change'
+      ];
+      // Valid values of compare command
+      CompareEQValues: array of string = [
+        'eq', 'equal', 'same'
+      ];
+      CompareGTValues: array of string = [
+        'gt', 'newer', 'later'
+      ];
+      CompareGTEValues: array of string = [
+        'gte', 'not-older', 'not-earlier'
+      ];
+      CompareLTValues: array of string = [
+        'lt', 'older', 'earlier'
+      ];
+      CompareLTEValues: array of string = [
+        'lte', 'not-newer', 'not-later'
+      ];
+      CompareNEQValues: array of string = [
+        'neq', 'not-equal', 'not-same', 'different'
+      ];
+  strict private
     var
       // List of command line parameters
       fParams: TStringList;
@@ -64,6 +98,16 @@ type
     ///  <exception><c>EApplication</c> raised if <c>DT</c> is not a valid
     ///  date type name.</exception>
     procedure ParseDateType(DT: string);
+    ///  <summary>Checks if a given value is contained in a given array of valid
+    ///  values.</summary>
+    ///  <param name="AValue">[in] Value to be tested.</param>
+    ///  <param name="AValidValues">[in] Array containing the valid values.
+    ///  </param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if <c>AValue</c> is valid,
+    ///  <c>False</c> if not.</returns>
+    ///  <remarks>The test for validity is case insensitive.</remarks>
+    class function IsValidValue(const AValue: string;
+      const AValidValues: array of string): Boolean;
     ///  <summary>Read accessor for <c>Warnings</c> property.</summary>
     function GetWarnings: TArray<string>;
   public
@@ -181,6 +225,15 @@ begin
   Result := fWarnings.ToStringArray;
 end;
 
+class function TParams.IsValidValue(const AValue: string;
+  const AValidValues: array of string): Boolean;
+begin
+  Result := False;
+  for var ValidValue in AValidValues do
+    if string.Compare(ValidValue, AValue, True) = 0 then
+      Exit(True);
+end;
+
 procedure TParams.Parse;
 begin
   // Loop through all commands on command line
@@ -277,19 +330,17 @@ procedure TParams.ParseCompareType(CT: string);
 begin
   if CT.IsEmpty then
     raise EApplication.Create(sNoCompareType, EApplication.ErrNoCompareType);
-  CT := CT.ToLower;
-  if (CT = 'eq') or (CT = 'equal') or (CT = 'same') then
+  if IsValidValue(CT, CompareEQValues) then
     fComparisonOp := TDateComparer.TOp.EQ
-  else if (CT = 'gt') or (CT = 'newer') or (CT = 'later') then
+  else if IsValidValue(CT, CompareGTValues) then
     fComparisonOp := TDateComparer.TOp.GT
-  else if (CT = 'gte') or (CT = 'not-older') or (CT = 'not-earlier') then
+  else if IsValidValue(CT, CompareGTEValues) then
     fComparisonOp := TDateComparer.TOp.GTE
-  else if (CT = 'lt') or (CT = 'older') or (CT = 'earlier') then
+  else if IsValidValue(CT, CompareLTValues) then
     fComparisonOp := TDateComparer.TOp.LT
-  else if (CT = 'lte') or (CT = 'not-newer') or (CT = 'not-later') then
+  else if IsValidValue(CT, CompareLTEValues) then
     fComparisonOp := TDateComparer.TOp.LTE
-  else if (CT = 'neq') or (CT = 'not-equal') or (CT = 'not-same')
-    or (CT = 'different') then
+  else if IsValidValue(CT, CompareNEQValues) then
     fComparisonOp := TDateComparer.TOp.NEQ
   else
     raise EApplication.Create(sBadCompareType, EApplication.ErrBadCompareType);
@@ -299,12 +350,9 @@ procedure TParams.ParseDateType(DT: string);
 begin
   if DT.IsEmpty then
     raise EApplication.Create(sNoDateType, EApplication.ErrNoDateType);
-  DT := DT.ToLower;
-  if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
-    or (DT = 'modification')
-    then
+  if IsValidValue(DT, DateTypeModifyValues) then
     fDateType := TDateExtractor.TDateType.LastModified
-  else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
+  else if IsValidValue(DT, DateTypeCreateValues) then
   begin
     {$IF Defined(MSWINDOWS)}
     fDateType := TDateExtractor.TDateType.Created;
@@ -313,11 +361,9 @@ begin
     fWarnings.Add(string.Format(sNoCreationDate, [DT]));
     {$ENDIF}
   end
-  else if (DT = 'a') or (DT = 'accessed') or (DT = 'last-accessed')
-    or (DT = 'access') then
+  else if IsValidValue(DT, DateTypeAccessValues) then
     fDateType := TDateExtractor.TDateType.LastAccessed
-  else if (DT = 's') or (DT = 'status-changed')
-    or (DT = 'last-status-change') then
+  else if IsValidValue(DT, DateTypeStatusChangeValues) then
   begin
     {$IF Defined(MSWINDOWS)}
     raise EApplication.Create(
