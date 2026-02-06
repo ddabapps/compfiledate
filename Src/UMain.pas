@@ -134,6 +134,8 @@ resourcestring
           Check if file dates are different.
   ''';
 
+
+  {$IF Defined(MSWINDOWS)}
   sHelpDateTypeCmd = '''
     -d <type> or --datetype=<type>
       Determines whether last modification, last accessed or creation dates are
@@ -141,11 +143,29 @@ resourcestring
       <type> must be one of the following:
         m, modified, last-modified, modification:
           Use date files were last modified (default if option is not provided).
-        c, created, creation:
-          Use date files were created.
         a, access, accessed, last-accessed:
           Use date files were last accessed.
+        c, created, creation:
+          Use date files were created.
   ''';
+  {$ELSEIF Defined(LINUX)}
+  sHelpDateTypeCmd = '''
+    -d <type> or --datetype=<type>
+      Determines whether last modification, last accessed or last status update
+      dates are compared.
+      <type> must be one of the following:
+        m, modified, last-modified, modification:
+          Use date files were last modified (default if option is not provided).
+        a, access, accessed, last-accessed:
+          Use date files were last accessed.
+        s, status-changed, last-status-change:
+          Use date files last had status updates.
+        c, created, creation:
+          DEPRECATED: use status-changed instead.
+          These value are treated as aliases for status-changed.
+          A warning is displayed if any of the values are specified.
+  ''';
+  {$ENDIF}
 
   {$IF Defined(MSWINDOWS)}
   sHelpFollowShortcutsCmd = '''

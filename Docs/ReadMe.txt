@@ -110,15 +110,28 @@ options are:
         Checks if the dates of the files are not equal.
 
   -d <type> or --datetype=<type>
-    Determines whether the last modification, last accessed, or creation dates 
-    of the files are compared. <type> must be one of the following:
+    Determines which date property of the files is used in the comparison.
+     <type> must be one of the following:
       m, modified, last-modified, modification:
         Use the date the files were last modified. This is the default used if
         this option is not provided.
-      c, created, creation:
-        Use the date the files were created.
       a, access, accessed, last-accessed:
         Use the date the files were last accessed.
+      c, created, creation:
+        Windows:
+          Use the date the files were created.
+        Linux:
+          DEPRECATED. A warning is written to standard error noting that file
+          creation dates are not supported.
+          The date the status of the files was last changed is used instead, as
+          if <type> had been "status-changed".
+      s, status-changed, last-status-change:
+        Linux:
+          Use the date the status of the files was last updated.
+        Windows:
+          Not supported because Windows files do not support status update
+          dates. The program fails with exit code 108 if any of these date types
+          is specified.
 
   -s or --followshortcuts
     Windows:
