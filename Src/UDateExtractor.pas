@@ -26,10 +26,20 @@ type
       ///  <summary>Type of date to be extracted from a file.</summary>
       ///  <remarks>
       ///  <para>- LastModified - get date file was last modified.</para>
-      ///  <para>- Created - get date file was created.</para>
+      ///  <para>- Created - get date file was created (Windows only).</para>
+      ///  <para>- StatusChanged - get date when the file's status was was
+      ///  changed (Linux only).</para>
       ///  <para>- LastAccessed - get date file was last accessed.</para>
       ///  </remarks>
-      TDateType = (LastModified, Created, LastAccessed);
+      TDateType = (
+        LastModified,
+        {$IF Defined(MSWINDOWS)}
+        Created,
+        {$ELSEIF Defined(LINUX)}
+        StatusChanged,
+        {$ENDIF}
+        LastAccessed
+      );
       {$SCOPEDENUMS OFF}
   public
     ///  <summary>Gets either creation, last-modified or last-accessed date from
@@ -72,8 +82,15 @@ begin
   case DateType of
     TDateType.LastModified:
       Result := TFile.GetLastWriteTime(FileName);
+    {$IF Defined(MSWINDOWS)}
     TDateType.Created:
       Result := TFile.GetCreationTime(FileName);
+    {$ELSEIF Defined(LINUX)}
+    TDateType.StatusChanged:
+      // On Linux, TFile.GetCreationTime ultimately returns the _status.st_ctime
+      // value, which is the status change date. Confusing!
+      Result := TFile.GetCreationTime(FileName);
+    {$ENDIF}
     TDateType.LastAccessed:
       Result := TFile.GetLastAccessTime(FileName);
   else

@@ -202,7 +202,11 @@ resourcestring
   sFailureReport = 'Comparison using %s is false';
 
   sDateTypeModified = 'last modification dates';
+  {$IF Defined(MSWINDOWS)}
   sDateTypeCreated = 'creation dates';
+  {$ELSEIF Defined(LINUX)}
+  sDateTypeStatusChanged = 'status change dates';
+  {$ENDIF}
   sDateTypeAccessed = 'last access dates';
 
   sWarning = 'WARNING: %s';
@@ -215,7 +219,13 @@ const
     sNEQ, sGTE, sLTE, sGT, sLT, SEQ
   );
   DateTypeResponses: array[TDateExtractor.TDateType] of string = (
-    sDateTypeModified, sDateTypeCreated, sDateTypeAccessed
+    sDateTypeModified,
+    {$IF Defined(MSWINDOWS)}
+    sDateTypeCreated,
+    {$ELSEIF Defined(LINUX)}
+    sDateTypeStatusChanged,
+    {$ENDIF}
+    sDateTypeAccessed
   );
 
 

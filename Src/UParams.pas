@@ -141,6 +141,11 @@ resourcestring
   sBadDateType = 'Invalid date type in -d or --datetype command';
   sNoShortcutsOnLinux =
     'The -s or --followshortcuts command is not supported on Linux';
+  sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
+  // Warning messages
+  sNoCreationDate =
+    'The "%s" date type is deprecated on Linux. '
+    + 'Using "status-changed" instead.';
 
 
 { TParams }
@@ -296,13 +301,32 @@ begin
     raise EApplication.Create(sNoDateType, EApplication.ErrNoDateType);
   DT := DT.ToLower;
   if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
-    or (DT = 'modification') then
+    or (DT = 'modification')
+    then
     fDateType := TDateExtractor.TDateType.LastModified
   else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
-    fDateType := TDateExtractor.TDateType.Created
+  begin
+    {$IF Defined(MSWINDOWS)}
+    fDateType := TDateExtractor.TDateType.Created;
+    {$ELSEIF Defined(LINUX)}
+    fDateType := TDateExtractor.TDateType.StatusChanged;
+    fWarnings.Add(string.Format(sNoCreationDate, [DT]));
+    {$ENDIF}
+  end
   else if (DT = 'a') or (DT = 'accessed') or (DT = 'last-accessed')
     or (DT = 'access') then
     fDateType := TDateExtractor.TDateType.LastAccessed
+  else if (DT = 's') or (DT = 'status-changed')
+    or (DT = 'last-status-change') then
+  begin
+    {$IF Defined(MSWINDOWS)}
+    raise EApplication.Create(
+      sNoCTimeOnWindows, [DT], EApplication.ErrBadDateType
+    );
+    {$ELSEIF Defined(LINUX)}
+    fDateType := TDateExtractor.TDateType.StatusChanged;
+    {$ENDIF}
+  end
   else
     raise EApplication.Create(sBadDateType, EApplication.ErrBadDateType);
 end;
