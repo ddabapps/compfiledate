@@ -91,71 +91,110 @@ where
 options are:
 
   -c <op> or --compare=<op>
+
     Defines the compare operation to use. <op> must be one of the following:
-      eq, equal, same:
+  
+      =, ==, eq, eql, equal, same
+
         Checks if the dates of the files are equal.
-      gt, newer, later:
+  
+      >, gt, newer, later, after
+    
         Checks if the 1st file date is greater than (i.e. later than) the 2nd
         file date.
-      gte, not-older, not-earlier
+  
+      >=, gte, ge, goe, no-older, not-older, no-earlier, not-earlier, 
+      not-before
+    
         Checks if the 1st file date is greater than or equal to (i.e. no older
         than) the 2nd file date.
-      lt, older, earlier
+  
+      <, lt, older, earlier, before
+    
         Checks if the 1st file date is less than (i.e. earlier than) the 2nd
         file date. This is the default used if this option is not provided.
-      lte, not-newer, not-later
+  
+      <=, lte, le, loe, no-newer, not-newer, no-later, not-later, not-after
+    
         Checks if the 1st file date is less than or equal to (i.e. no newer
         than) the 2nd file date.
-      neq, not-equal, not-same, different
+  
+      <>, !=, ~=, neq, ne, not-equal, not-same, different
+    
         Checks if the dates of the files are not equal.
 
+      If <op> contains either a '<' or '>' character then the value must be
+      enclosed in double quotes. On Linux single quotes may also be used. For
+      example --convert="<=" and -c "<>"
+        
+
   -d <type> or --datetype=<type>
+  
     Determines which date property of the files is used in the comparison.
-     <type> must be one of the following:
-      m, modified, last-modified, modification:
+    <type> must be one of the following:
+    
+      m, modify, modified, last-modified, modification, update, updated,
+      last-updated, write, written, last-written
+    
         Use the date the files were last modified. This is the default used if
         this option is not provided.
-      a, access, accessed, last-accessed:
+    
+      a, accessed, last-accessed, access, read, last-read
+    
         Use the date the files were last accessed.
-      c, created, creation:
+    
+      c, create, created, creation
+    
         Windows:
           Use the date the files were created.
+    
         Linux:
-          DEPRECATED. A warning is written to standard error noting that file
-          creation dates are not supported.
-          The date the status of the files was last changed is used instead, as
-          if <type> had been "status-changed".
-      s, status-changed, last-status-change:
+          Linux does not support file creation dates.
+          Parameters that were present in v2.4.0 (i.e. c, created and creation)
+          are DEPRECATED. The date the status of the files was last changed is
+          used instead, as if <type> had been "status-changed".
+          Parameters introduced after v2.4.0 are not supported and cause the
+          program to fail with exit code 108.
+    
+      s, status, status-change, last-status-change, status-changed, metadata,
+      metadata-change, last-metadata-change, metadata-changed
+    
         Linux:
-          Use the date the status of the files was last updated.
+          Use the date that the status (metadata) of the files was last updated.
+    
         Windows:
           Not supported because Windows files do not support status update
           dates. The program fails with exit code 108 if any of these date types
           is specified.
 
   -s or --followshortcuts
+    
     Windows:
       Indicates that if either filename1 or filename2 is a shortcut (.lnk)
       file then the date of the shortcut's target file will be used in
       comparisons. If neither option is specified then shortcuts are not
       followed and the date of the shortcut file itself is used in the
       comparison.
+    
     Linux:
       Not supported because Linux does not support the Windows .lnk shortcut
       file format. The program fails with exit code 101 if either of the options
       is specified.
 
   -v or --verbose
-    Verbose: writes output to standard output. No output is written if the
+    
+    Verbose. Writes output to standard output. No output is written if the
     option is not provided. Output is always written to standard error when an
     error occurs or to standard output when help or the program's version number
     are requested.
 
   -h or -? or --help
+    
     Displays a help screen on standard output and halts. Any file names and
     other options are ignored.
 
   -V or --version.
+    
     Displays the program's version number and platform on standard output and
     halts. Any file names and other options are ignored.
 

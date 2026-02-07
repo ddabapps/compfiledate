@@ -113,96 +113,128 @@ resourcestring
     Name of second file to be compared.
 
   Options are:
+
   ''';
 
   sHelpCompareCmd = '''
-    -c <op> or --compare=<op>'
+    -c <op> or --compare=<op>
+
       Defines the compare operation to use. <op> must be one of the
       following:
-        eq, equal, same:
+        =, ==, eq, eql, equal, same:
           Check if file dates are the same.
-        gt, newer, later:
+        >, gt, newer, later, after:
           Check if 1st file date is later than 2nd file date.
-        gte, not-older, not-earlier:
+        >=, gte, ge, goe, no-older, not-older, no-earlier, not-earlier,
+        not-before:
           Check if 1st file date is no earlier than 2nd file date.
-        lt, older, earlier:
+        <, lt, older, earlier, before:
           Check if 1st file date is earlier than 2nd file date (default if
           option is not provided).
-        lte, not-newer, not-later:
+        <=, lte, le, loe, no-newer, not-newer, no-later, not-later, not-after:
           Check if 1st file date is no later than 2nd file date.
-        neq, not-equal, not-same, different:
+        <>, !=, ~=, neq, ne, not-equal, not-same, different:
           Check if file dates are different.
+
+  '''
+{$IF Defined(MSWINDOWS)}
+  + '''
+      If <op> contains either a '<' or '>' character then the value must be
+      enclosed in double quotes.
+
   ''';
+{$ELSEIF Defined(LINUX)}
+  + '''
+      If <op> contains either a '<' or '>' character then the value must be
+      enclosed in single or double quotes.
+
+  ''';
+{$ENDIF}
 
 
   {$IF Defined(MSWINDOWS)}
   sHelpDateTypeCmd = '''
     -d <type> or --datetype=<type>
+
       Determines whether last modification, last accessed or creation dates are
       compared.
       <type> must be one of the following:
-        m, modified, last-modified, modification:
+        m, modify, modified, last-modified, modification, update, updated,
+        last-updated, write, written, last-written:
           Use date files were last modified (default if option is not provided).
-        a, access, accessed, last-accessed:
+        a, accessed, last-accessed, access, read, last-read:
           Use date files were last accessed.
-        c, created, creation:
+        c, create, created, creation:
           Use date files were created.
+
   ''';
   {$ELSEIF Defined(LINUX)}
   sHelpDateTypeCmd = '''
     -d <type> or --datetype=<type>
+
       Determines whether last modification, last accessed or last status update
       dates are compared.
       <type> must be one of the following:
-        m, modified, last-modified, modification:
+        m, modify, modified, last-modified, modification, update, updated,
+        last-updated, write, written, last-written:
           Use date files were last modified (default if option is not provided).
-        a, access, accessed, last-accessed:
+        a, accessed, last-accessed, access, read, last-read:
           Use date files were last accessed.
-        s, status-changed, last-status-change:
+        s, status, status-change, last-status-change, status-changed,
+        metadata, metadata-change, last-metadata-change, metadata-changed:
           Use date files last had status updates.
         c, created, creation:
           DEPRECATED: use status-changed instead.
-          These value are treated as aliases for status-changed.
-          A warning is displayed if any of the values are specified.
+          These values are treated as aliases for status-changed and a warning
+          is displayed.
+
   ''';
   {$ENDIF}
 
   {$IF Defined(MSWINDOWS)}
   sHelpFollowShortcutsCmd = '''
     -s or --followshortcuts
+
       Indicates that if either filename1 or filename2 is a shortcut file then
       the date of the target file will be used in comparisons. If neither option
       is specified then shortcuts are not followed and the date of the shortcut
       file itself is used.
+
   ''';
   {$ELSEIF Defined(LINUX)}
   sHelpFollowShortcutsCmd = '''
     -s or --followshortcuts
       <<Not supported on Linux>>. Reports an error if used.
+
   ''';
   {$ENDIF}
 
   sHelpVerboseCmd = '''
     -v or --verbose
-      Verbose: writes output to standard output. No output is written if the
+
+      Verbose. Writes output to standard output. No output is written if the
       option is not provided. Output is always written to standard error when an
       error occurs or to standard output when help or the program's version
       number are requested.
+
   ''';
 
   sHelpHelpCmd = '''
     -h or -? or --help
+
       Displays help screen. Rest of command line ignored.
+
   ''';
 
   sHelpVersionCmd = '''
     -V or --version
+
       Displays program version number and platform. Rest of command line
       ignored.
+
   ''';
 
   sHelpOutro = '''
-
   The program's exit code is 1 if the comparison is true and 0 if it is false.
 
   If an error occurs then an error code >= 100 is returned and an error message
