@@ -32,16 +32,22 @@ type
     const
       // Valid values of date type command
       DateTypeCreateValues: array of string = [
+        // Values that existed a v2.4.0: generate warning on Linux
         'c', 'created', 'creation'
+        // Value added after v2.4.0: error on Linux
+        {$IF Defined(MSWINDOWS)}, 'create'{$ENDIF}
       ];
       DateTypeModifyValues: array of string = [
-        'm', 'modified', 'last-modified', 'modification'
+        'm', 'modify', 'modified', 'last-modified', 'modification', 'update',
+        'updated', 'last-updated', 'write', 'written', 'last-written'
       ];
       DateTypeAccessValues: array of string = [
-        'a', 'accessed', 'last-accessed', 'access'
+        'a', 'accessed', 'last-accessed', 'access', 'read', 'last-read'
       ];
       DateTypeStatusChangeValues: array of string = [
-        's', 'status-changed', 'last-status-change'
+        's', 'status', 'status-change', 'last-status-change', 'status-changed',
+        'metadata', 'metadata-change', 'last-metadata-change',
+        'metadata-changed'
       ];
       // Valid values of compare command
       CompareEQValues: array of string = [
