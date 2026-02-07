@@ -51,22 +51,24 @@ type
       ];
       // Valid values of compare command
       CompareEQValues: array of string = [
-        'eq', 'equal', 'same'
+        '=', '==', 'eq', 'eql', 'equal', 'same'
       ];
       CompareGTValues: array of string = [
-        'gt', 'newer', 'later'
+        '>', 'gt', 'newer', 'later', 'after'
       ];
       CompareGTEValues: array of string = [
-        'gte', 'not-older', 'not-earlier'
+        '>=', 'gte', 'ge', 'goe', 'no-older', 'not-older', 'no-earlier',
+        'not-earlier', 'not-before'
       ];
       CompareLTValues: array of string = [
-        'lt', 'older', 'earlier'
+        '<', 'lt', 'older', 'earlier', 'before'
       ];
       CompareLTEValues: array of string = [
-        'lte', 'not-newer', 'not-later'
+        '<=', 'lte', 'le', 'loe', 'no-newer', 'not-newer', 'no-later',
+        'not-later', 'not-after'
       ];
       CompareNEQValues: array of string = [
-        'neq', 'not-equal', 'not-same', 'different'
+        '<>', '!=', '~=', 'neq', 'ne', 'not-equal', 'not-same', 'different'
       ];
   strict private
     var
