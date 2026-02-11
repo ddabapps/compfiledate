@@ -29,6 +29,48 @@ type
   ///  properties.</summary>
   TParams = class(TObject)
   strict private
+    const
+      // Valid values of date type command
+      DateTypeCreateValues: array of string = [
+        // Values that existed a v2.4.0: generate warning on Linux
+        'c', 'created', 'creation'
+        // Value added after v2.4.0: error on Linux
+        {$IF Defined(MSWINDOWS)}, 'create'{$ENDIF}
+      ];
+      DateTypeModifyValues: array of string = [
+        'm', 'modify', 'modified', 'last-modified', 'modification', 'update',
+        'updated', 'last-updated', 'write', 'written', 'last-written'
+      ];
+      DateTypeAccessValues: array of string = [
+        'a', 'accessed', 'last-accessed', 'access', 'read', 'last-read'
+      ];
+      DateTypeStatusChangeValues: array of string = [
+        's', 'status', 'status-change', 'last-status-change', 'status-changed',
+        'metadata', 'metadata-change', 'last-metadata-change',
+        'metadata-changed'
+      ];
+      // Valid values of compare command
+      CompareEQValues: array of string = [
+        '=', '==', 'eq', 'eql', 'equal', 'same'
+      ];
+      CompareGTValues: array of string = [
+        '>', 'gt', 'newer', 'later', 'after'
+      ];
+      CompareGTEValues: array of string = [
+        '>=', 'gte', 'ge', 'goe', 'no-older', 'not-older', 'no-earlier',
+        'not-earlier', 'not-before'
+      ];
+      CompareLTValues: array of string = [
+        '<', 'lt', 'older', 'earlier', 'before'
+      ];
+      CompareLTEValues: array of string = [
+        '<=', 'lte', 'le', 'loe', 'no-newer', 'not-newer', 'no-later',
+        'not-later', 'not-after'
+      ];
+      CompareNEQValues: array of string = [
+        '<>', '!=', '~=', 'neq', 'ne', 'not-equal', 'not-same', 'different'
+      ];
+  strict private
     var
       // List of command line parameters
       fParams: TStringList;
@@ -42,6 +84,8 @@ type
       fFollowShortcuts: Boolean;
       fFileName2: string;
       fFileName1: string;
+      // List of warnings
+      fWarnings: TStrings;
     ///  <summary>Parses the command at a given index on the command line.
     ///  </summary>
     ///  <param name="Idx">[in/out] When called <c>Idx</c> is set to the index
@@ -62,6 +106,18 @@ type
     ///  <exception><c>EApplication</c> raised if <c>DT</c> is not a valid
     ///  date type name.</exception>
     procedure ParseDateType(DT: string);
+    ///  <summary>Checks if a given value is contained in a given array of valid
+    ///  values.</summary>
+    ///  <param name="AValue">[in] Value to be tested.</param>
+    ///  <param name="AValidValues">[in] Array containing the valid values.
+    ///  </param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if <c>AValue</c> is valid,
+    ///  <c>False</c> if not.</returns>
+    ///  <remarks>The test for validity is case insensitive.</remarks>
+    class function IsValidValue(const AValue: string;
+      const AValidValues: array of string): Boolean;
+    ///  <summary>Read accessor for <c>Warnings</c> property.</summary>
+    function GetWarnings: TArray<string>;
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -111,6 +167,8 @@ type
     property FileName1: string read fFileName1;
     ///  <summary>Name of the 2nd file on the command line.</summary>
     property FileName2: string read fFileName2;
+    ///  <summary>Array of any warnings generated while parsing parameters
+    property Warnings: TArray<string> read GetWarnings;
   end;
 
 
@@ -135,6 +193,11 @@ resourcestring
   sBadDateType = 'Invalid date type in -d or --datetype command';
   sNoShortcutsOnLinux =
     'The -s or --followshortcuts command is not supported on Linux';
+  sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
+  // Warning messages
+  sNoCreationDate =
+    'The "%s" date type is deprecated on Linux. '
+    + 'Using "status-changed" instead.';
 
 
 { TParams }
@@ -155,12 +218,28 @@ begin
   fComparisonOp := TDateComparer.TOp.LT;
   fDateType := TDateExtractor.TDateType.LastModified;
   fFollowShortcuts := False;
+  fWarnings := TStringList.Create;
 end;
 
 destructor TParams.Destroy;
 begin
+  fWarnings.Free;
   fParams.Free;
   inherited;
+end;
+
+function TParams.GetWarnings: TArray<string>;
+begin
+  Result := fWarnings.ToStringArray;
+end;
+
+class function TParams.IsValidValue(const AValue: string;
+  const AValidValues: array of string): Boolean;
+begin
+  Result := False;
+  for var ValidValue in AValidValues do
+    if string.Compare(ValidValue, AValue, True) = 0 then
+      Exit(True);
 end;
 
 procedure TParams.Parse;
@@ -259,19 +338,17 @@ procedure TParams.ParseCompareType(CT: string);
 begin
   if CT.IsEmpty then
     raise EApplication.Create(sNoCompareType, EApplication.ErrNoCompareType);
-  CT := CT.ToLower;
-  if (CT = 'eq') or (CT = 'equal') or (CT = 'same') then
+  if IsValidValue(CT, CompareEQValues) then
     fComparisonOp := TDateComparer.TOp.EQ
-  else if (CT = 'gt') or (CT = 'newer') or (CT = 'later') then
+  else if IsValidValue(CT, CompareGTValues) then
     fComparisonOp := TDateComparer.TOp.GT
-  else if (CT = 'gte') or (CT = 'not-older') or (CT = 'not-earlier') then
+  else if IsValidValue(CT, CompareGTEValues) then
     fComparisonOp := TDateComparer.TOp.GTE
-  else if (CT = 'lt') or (CT = 'older') or (CT = 'earlier') then
+  else if IsValidValue(CT, CompareLTValues) then
     fComparisonOp := TDateComparer.TOp.LT
-  else if (CT = 'lte') or (CT = 'not-newer') or (CT = 'not-later') then
+  else if IsValidValue(CT, CompareLTEValues) then
     fComparisonOp := TDateComparer.TOp.LTE
-  else if (CT = 'neq') or (CT = 'not-equal') or (CT = 'not-same')
-    or (CT = 'different') then
+  else if IsValidValue(CT, CompareNEQValues) then
     fComparisonOp := TDateComparer.TOp.NEQ
   else
     raise EApplication.Create(sBadCompareType, EApplication.ErrBadCompareType);
@@ -281,12 +358,29 @@ procedure TParams.ParseDateType(DT: string);
 begin
   if DT.IsEmpty then
     raise EApplication.Create(sNoDateType, EApplication.ErrNoDateType);
-  DT := DT.ToLower;
-  if (DT = 'm') or (DT = 'modified') or (DT = 'last-modified')
-    or (DT = 'modification') then
+  if IsValidValue(DT, DateTypeModifyValues) then
     fDateType := TDateExtractor.TDateType.LastModified
-  else if (DT = 'c') or (DT = 'created') or (DT = 'creation') then
-    fDateType := TDateExtractor.TDateType.Created
+  else if IsValidValue(DT, DateTypeCreateValues) then
+  begin
+    {$IF Defined(MSWINDOWS)}
+    fDateType := TDateExtractor.TDateType.Created;
+    {$ELSEIF Defined(LINUX)}
+    fDateType := TDateExtractor.TDateType.StatusChanged;
+    fWarnings.Add(string.Format(sNoCreationDate, [DT]));
+    {$ENDIF}
+  end
+  else if IsValidValue(DT, DateTypeAccessValues) then
+    fDateType := TDateExtractor.TDateType.LastAccessed
+  else if IsValidValue(DT, DateTypeStatusChangeValues) then
+  begin
+    {$IF Defined(MSWINDOWS)}
+    raise EApplication.Create(
+      sNoCTimeOnWindows, [DT], EApplication.ErrBadDateType
+    );
+    {$ELSEIF Defined(LINUX)}
+    fDateType := TDateExtractor.TDateType.StatusChanged;
+    {$ENDIF}
+  end
   else
     raise EApplication.Create(sBadDateType, EApplication.ErrBadDateType);
 end;

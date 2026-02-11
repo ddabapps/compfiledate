@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file.
 
 This change log begins with the first public release version of _CompFileDate_. Releases are listed in reverse version number order.
 
+## Release v2.5.0 of 11 February
+
+* Added support for comparing last access dates of the files being compared [[issue #37](https://github.com/ddabapps/compfiledate/issues/37)].
+* Added support to the Linux build for comparing last status change events of file instead of creation dates, which Linux doesn't support. This option is not supported on Windows. Passing the `c`,  `created` or `creation` values to the `-d` / `--datetype` command on Linux results in a warning being issued and the last status change date being used instead [[issue #39](https://github.com/ddabapps/compfiledate/issues/39) & [issue #41](https://github.com/ddabapps/compfiledate/issues/41)].
+* Added further aliases for the `-d` / `--datatype` command values [[issue #41](https://github.com/ddabapps/compfiledate/issues/41)]. New creation date aliases, beyond those noted above, are not supported on Linux.
+* Added further aliases for the `-c` / `--compare` command values including arithmetic comparision operator symbols [[issue #42](https://github.com/ddabapps/compfiledate/issues/42)].
+* Updated the help screen re the changes in this release. Note that the help screen now differs between Windows and Linux builds.
+* Refactored code that checks for parameter values.
+* Updated the `Docs/ReadMe.txt` usage section re the changes in this release.
+
 ## Release v2.4.0 of 5 February 2026
 
 * Added 64 bit Linux support [[issue #28](https://github.com/ddabapps/compfiledate/issues/28)]. The Linux version works identically to the Windows versions except that the `--followshortcuts` (`-s`) command is not supported.
