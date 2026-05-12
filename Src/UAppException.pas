@@ -41,6 +41,7 @@ type
       ErrBadCompareType = 106;
       ErrNoDateType = 107;
       ErrBadDateType = 108;
+      ErrCantReadFileDate = 109;
   public
     ///  <summary>Object constructor.</summary>
     ///  <param name="Msg">[in] Error message.</param>

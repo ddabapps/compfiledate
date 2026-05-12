@@ -14,6 +14,10 @@ unit UDateExtractor;
 
 interface
 
+uses
+  // Project
+  USysDate;
+
 
 type
 
@@ -42,16 +46,15 @@ type
       );
       {$SCOPEDENUMS OFF}
   public
-    ///  <summary>Gets either creation, last-modified or last-accessed date from
-    ///  a file.</summary>
+    ///  <summary>Gets a given type of date from a file.</summary>
     ///  <param name="FileName">[in] Name of the file to be examined.</param>
-    ///  <param name="DateType">[in] Specifies whether the last-modified,
-    ///  last-accessed or creation date is to be returned.</param>
-    ///  <returns><c>TDateTime</c>. The required file date.</returns>
-    class function GetDate(const FileName: string; const DateType: TDateType):
-      TDateTime; static;
-  end;
+    ///  <param name="DateType">[in] Specifies type of date is to be returned.
+    ///  </param>
+    ///  <returns><c>TSysDate</c>. The required file date.</returns>
+    class function GetDate(const AFileName: string; const ADateType: TDateType):
+      TSysDate; static;
 
+  end;
 
 implementation
 
@@ -59,8 +62,12 @@ implementation
 uses
   // Delphi
   System.SysUtils,
-  System.RTLConsts,
   System.IOUtils,
+  {$IF Defined(MSWINDOWS)}
+  WinApi.Windows,
+  {$ELSEIF Defined(LINUX)}
+  Posix.SysStat,
+  {$ENDIF}
   // Project
   UAppException;
 
@@ -68,34 +75,50 @@ uses
 resourcestring
   // Error messages
   sFileNameNotFound = 'File "%s" not found';
-
+  sCantReadFileDate = 'Can''t read date information from "%s"';
 
 { TDateExtractor }
 
-class function TDateExtractor.GetDate(const FileName: string;
-  const DateType: TDateType): TDateTime;
+class function TDateExtractor.GetDate(const AFileName: string;
+  const ADateType: TDateType): TSysDate;
 begin
-  if not TFile.Exists(FileName) then
+  if not TFile.Exists(AFileName) then
     raise EApplication.Create(
-      sFileNameNotFound, [FileName], EApplication.ErrFileNameNotFound
+      sFileNameNotFound, [AFileName], EApplication.ErrFileNameNotFound
     );
-  case DateType of
+  {$IF Defined(MSWINDOWS)}
+  var Data: TWin32FindData;
+  if not GetFileAttributesEx(
+    PChar(AFileName), GetFileExInfoStandard, @Data
+  ) then
+    raise EApplication.Create(
+      sCantReadFileDate, [AFileName], EApplication.ErrCantReadFileDate
+    );
+  case ADateType of
     TDateType.LastModified:
-      Result := TFile.GetLastWriteTime(FileName);
-    {$IF Defined(MSWINDOWS)}
+      Result := TSysDate.Create(Data.ftLastWriteTime);
     TDateType.Created:
-      Result := TFile.GetCreationTime(FileName);
-    {$ELSEIF Defined(LINUX)}
-    TDateType.StatusChanged:
-      // On Linux, TFile.GetCreationTime ultimately returns the _status.st_ctime
-      // value, which is the status change date. Confusing!
-      Result := TFile.GetCreationTime(FileName);
-    {$ENDIF}
+      Result := TSysDate.Create(Data.ftCreationTime);
     TDateType.LastAccessed:
-      Result := TFile.GetLastAccessTime(FileName);
-  else
-    raise Exception.Create('Invalid TDateExtractor.TDateType value');
+      Result := TSysDate.Create(Data.ftLastAccessTime);
   end;
+  {$ELSEIF Defined(LINUX)}
+  var M: TMarshaller;
+  var P := M.AsAnsi(AFileName, CP_UTF8).ToPointer;
+  var Data: _stat;
+  if lstat(P, Data) <> 0 then
+    raise EApplication.Create(
+      sCantReadFileDate, [AFileName], EApplication.ErrCantReadFileDate
+    );
+  case ADateType of
+    TDateType.LastModified:
+      Result := TSysDate.Create(Data.st_mtime, Data.st_mtimensec);
+    TDateType.StatusChanged:
+      Result := TSysDate.Create(Data.st_ctime, Data.st_ctimensec);
+    TDateType.LastAccessed:
+      Result := TSysDate.Create(Data.st_atime, Data.st_atimensec);
+  end;
+  {$ENDIF}
 end;
 
 end.

@@ -15,6 +15,11 @@ unit UDateComparer;
 interface
 
 
+uses
+  // Project
+  USysDate;
+
+
 type
   ///  <summary>Method only record that exposes a method that performs date
   ///  comparisons for all supported date comparison operations.</summary>
@@ -42,7 +47,7 @@ type
     type
       ///  <summary>Type of functions used to compare two <c>TDateTime</c>
       ///  values.</summary>
-      TCompareFn = reference to function(const Left, Right: TDateTime): Boolean;
+      TCompareFn = reference to function(const Left, Right: TSysDate): Boolean;
       ///  <summary>Type of array that maps each <c>TOp</c> value to a function
       ///  that implements the required comparison.</summary>
       TComparerMap = array[TOp] of TCompareFn;
@@ -54,7 +59,7 @@ type
     ///  <summary>Class constructor. Intialises the map of comparison types to
     ///  the implementing functions.</summary>
     class constructor Create;
-    ///  <summary>Compares two <c>TDataTime</c> values using a given operator.
+    ///  <summary>Compares two <c>TSysDate</c> values using a given operator.
     ///  </summary>
     ///  <param name="Left">[in] Left hand operand.</param>
     ///  <param name="Right">[in] Right hand operand.</param>
@@ -62,7 +67,7 @@ type
     ///  operands.</param>
     ///  <returns><c>Boolean</c>. The return value of applying <c>Operation</c>
     ///  to the operands.</returns>
-    class function Compare(const Left, Right: TDateTime; const Operation: TOp):
+    class function Compare(const Left, Right: TSysDate; const Operation: TOp):
       Boolean; static;
   end;
 
@@ -70,17 +75,9 @@ type
 implementation
 
 
-uses
-  // Delphi
-  System.SysUtils,
-  System.RTLConsts,
-  System.Types,
-  System.DateUtils;
-
-
 { TDateComparer }
 
-class function TDateComparer.Compare(const Left, Right: TDateTime;
+class function TDateComparer.Compare(const Left, Right: TSysDate;
   const Operation: TOp): Boolean;
 begin
   Result := fMap[Operation](Left, Right);
@@ -88,32 +85,29 @@ end;
 
 class constructor TDateComparer.Create;
 begin
-  fMap[TOp.EQ] := function (const Left, Right: TDateTime): Boolean
+  fMap[TOp.EQ] := function (const Left, Right: TSysDate): Boolean
     begin
-      Result := Left.CompareDateTime(Right) = EqualsValue;
+      Result := Left = Right;
     end;
-  fMap[TOp.LT] := function (const Left, Right: TDateTime): Boolean
+  fMap[TOp.LT] := function (const Left, Right: TSysDate): Boolean
     begin
-      Result := Left.CompareDateTime(Right) = LessThanValue;
+      Result := Left < Right;
     end;
-  fMap[TOp.GT] := function (const Left, Right: TDateTime): Boolean
+  fMap[TOp.GT] := function (const Left, Right: TSysDate): Boolean
     begin
-      Result := Left.CompareDateTime(Right) = GreaterThanValue;
+      Result := Left > Right;
     end;
-  fMap[TOp.LTE] := function (const Left, Right: TDateTime):
-    Boolean
+  fMap[TOp.LTE] := function (const Left, Right: TSysDate): Boolean
     begin
-      Result := Left.CompareDateTime(Right) <> GreaterThanValue;
+      Result := Left <= Right;
     end;
-  fMap[TOp.GTE] := function (const Left, Right: TDateTime):
-    Boolean
+  fMap[TOp.GTE] := function (const Left, Right: TSysDate): Boolean
     begin
-      Result := Left.CompareDateTime(Right) <> LessThanValue;
+      Result := Left >= Right;
     end;
-  fMap[TOp.NEQ] := function (const Left, Right: TDateTime):
-    Boolean
+  fMap[TOp.NEQ] := function (const Left, Right: TSysDate): Boolean
     begin
-      Result := Left.CompareDateTime(Right) <> EqualsValue;
+      Result := Left <> Right;
     end;
 end;
 
