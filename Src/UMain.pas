@@ -20,7 +20,8 @@ uses
   System.SysUtils,
   // Project
   UConsole,
-  UParams;
+  UParams,
+  USysDate;
 
 
 type
@@ -61,9 +62,14 @@ type
     ///  is set to <c>1</c>, otherwise the exit code is set to <c>0</c>.
     ///  </summary>
     procedure CompareFilesAndReport;
-    ///  <summary>Reports the result of the file comparison.</summary>
-    procedure ReportResults(const FileName1, FileName2: string;
+    ///  <summary>Briefly reports the result of the file date comparison.
+    ///  </summary>
+    procedure ReportStandardResults(const FileName1, FileName2: string;
       const CompareResult: Boolean);
+    ///  <summary>Reports the result of the file date comparison in detail.
+    ///  </summary>
+    procedure ReportExtraVerboseResults(const FileName1, FileName2: string;
+      const FileDate1, FileDate2: TSysDate; const CompareResult: Boolean);
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -189,6 +195,23 @@ resourcestring
   ''';
   {$ENDIF}
 
+  sHelpDateFormatCmd = '''
+    -i or --iso-dates
+
+      Specifies that dates should be output in ISO8601 format. If this command
+      is not used then dates are output in the correct format for the user's
+      current locale.
+
+  ''';
+
+  sHelpDateBasisCmd = '''
+    -l or --local-time
+
+      Specifies that all file dates relate to the local time zone. If this
+      command is not used then file dates are taken to be in UTC.
+
+  ''';
+
   {$IF Defined(MSWINDOWS)}
   sHelpFollowShortcutsCmd = '''
     -s or --followshortcuts
@@ -214,6 +237,14 @@ resourcestring
       option is not provided. Output is always written to standard error when an
       error occurs or to standard output when help or the program's version
       number are requested.
+
+  ''';
+
+  sHelpExtraVerboseCmd = '''
+    -vv, -x, or --extra-verbose
+
+      Extra verbose. Behaves as if -v or --verbose had been specified except
+      that file date comparison results are output in more detail.
 
   ''';
 
@@ -279,6 +310,9 @@ const
   );
 
 
+type
+  TOpArray = array[TDateComparer.TOp] of string;
+
 { TMain }
 
 function TMain.AdjustFileName(const AFileName: string): string;
@@ -303,7 +337,6 @@ end;
 
 procedure TMain.CompareFilesAndReport;
 begin
-  // Normal execution
   var FileName1 := AdjustFileName(fParams.FileName1);
   var FileName2 := AdjustFileName(fParams.FileName2);
   var FileDate1 := TDateExtractor.GetDate(FileName1, fParams.DateType);
@@ -313,7 +346,14 @@ begin
   );
   fConsole.Silent := not fParams.Verbose;
   SignOn;
-  ReportResults(FileName1, FileName2, CompareResult);
+  if fParams.ExtraVerbose then
+    ReportExtraVerboseResults(
+      FileName1, FileName2, FileDate1, FileDate2, CompareResult
+    )
+  else
+    ReportStandardResults(
+      FileName1, FileName2, CompareResult
+    );
   ExitCode := if CompareResult then 1 else 0;
 end;
 
@@ -369,10 +409,43 @@ begin
   );
 end;
 
-procedure TMain.ReportResults(const FileName1, FileName2: string;
+procedure TMain.ReportExtraVerboseResults(const FileName1, FileName2: string;
+  const FileDate1, FileDate2: TSysDate; const CompareResult: Boolean);
+const
+  Indent = '  ';
+  Operators: TOpArray = ('=', '<', '>', '<=', '>=', '<>');
+
+  procedure WriteFileInfo(const AFileName: string; const ADate: TSysDate);
+  begin
+    fConsole.WriteLn(TConsole.TChannel.StdOut, Indent + AFileName);
+    fConsole.WriteLn(
+      TConsole.TChannel.StdOut,
+      Indent + ADate.ToString(fParams.DateFormat, fParams.DateBasis)
+    );
+  end;
+
+begin
+  fConsole.Write(TConsole.TChannel.StdOut, 'Comparing ');
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, DateTypeResponses[fParams.DateType] + ' of:'
+  );
+  WriteFileInfo(FileName1, FileDate1);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, 'and:');
+  WriteFileInfo(FileName2, FileDate2);
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, 'Using comparision operator:'
+  );
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, Indent + Operators[fParams.ComparisonOp]
+  );
+  fConsole.WriteLn(TConsole.TChannel.StdOut, 'Result:');
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, Indent + BoolToStr(CompareResult, True)
+  );
+end;
+
+procedure TMain.ReportStandardResults(const FileName1, FileName2: string;
   const CompareResult: Boolean);
-type
-  TOpArray = array[TDateComparer.TOp] of string;
 const
   Reports: array[Boolean] of string = (sFailureReport, sSuccessReport);
   Responses: array[Boolean] of TOpArray = (
@@ -407,8 +480,11 @@ begin
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpIntro);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpCompareCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateTypeCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateFormatCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateBasisCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowShortcutsCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVerboseCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpExtraVerboseCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpHelpCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVersionCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpOutro);
