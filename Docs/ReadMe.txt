@@ -167,6 +167,17 @@ options are:
           dates. The program fails with exit code 108 if any of these date types
           is specified.
 
+  -i or --iso-dates
+
+    Specifies that dates should be output in ISO8601 format. If this command
+    is not used then dates are output in the correct format for the user's
+    current locale.
+
+  -l or --local-time
+
+    Specifies that all file dates relate to the local time zone. If this
+    command is not used then file dates are taken to be in UTC.
+
   -s or --followshortcuts
     
     Windows:
@@ -187,6 +198,11 @@ options are:
     option is not provided. Output is always written to standard error when an
     error occurs or to standard output when help or the program's version number
     are requested.
+
+  -vv, -x, or --extra-verbose
+
+    Extra verbose. Behaves as if -v or --verbose had been specified except
+    that file date comparison results are output in more detail.
 
   -h or -? or --help
     
