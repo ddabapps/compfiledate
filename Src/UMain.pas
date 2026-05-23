@@ -56,16 +56,14 @@ type
     ///  </remarks>
     function AdjustFileName(const AFileName: string): string;
       {$IF not Defined(MSWINDOWS)}inline;{$ENDIF}
-    ///  <summary>Compares dates of the two files passed on the command line
-    ///  using the user's chosen comparison operation and returns True if the
-    ///  comparison succeeds or False if not.</summary>
-    ///  <param name="File1">[in] Information about the file that is the left
-    ///  hand operand of the comparison.</param>
-    ///  <param name="File2">[in] Information about the file that is the right
-    ///  hand operand of the comparison.</param>
-    ///  <returns><c>Boolean</c>. <c>True</c> if the operation succeeds or
-    ///  <c>False</c> if not.</returns>
-    function CompareFileDates(const FileName1, FileName2: string): Boolean;
+    ///  <summary>Performs date comparison on the two files then reports the
+    ///  outcome. If the comparison is <c>True</c> then the program's exit code
+    ///  is set to <c>1</c>, otherwise the exit code is set to <c>0</c>.
+    ///  </summary>
+    procedure CompareFilesAndReport;
+    ///  <summary>Reports the result of the file comparison.</summary>
+    procedure ReportResults(const FileName1, FileName2: string;
+      const CompareResult: Boolean);
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -303,11 +301,20 @@ begin
   {$ENDIF}
 end;
 
-function TMain.CompareFileDates(const FileName1, FileName2: string): Boolean;
+procedure TMain.CompareFilesAndReport;
 begin
+  // Normal execution
+  var FileName1 := AdjustFileName(fParams.FileName1);
+  var FileName2 := AdjustFileName(fParams.FileName2);
   var FileDate1 := TDateExtractor.GetDate(FileName1, fParams.DateType);
   var FileDate2 := TDateExtractor.GetDate(FileName2, fParams.DateType);
-  Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
+  var CompareResult := TDateComparer.Compare(
+    FileDate1, FileDate2, fParams.ComparisonOp
+  );
+  fConsole.Silent := not fParams.Verbose;
+  SignOn;
+  ReportResults(FileName1, FileName2, CompareResult);
+  ExitCode := if CompareResult then 1 else 0;
 end;
 
 constructor TMain.Create;
@@ -335,43 +342,7 @@ begin
     else if fParams.Version then
       ShowVersion
     else
-    begin
-      // Normal execution
-      fConsole.Silent := not fParams.Verbose;
-      SignOn;
-      var FileName1 := AdjustFileName(fParams.FileName1);
-      var FileName2 := AdjustFileName(fParams.FileName2);
-      if CompareFileDates(FileName1, FileName2) then
-      begin
-        fConsole.WriteLn(
-          TConsole.TChannel.StdOut,
-          string.Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
-        );
-        fConsole.WriteLn(
-          TConsole.TChannel.StdOut,
-          string.Format(
-            TrueResponses[fParams.ComparisonOp],
-            [FileName1, FileName2]
-          )
-        );
-        ExitCode := 1;
-      end
-      else
-      begin
-        fConsole.WriteLn(
-          TConsole.TChannel.StdOut,
-          string.Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
-        );
-        fConsole.WriteLn(
-          TConsole.TChannel.StdOut,
-          string.Format(
-            FalseResponses[fParams.ComparisonOp],
-            [FileName1, FileName2]
-          )
-        );
-        ExitCode := 0;
-      end;
-    end;
+      CompareFilesAndReport;
   except
     // Report any errors
     on E: EApplication do
@@ -395,6 +366,32 @@ begin
   fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdErr, string.Format(sError, [E.Message])
+  );
+end;
+
+procedure TMain.ReportResults(const FileName1, FileName2: string;
+  const CompareResult: Boolean);
+type
+  TOpArray = array[TDateComparer.TOp] of string;
+const
+  Reports: array[Boolean] of string = (sFailureReport, sSuccessReport);
+  Responses: array[Boolean] of TOpArray = (
+    (sNEQ, sGTE, sLTE, sGT, sLT, SEQ),
+    (sEQ, sLT, sGT, sLTE, sGTE, sNEQ)
+  );
+begin
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut,
+    string.Format(
+      Reports[CompareResult], [DateTypeResponses[fParams.DateType]]
+    )
+  );
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut,
+    string.Format(
+      Responses[CompareResult, fParams.ComparisonOp],
+      [FileName1, FileName2]
+    )
   );
 end;
 
