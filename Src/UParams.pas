@@ -20,7 +20,8 @@ uses
   System.Classes,
   // Project
   UDateComparer,
-  UDateExtractor;
+  UDateExtractor,
+  USysDate;
 
 
 type
@@ -76,11 +77,14 @@ type
       fParams: TStringList;
       // Property values
       fVerbose: Boolean;
+      fExtraVerbose: Boolean;
       fHelp: Boolean;
       fShortHelp: Boolean;
       fVersion: Boolean;
       fComparisonOp: TDateComparer.TOp;
       fDateType: TDateExtractor.TDateType;
+      fDateBasis: TSysDate.TDateBasis;
+      fDateFormat: TSysDate.TDateFormat;
       fFollowShortcuts: Boolean;
       fFileName2: string;
       fFileName1: string;
@@ -132,6 +136,11 @@ type
     ///  <remarks><c>True</c> if either the -v or --verbose command has been
     ///  specified, <c>False</c> if not.</remarks>
     property Verbose: Boolean read fVerbose;
+    ///  <summary>Specifies whether the program is to be run in extra verbose
+    ///  mode.</summary>
+    ///  <remarks><c>True</c> if any of the -x, -vv or --extra-verbose command
+    ///  has been specified, <c>False</c> if not.</remarks>
+    property ExtraVerbose: Boolean read fExtraVerbose;
     ///  <summary>Specifies whether help text is to be displayed.</summary>
     ///  <remarks><c>True</c> if either the -h, -? or --help command has been
     ///  specified, <c>False</c> if not.</remarks>
@@ -156,6 +165,18 @@ type
     ///  unless either the -d or --datetype command are used to override this
     ///  value.</remarks>
     property DateType: TDateExtractor.TDateType read fDateType;
+    ///  <summary>Specifies the date format to be used when displaying file
+    ///  dates.</summary>
+    ///  <remarks>Defaults to the locale specific date format unless the
+    ///  <c>--iso-dates</c> or <c>-i</c> command is specified when ISO 8601 date
+    ///  format is used instead.</remarks>
+    property DateFormat: TSysDate.TDateFormat read fDateFormat;
+    ///  <summary>Specifies the time zone to be used as the basis when
+    ///  displaying file dates.</summary>
+    ///  <remarks>Default to displaying dates in UTC unless the
+    ///  <c>--local-time</c> or <c>-l</c> is specified when dates are displayed
+    ///  in local time.</remarks>
+    property DateBasis: TSysDate.TDateBasis read fDateBasis;
     ///  <summary>Specifies if shortcut files are to be expanded before
     ///  comparing dates.</summary>
     ///  <remarks>When <c>True</c> the files targeted by any shortcut are used
@@ -213,10 +234,13 @@ begin
   fHelp := False;
   fVersion := False;
   fVerbose := False;
+  fExtraVerbose := False;
   fFileName1 := string.Empty;
   fFileName2 := string.Empty;
   fComparisonOp := TDateComparer.TOp.LT;
   fDateType := TDateExtractor.TDateType.LastModified;
+  fDateBasis := TSysDate.TDateBasis.UTC;
+  fDateFormat := TSysDate.TDateFormat.LocaleSpecific;
   fFollowShortcuts := False;
   fWarnings := TStringList.Create;
 end;
@@ -295,6 +319,12 @@ begin
   end
   else if (Command = '-v') or (Command = '--verbose') then
     fVerbose := True
+  else if (Command = '-x') or (Command = '-vv')
+    or (Command = '--extra-verbose') then
+  begin
+    fVerbose := True;
+    fExtraVerbose := True;
+  end
   else if (Command = '-s') or (Command = '--followshortcuts') then
     {$IF Defined(MSWINDOWS)}
     fFollowShortcuts := True
@@ -328,6 +358,10 @@ begin
       if EqualsPos > 0 then Command.Substring(EqualsPos) else string.Empty
     );
   end
+  else if (Command = '-i') or (Command = '--iso-dates') then
+    fDateFormat := TSysDate.TDateFormat.ISO8601
+  else if (Command = '-l') or (Command = '--local-time') then
+    fDateBasis := TSysDate.TDateBasis.Local
   else
     raise EApplication.CreateFmt(
       sBadSwitch, [fParams[Idx], EApplication.ErrBadSwitch]

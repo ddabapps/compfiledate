@@ -136,6 +136,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCCReference Include="UDateExtractor.pas"/>
         <DCCReference Include="UAppInfo.pas"/>
         <DCCReference Include="UWinShellLink.pas"/>
+        <DCCReference Include="USysDate.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
