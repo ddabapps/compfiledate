@@ -128,7 +128,7 @@ options are:
       example --convert="<=" and -c "<>"
         
 
-  -d <type> or --datetype=<type>
+  -d <type> or --date-type=<type>
   
     Determines which date property of the files is used in the comparison.
     <type> must be one of the following:
@@ -178,7 +178,14 @@ options are:
     Specifies that all file dates relate to the local time zone. If this
     command is not used then file dates are taken to be in UTC.
 
-  -s or --followshortcuts
+  -S, -sy or --follow-symlinks
+
+    Indicates that if either filename1 or filename2 is a symlink then the date
+    of the target file will be used in comparisons. If neither option is 
+    specified then the symlinks are not followed and the date of the symlink 
+    file itself is used.
+
+  -s, -sh or --follow-shortcuts
     
     Windows:
       Indicates that if either filename1 or filename2 is a shortcut (.lnk)
@@ -189,8 +196,20 @@ options are:
     
     Linux:
       Not supported because Linux does not support the Windows .lnk shortcut
-      file format. The program fails with exit code 101 if either of the options
-      is specified.
+      file format. The program fails with exit code 101 if any of these options
+      are specified.
+
+  -ss or --follow-all-links
+
+    Windows:
+      Indicates that if either filename1 or filename2 is a shortcut or a symlink
+      file then the date of the target file will be used in comparisons. If this
+      option is not specified then shortcuts are not followed and the date of
+      the shortcut or symlink file itself is used.
+    
+    Linux:
+      Not supported because Linux only supports symlinks and not shortcuts. The
+      program fails with exit code 101 if either of these options are specified.
 
   -v or --verbose
     
@@ -230,8 +249,8 @@ is written to standard error. The error codes are:
   104 - one or both files cannot be found
   105 - no comparison type was specified for the -c or --compare option
   106 - an invalid comparison type was specified for the -c or --compare option
-  107 - no date type was specified for the -d or --datetype option
-  108 - an invalid date type was specified for the -d or --datetype option
+  107 - no date type was specified for the -d or --date-type option
+  108 - an invalid date type was specified for the -d or --date-type option
 
 
 4. Source Code
