@@ -63,16 +63,56 @@ type
     const
       // Lookup table listing information about all supported commands
       CommandLookup: array[0..Ord(High(TCommandID))] of TCommandInfo = (
-        (ID: TCommandID.Help; Keys: ['-h', '-?', '--help']; ExpectsValue: False),
-        (ID: TCommandID.Version; Keys: ['-V', '--version']; ExpectsValue: False),
-        (ID: TCommandID.Verbose; Keys: ['-v', '--verbose']; ExpectsValue: False),
-        (ID: TCommandID.ExtraVerbose; Keys: ['-x', '-vv', '--extra-verbose']; ExpectsValue: False),
-        (ID: TCommandID.FollowShortcuts; Keys: ['-s', '--followshortcuts']; ExpectsValue: False),
-        (ID: TCommandID.ComparisonOp; Keys: ['-c', '--compare']; ExpectsValue: True),
-        (ID: TCommandID.DateType; Keys: ['-d', '--datetype']; ExpectsValue: True),
-        (ID: TCommandID.LocalTime; Keys: ['-l', '--local-time']; ExpectsValue: False),
-        (ID: TCommandID.ISODates; Keys: ['-i', '--iso-dates']; ExpectsValue: False),
-        (ID: TCommandID.FollowSymlinks; Keys: ['-S', '--follow-symlinks']; ExpectsValue: False)
+        (
+          ID: TCommandID.Help;
+          Keys: ['-h', '-?', '--help'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.Version;
+          Keys: ['-V', '--version'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.Verbose;
+          Keys: ['-v', '--verbose'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.ExtraVerbose;
+          Keys: ['-x', '-vv', '--extra-verbose'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.FollowShortcuts;
+          Keys: ['-sh', '-s', '--followshortcuts'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.ComparisonOp;
+          Keys: ['-c', '--compare'];
+          ExpectsValue: True
+        ),
+        (
+          ID: TCommandID.DateType;
+          Keys: ['-d', '--datetype'];
+          ExpectsValue: True
+        ),
+        (
+          ID: TCommandID.LocalTime;
+          Keys: ['-l', '--local-time'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.ISODates;
+          Keys: ['-i', '--iso-dates'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.FollowSymlinks;
+          Keys: ['-sy', '-S', '--follow-symlinks'];
+          ExpectsValue: False
+        )
       );
     const
       // Map of date types to valid values
@@ -321,14 +361,14 @@ type
     ///  comparing dates.</summary>
     ///  <remarks>When <c>True</c> the files targeted by any shortcut are used
     ///  in the date comparison; when <c>False</c> the date of the shortcut file
-    ///  itself is used. Defaults to <c>False</c> unless the -s or
+    ///  itself is used. Defaults to <c>False</c> unless the -s, -sh or
     ///  --followshortcuts command has been specified.</remarks>
     property FollowShortcuts: Boolean read fFollowShortcuts;
     ///  <summary>Specifies if symbolic links are to be expanded before
     ///  comparing dates.</summary>
     ///  <remarks>When <c>True</c> the files targeted by any symlink are used
     ///  in the date comparison; when <c>False</c> the date of the symlink file
-    ///  itself is used. Defaults to <c>False</c> unless the -S or
+    ///  itself is used. Defaults to <c>False</c> unless the -S, -sy or
     ///  --follow-symlinks command has been specified.</remarks>
     property FollowSymlinks: Boolean read fFollowSymlinks;
     ///  <summary>Name of the 1st file on the command line.</summary>
@@ -364,14 +404,14 @@ resourcestring
   sBadDateType = 'Invalid date type in -d or --datetype command';
   {$IF Defined(LINUX)}
   sNoShortcutsOnLinux =
-    'The -s or --followshortcuts command is not supported on Linux';
+    'The -s, -sh or --followshortcuts commands are not supported on Linux';
   {$ENDIF LINUX}
   sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
   // Warning messages
   {$IF Defined(LINUX)}
   sNoCreationDate =
     'The "%s" date type is deprecated on Linux. '
-    + 'Using "status-changed" instead.';
+    + 'Using "--status-changed" instead.';
   {$ENDIF LINUX}
 
 
