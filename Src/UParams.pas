@@ -85,7 +85,7 @@ type
         ),
         (
           ID: TCommandID.FollowShortcuts;
-          Keys: ['-sh', '-s', '--followshortcuts'];
+          Keys: ['-sh', '-s', '--follow-shortcuts'];
           ExpectsValue: False
         ),
         (
@@ -95,7 +95,7 @@ type
         ),
         (
           ID: TCommandID.DateType;
-          Keys: ['-d', '--datetype'];
+          Keys: ['-d', '--date-type'];
           ExpectsValue: True
         ),
         (
@@ -342,7 +342,7 @@ type
     ///  <summary>Specifies whether to compare files' last-modified or creation
     ///  dates.</summary>
     ///  <remarks>Defaults to <c>TDateExtractor.TDateType.LastModified</c>
-    ///  unless either the -d or --datetype command are used to override this
+    ///  unless either the -d or --date-type command are used to override this
     ///  value.</remarks>
     property DateType: TDateExtractor.TDateType read fDateType;
     ///  <summary>Specifies the date format to be used when displaying file
@@ -362,7 +362,7 @@ type
     ///  <remarks>When <c>True</c> the files targeted by any shortcut are used
     ///  in the date comparison; when <c>False</c> the date of the shortcut file
     ///  itself is used. Defaults to <c>False</c> unless the -s, -sh or
-    ///  --followshortcuts command has been specified.</remarks>
+    ///  --follow-shortcuts command has been specified.</remarks>
     property FollowShortcuts: Boolean read fFollowShortcuts;
     ///  <summary>Specifies if symbolic links are to be expanded before
     ///  comparing dates.</summary>
@@ -401,10 +401,10 @@ resourcestring
   s2FilesNeeded = 'Exactly two file names must be specified';
   sFileNamesSame = 'File names must be different';
   sBadCompareType = 'Invalid comparison type in -c or --compare command';
-  sBadDateType = 'Invalid date type in -d or --datetype command';
+  sBadDateType = 'Invalid date type in -d or --date-type command';
   {$IF Defined(LINUX)}
   sNoShortcutsOnLinux =
-    'The -s, -sh or --followshortcuts commands are not supported on Linux';
+    'The -s, -sh or --follow-shortcuts commands are not supported on Linux';
   {$ENDIF LINUX}
   sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
   // Warning messages
