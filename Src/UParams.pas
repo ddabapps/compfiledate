@@ -46,7 +46,8 @@ type
         ComparisonOp,
         DateType,
         LocalTime,
-        ISODates
+        ISODates,
+        FollowSymlinks
       );
       {$SCOPEDENUMS OFF}
 
@@ -70,7 +71,8 @@ type
         (ID: TCommandID.ComparisonOp; Keys: ['-c', '--compare']; ExpectsValue: True),
         (ID: TCommandID.DateType; Keys: ['-d', '--datetype']; ExpectsValue: True),
         (ID: TCommandID.LocalTime; Keys: ['-l', '--local-time']; ExpectsValue: False),
-        (ID: TCommandID.ISODates; Keys: ['-i', '--iso-dates']; ExpectsValue: False)
+        (ID: TCommandID.ISODates; Keys: ['-i', '--iso-dates']; ExpectsValue: False),
+        (ID: TCommandID.FollowSymlinks; Keys: ['-S', '--follow-symlinks']; ExpectsValue: False)
       );
     const
       // Map of date types to valid values
@@ -137,6 +139,7 @@ type
       fDateBasis: TSysDate.TDateBasis;
       fDateFormat: TSysDate.TDateFormat;
       fFollowShortcuts: Boolean;
+      fFollowSymlinks: Boolean;
       fFileName2: string;
       fFileName1: string;
       // List of warnings
@@ -321,6 +324,13 @@ type
     ///  itself is used. Defaults to <c>False</c> unless the -s or
     ///  --followshortcuts command has been specified.</remarks>
     property FollowShortcuts: Boolean read fFollowShortcuts;
+    ///  <summary>Specifies if symbolic links are to be expanded before
+    ///  comparing dates.</summary>
+    ///  <remarks>When <c>True</c> the files targeted by any symlink are used
+    ///  in the date comparison; when <c>False</c> the date of the symlink file
+    ///  itself is used. Defaults to <c>False</c> unless the -S or
+    ///  --follow-symlinks command has been specified.</remarks>
+    property FollowSymlinks: Boolean read fFollowSymlinks;
     ///  <summary>Name of the 1st file on the command line.</summary>
     property FileName1: string read fFileName1;
     ///  <summary>Name of the 2nd file on the command line.</summary>
@@ -385,6 +395,7 @@ begin
   fDateBasis := TSysDate.TDateBasis.UTC;
   fDateFormat := TSysDate.TDateFormat.LocaleSpecific;
   fFollowShortcuts := False;
+  fFollowSymlinks := False;
   fWarnings := TStringList.Create;
 end;
 
@@ -572,6 +583,8 @@ begin
       fDateBasis := TSysDate.TDateBasis.Local;
     TCommandID.ISODates:
       fDateFormat := TSysDate.TDateFormat.ISO8601;
+    TCommandID.FollowSymlinks:
+      fFollowSymlinks := True;
   end;
 end;
 
