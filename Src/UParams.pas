@@ -48,6 +48,9 @@ type
         LocalTime,
         ISODates,
         FollowSymlinks
+        {$IF Defined(MSWINDOWS)}
+        , FollowAllLinks
+        {$ENDIF}
       );
       {$SCOPEDENUMS OFF}
 
@@ -113,6 +116,14 @@ type
           Keys: ['-sy', '-S', '--follow-symlinks'];
           ExpectsValue: False
         )
+        {$IF Defined(MSWINDOWS)}
+        ,
+        (
+          ID: TCommandID.FollowAllLinks;
+          Keys: ['-ss', '--follow-all-links'];
+          ExpectsValue: False
+        )
+        {$ENDIF}
       );
     const
       // Map of date types to valid values
@@ -625,6 +636,13 @@ begin
       fDateFormat := TSysDate.TDateFormat.ISO8601;
     TCommandID.FollowSymlinks:
       fFollowSymlinks := True;
+    {$IF Defined(MSWINDOWS)}
+    TCommandID.FollowAllLinks:
+    begin
+      fFollowSymlinks := True;
+      fFollowShortcuts := True;
+    end;
+    {$ENDIF}
   end;
 end;
 
