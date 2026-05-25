@@ -600,8 +600,11 @@ procedure TParams.ParseCommand(var Idx: Integer);
 begin
   Assert((Idx >= 0) and (Idx <= fParams.Count),
     ClassName + '.ParseCommand: Idx is out of range of fParams');
-  Assert(IsCommand(fParams[Idx]),
-    ClassName + '.ParseCommand: fParams[Idx] is not a command');
+
+  if not IsCommand(fParams[Idx]) then
+    raise EApplication.Create(
+      sBadCommandFormat, [fParams[Idx]], EApplication.ErrBadSwitch
+    );
 
   var CommandInfo := GetCommandIDAndValue(Idx);
 
