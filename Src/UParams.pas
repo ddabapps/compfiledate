@@ -38,16 +38,18 @@ type
       TCommandID = (
         // DO NOT assign values to this enumeration - following code assumes
         // Ord(first-value) = 0 and Ord(last-value) = Pred(number of elements)
-        Help,
-        Version,
-        Verbose,
-        ExtraVerbose,
-        FollowShortcuts,
-        ComparisonOp,
-        DateType,
-        LocalTime,
-        ISODates,
-        FollowSymlinks
+        Help
+        , Version
+        , Verbose
+        , ExtraVerbose
+        {$IF Defined(MSWINDOWS)}
+        , FollowShortcuts
+        {$ENDIF}
+        , ComparisonOp
+        , DateType
+        , LocalTime
+        , ISODates
+        , FollowSymlinks
         {$IF Defined(MSWINDOWS)}
         , FollowAllLinks
         {$ENDIF}
@@ -70,47 +72,58 @@ type
           ID: TCommandID.Help;
           Keys: ['-h', '-?', '--help'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.Version;
           Keys: ['-V', '--version'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.Verbose;
           Keys: ['-v', '--verbose'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.ExtraVerbose;
           Keys: ['-x', '-vv', '--extra-verbose'];
           ExpectsValue: False
-        ),
+        )
+        {$IF Defined(MSWINDOWS)}
+        ,
         (
           ID: TCommandID.FollowShortcuts;
           Keys: ['-sh', '-s', '--follow-shortcuts'];
           ExpectsValue: False
-        ),
+        )
+        {$ENDIF}
+        ,
         (
           ID: TCommandID.ComparisonOp;
           Keys: ['-c', '--compare'];
           ExpectsValue: True
-        ),
+        )
+        ,
         (
           ID: TCommandID.DateType;
           Keys: ['-d', '--date-type'];
           ExpectsValue: True
-        ),
+        )
+        ,
         (
           ID: TCommandID.LocalTime;
           Keys: ['-l', '--local-time'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.ISODates;
           Keys: ['-i', '--iso-dates'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.FollowSymlinks;
           Keys: ['-sy', '-S', '--follow-symlinks'];
@@ -141,11 +154,7 @@ type
         [ // StatusChanged
           's', 'status', 'status-change', 'last-status-change',
           'status-changed', 'metadata', 'metadata-change',
-          'last-metadata-change', 'metadata-changed',
-          // for backwards compatibility: following are mapped to status-changed
-          // on Linux
-          // *** remove if backwards compatibility is dropped
-          'c', 'created', 'creation'
+          'last-metadata-change', 'metadata-changed'
         ],
         {$ENDIF}
         [ // LastAccessed
@@ -193,8 +202,6 @@ type
       fFollowSymlinks: Boolean;
       fFileName2: string;
       fFileName1: string;
-      // List of warnings
-      fWarnings: TStrings;
 
     ///  <summary>Checks if string <c>AStr</c> is contained in string array
     ///  <c>AArr</c>, ignoring case.</summary>
@@ -311,8 +318,6 @@ type
     ///  present for a command that expects one.</exception>
     function GetCommandIDAndValue(var AParamIdx: Integer):
       TPair<TCommandID,string>;
-    ///  <summary>Read accessor for <c>Warnings</c> property.</summary>
-    function GetWarnings: TArray<string>;
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -386,9 +391,6 @@ type
     property FileName1: string read fFileName1;
     ///  <summary>Name of the 2nd file on the command line.</summary>
     property FileName2: string read fFileName2;
-    ///  <summary>Array of any warnings generated while parsing parameters.
-    ///  </summary>
-    property Warnings: TArray<string> read GetWarnings;
   end;
 
 
@@ -413,17 +415,6 @@ resourcestring
   sFileNamesSame = 'File names must be different';
   sBadCompareType = 'Invalid comparison type in -c or --compare command';
   sBadDateType = 'Invalid date type in -d or --date-type command';
-  {$IF Defined(LINUX)}
-  sNoShortcutsOnLinux =
-    'The -s, -sh or --follow-shortcuts commands are not supported on Linux';
-  {$ENDIF LINUX}
-  sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
-  // Warning messages
-  {$IF Defined(LINUX)}
-  sNoCreationDate =
-    'The "%s" date type is deprecated on Linux. '
-    + 'Using "--status-changed" instead.';
-  {$ENDIF LINUX}
 
 
 { TParams }
@@ -447,12 +438,10 @@ begin
   fDateFormat := TSysDate.TDateFormat.LocaleSpecific;
   fFollowShortcuts := False;
   fFollowSymlinks := False;
-  fWarnings := TStringList.Create;
 end;
 
 destructor TParams.Destroy;
 begin
-  fWarnings.Free;
   fParams.Free;
   inherited;
 end;
@@ -514,11 +503,6 @@ begin
     raise EApplication.Create(
       sNoValueExpected, [Param.Key], EApplication.ErrBadSwitch
     );
-end;
-
-function TParams.GetWarnings: TArray<string>;
-begin
-  Result := fWarnings.ToStringArray;
 end;
 
 class function TParams.IsCommand(const AParam: string): Boolean;
@@ -622,13 +606,10 @@ begin
       fVerbose := True;
       fExtraVerbose := True;
     end;
+    {$IF Defined(MSWINDOWS)}
     TCommandID.FollowShortcuts:
-      {$IF Defined(MSWINDOWS)}
       fFollowShortcuts := True;
-      {$ENDIF}
-      {$IF Defined(LINUX)}
-      raise EApplication.Create(sNoShortcutsOnLinux, EApplication.ErrBadSwitch);
-      {$ENDIF}
+    {$ENDIF}
     TCommandID.ComparisonOp:
       ParseCompareType(CommandInfo.Value);
     TCommandID.DateType:
@@ -677,11 +658,6 @@ begin
     end;
   if not Found then
     raise EApplication.Create(sBadDateType, EApplication.ErrBadDateType);
-  {$IF Defined(LINUX)}
-  // special handling of some creation date aliases for backwards compatibility
-  if IsValidValue(DT, ['c', 'created', 'creation']) then
-    fWarnings.Add(string.Format(sNoCreationDate, [DT]));
-  {$ENDIF}
 end;
 
 class function TParams.TryLookupCommandInfo(const ACommand: string;
