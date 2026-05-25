@@ -37,9 +37,9 @@ type
       Err2FilesNeeded = 102;
       ErrFileNamesSame = 103;
       ErrFileNameNotFound = 104;
-      ErrNoCompareType = 105;
+      // Error code 105 unused & removed
       ErrBadCompareType = 106;
-      ErrNoDateType = 107;
+      // Error code 107 unused & removed
       ErrBadDateType = 108;
       ErrCantReadFileDate = 109;
       ErrCantReadFileAttrs = 110;
