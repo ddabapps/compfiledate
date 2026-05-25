@@ -329,19 +329,8 @@ type
 { TMain }
 
 function TMain.AdjustFileName(const AFileName: string): string;
-
-  {$IF Defined(MSWINDOWS)}
-  // TODO: Try to check validity using COM rather than file ext
-  // TODO: Move to UWinShellLink unit
-  function IsWinShellLink(const AFileName: string): Boolean;
-  begin
-    Result := TPath.GetExtension(AFileName).CompareTo('.lnk') = 0;
-  end;
-  {$ENDIF}
-
 resourcestring
   sFileNotFound = 'File "%s" not found';
-
 begin
   if not TFile.Exists(AFileName) then
     raise EApplication.Create(
@@ -351,10 +340,7 @@ begin
     Result := ResolveSymlink(AFileName)
   {$IF Defined(MSWINDOWS)}
   else if fParams.FollowShortcuts and IsWinShellLink(AFileName) then
-  begin
-    if not TWinShellLink.TryResolveShortcut(AFileName, Result) then
-      Exit(AFileName);
-  end
+    Result := ResolveWinShellLink(AFileName)
   {$ENDIF}
   else
     Result := AFileName;

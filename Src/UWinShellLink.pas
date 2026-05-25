@@ -22,57 +22,36 @@ interface
 uses
   WinApi.ShlObj;
 
-type
-  ///  <summary>Advanced method only record that expands any Windows .lnk shell
-  ///  link file into the file it points to.</summary>
-  ///  <remarks>*** Use when compiling for Windows only.***</remarks>
-  TWinShellLink = record
-  strict private
-    ///  <summary>Attempts to get a reference to any shell link object
-    ///  associated with a file name.</summary>
-    ///  <param name="LinkFileName">[in] Name of file for which shell link
-    ///  object is requested.</param>
-    ///  <returns><c>IShellLink</c>. Reference to a shell link object associated
-    ///  with <c>LinkFileName</c> or <c>nil</c> if <c>LinkFileName</c> is not
-    ///  a link file, or if an error occurs.</returns>
-    class function LoadShellLink(const LinkFileName: string): IShellLink;
-      static;
-    ///  <summary>Attempts to get the name of a file referenced by the given
-    ///  shell link object.</summary>
-    ///  <param name="SL">[in] Shell link object for which the referenced file
-    ///  name is required.</param>
-    ///  <param name="TargetFileName">[out] Name of linked file if <c>SL</c>
-    ///  references a valid file. Undefined if <c>SL</c> does not reference such
-    ///  a file.</param>
-    ///  <returns><c>Boolean</c>. <c>True</c> if <c>SH</c> represents a shell
-    ///  link file, <c>False</c> otherwise.</c>
-    class function TryFileFromShellLink(const SL: IShellLink;
-      out TargetFileName: string): Boolean; static;
-  public
-    ///  <summary>Attempts to get the name of a file referenced by a shell link
-    ///  file.</summary>
-    ///  <param name="LinkFileName">[in] Name of condidate link file.</param>
-    ///  <param name="TargetFileName">[out] Name of linked file if
-    ///  <c>LinkFileName</c> is a valid shell link file. Undefined if
-    ///  <c>LinkFileName</c> is not a shell link file.</param>
-    ///  <returns><c>Boolean</c>. <c>True</c> if <c>LinkFileName</c> is a shell
-    ///  link file, <c>False</c> otherwise.</c>
-    class function TryResolveShortcut(const LinkFileName: string;
-      out TargetFileName: string): Boolean; static;
-  end;
+///  <summary>Checks if a file is a Windows shortcut file.</summary>
+///  <param name="ALinkFileName">[in] Name of file to be checked.</param>
+///  <returns><c>Boolean</c>. <c>True</c> if <c>ALinkFileName</c> is a shortcut
+///  file or <c>False</c> otherwise.</returns>
+function IsWinShellLink(const ALinkFileName: string): Boolean;
+
+///  <summary>Calculates and returns the name of the file referenced by a
+///  Windows shortcut file.</summary>
+///  <param name="ALinkFileName">[in] Name of the shortcut file.</param>
+///  <returns><c>string</c>. The name of the file referenced by the shortcut
+///  file.</returns>
+///  <exception><c>EApplication</c> is raised if an error occurs while
+///  dereferencing the shortcut.</exception>
+///  <remarks><c>ALinkFileName</c> is expected to be a valid Windows shortcut
+///  file, with <c>.lnk</c<.</remarks>
+function ResolveWinShellLink(const ALinkFileName: string): string;
+
 {$ENDIF}
 
 implementation
 
 {$IF Defined(MSWINDOWS)}
 uses
+  System.SysUtils,
+  System.IOUtils,
   WinApi.Windows,
-  WinApi.ActiveX;
+  WinApi.ActiveX,
+  UAppException;
 
-{ TWinShellLink }
-
-class function TWinShellLink.LoadShellLink(const LinkFileName: string):
-  IShellLink;
+function LoadShellLink(const ALinkFileName: string): IShellLink;
 begin
   // Create shell link object
   if Succeeded(
@@ -88,7 +67,7 @@ begin
     // Try to load the shell link: succeeds only if the file is a shell link
     var PF := Result as IPersistFile;
     if Failed(
-      PF.Load(PWideChar(WideString(LinkFileName)), STGM_READ)
+      PF.Load(PWideChar(WideString(ALinkFileName)), STGM_READ)
     ) then
       Result := nil;  // this frees the shell link object
   end
@@ -96,33 +75,36 @@ begin
     Result := nil;
 end;
 
-class function TWinShellLink.TryFileFromShellLink(const SL: IShellLink;
-  out TargetFileName: string): Boolean;
+function IsWinShellLink(const ALinkFileName: string): Boolean;
 begin
-  // Get file path from link object and exit if this fails
+  if TPath.GetExtension(ALinkFileName).CompareTo('.lnk') <> 0 then
+    Exit(False);
+  var ShellLink: IShellLink := LoadShellLink(ALinkFileName);
+  Result := Assigned(ShellLink);
+end;
+
+function ResolveWinShellLink(const ALinkFileName: string): string;
+resourcestring
+  sResolveError = 'Can''t resolve shortcut "%s"';
+  sTargetError = 'Shortcut file "%s" has no valid target';
+begin
+  var ShellLink: IShellLink := LoadShellLink(ALinkFileName);
+  Assert(Assigned(ShellLink), 'ResolveWinShellLink: Invalid shell link file');
   var ResolvedFileBuf: array[0..MAX_PATH] of Char;  // receives target file name
   var FindData: TWin32FindData; // dummy required for IShellLink.GetPath call
   if Failed(
-    SL.GetPath(ResolvedFileBuf, MAX_PATH, FindData, 0)
+    ShellLink.GetPath(ResolvedFileBuf, MAX_PATH, FindData, 0)
   ) then
-    Exit(False);
+    raise EApplication.Create(
+      sResolveError, [ALinkFileName], EApplication.ErrCantResolveShortcut
+    );
   // Return file name
-  TargetFileName := ResolvedFileBuf;
-  Result := True;
+  Result := ResolvedFileBuf;
+  if Result.IsEmpty then
+    raise EApplication.Create(
+      sTargetError, [ALinkFileName], EApplication.ErrCantResolveShortcut
+    );
 end;
-
-class function TWinShellLink.TryResolveShortcut(const LinkFileName: string;
-  out TargetFileName: string): Boolean;
-begin
-  // Try to get interface to shell link: fails if file is not shell link
-  var SL: IShellLink := LoadShellLink(LinkFileName);
-  if not Assigned(SL) then
-    Exit(False);
-  if not TryFileFromShellLink(SL, TargetFileName) then
-    Exit(False);
-  Result := True;
-end;
-
 
 initialization
 
