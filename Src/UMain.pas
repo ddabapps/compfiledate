@@ -161,8 +161,7 @@ resourcestring
     -d <type> or --date-type=<type>
 
       Determines whether last modification, last accessed or creation dates are
-      compared.
-      <type> must be one of the following:
+      compared. <type> must be one of the following:
         m, modify, modified, last-modified, modification, update, updated,
         last-updated, write, written, last-written:
           Use date files were last modified (default if option is not provided).
@@ -177,8 +176,7 @@ resourcestring
     -d <type> or --date-type=<type>
 
       Determines whether last modification, last accessed or last status update
-      dates are compared.
-      <type> must be one of the following:
+      dates are compared. <type> must be one of the following:
         m, modify, modified, last-modified, modification, update, updated,
         last-updated, write, written, last-written:
           Use date files were last modified (default if option is not provided).
@@ -187,10 +185,6 @@ resourcestring
         s, status, status-change, last-status-change, status-changed,
         metadata, metadata-change, last-metadata-change, metadata-changed:
           Use date files last had status updates.
-        c, created, creation:
-          DEPRECATED: use status-changed instead.
-          These values are treated as aliases for status-changed and a warning
-          is displayed.
 
   ''';
   {$ENDIF}
@@ -230,13 +224,6 @@ resourcestring
       the date of the target file will be used in comparisons. If neither option
       is specified then shortcuts are not followed and the date of the shortcut
       file itself is used.
-
-  ''';
-
-  {$ELSEIF Defined(LINUX)}
-  sHelpFollowShortcutsCmd = '''
-    -s, -sh or --follow-shortcuts
-      <<Not supported on Linux>>. Reports an error if used.
 
   ''';
   {$ENDIF}
@@ -521,8 +508,8 @@ begin
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateFormatCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateBasisCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowSymlinksCmd);
-  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowShortcutsCmd);
   {$IF Defined(MSWINDOWS)}
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowShortcutsCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowAllLinksCmd);
   {$ENDIF}
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVerboseCmd);

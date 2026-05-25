@@ -149,12 +149,8 @@ options are:
           Use the date the files were created.
     
         Linux:
-          Linux does not support file creation dates.
-          Parameters that were present in v2.4.0 (i.e. c, created and creation)
-          are DEPRECATED. The date the status of the files was last changed is
-          used instead, as if <type> had been "status-changed".
-          Parameters introduced after v2.4.0 are not supported and cause the
-          program to fail with exit code 108.
+          Invalid. Linux does not support file creation dates. If any of these
+          values are used then the program will fail with exit code 108.
     
       s, status, status-change, last-status-change, status-changed, metadata,
       metadata-change, last-metadata-change, metadata-changed
@@ -163,9 +159,8 @@ options are:
           Use the date that the status (metadata) of the files was last updated.
     
         Windows:
-          Not supported because Windows files do not support status update
-          dates. The program fails with exit code 108 if any of these date types
-          is specified.
+          Invalid. Windows files do not support status update dates. If any of
+          these values are provided then the program fails with exit code 108.
 
   -i or --iso-dates
 
