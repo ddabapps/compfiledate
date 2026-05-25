@@ -141,11 +141,7 @@ type
         [ // StatusChanged
           's', 'status', 'status-change', 'last-status-change',
           'status-changed', 'metadata', 'metadata-change',
-          'last-metadata-change', 'metadata-changed',
-          // for backwards compatibility: following are mapped to status-changed
-          // on Linux
-          // *** remove if backwards compatibility is dropped
-          'c', 'created', 'creation'
+          'last-metadata-change', 'metadata-changed'
         ],
         {$ENDIF}
         [ // LastAccessed
@@ -418,12 +414,6 @@ resourcestring
     'The -s, -sh or --follow-shortcuts commands are not supported on Linux';
   {$ENDIF LINUX}
   sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
-  // Warning messages
-  {$IF Defined(LINUX)}
-  sNoCreationDate =
-    'The "%s" date type is deprecated on Linux. '
-    + 'Using "--status-changed" instead.';
-  {$ENDIF LINUX}
 
 
 { TParams }
@@ -677,11 +667,6 @@ begin
     end;
   if not Found then
     raise EApplication.Create(sBadDateType, EApplication.ErrBadDateType);
-  {$IF Defined(LINUX)}
-  // special handling of some creation date aliases for backwards compatibility
-  if IsValidValue(DT, ['c', 'created', 'creation']) then
-    fWarnings.Add(string.Format(sNoCreationDate, [DT]));
-  {$ENDIF}
 end;
 
 class function TParams.TryLookupCommandInfo(const ACommand: string;
