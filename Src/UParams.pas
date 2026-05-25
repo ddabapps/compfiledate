@@ -38,16 +38,18 @@ type
       TCommandID = (
         // DO NOT assign values to this enumeration - following code assumes
         // Ord(first-value) = 0 and Ord(last-value) = Pred(number of elements)
-        Help,
-        Version,
-        Verbose,
-        ExtraVerbose,
-        FollowShortcuts,
-        ComparisonOp,
-        DateType,
-        LocalTime,
-        ISODates,
-        FollowSymlinks
+        Help
+        , Version
+        , Verbose
+        , ExtraVerbose
+        {$IF Defined(MSWINDOWS)}
+        , FollowShortcuts
+        {$ENDIF}
+        , ComparisonOp
+        , DateType
+        , LocalTime
+        , ISODates
+        , FollowSymlinks
         {$IF Defined(MSWINDOWS)}
         , FollowAllLinks
         {$ENDIF}
@@ -70,47 +72,58 @@ type
           ID: TCommandID.Help;
           Keys: ['-h', '-?', '--help'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.Version;
           Keys: ['-V', '--version'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.Verbose;
           Keys: ['-v', '--verbose'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.ExtraVerbose;
           Keys: ['-x', '-vv', '--extra-verbose'];
           ExpectsValue: False
-        ),
+        )
+        {$IF Defined(MSWINDOWS)}
+        ,
         (
           ID: TCommandID.FollowShortcuts;
           Keys: ['-sh', '-s', '--follow-shortcuts'];
           ExpectsValue: False
-        ),
+        )
+        {$ENDIF}
+        ,
         (
           ID: TCommandID.ComparisonOp;
           Keys: ['-c', '--compare'];
           ExpectsValue: True
-        ),
+        )
+        ,
         (
           ID: TCommandID.DateType;
           Keys: ['-d', '--date-type'];
           ExpectsValue: True
-        ),
+        )
+        ,
         (
           ID: TCommandID.LocalTime;
           Keys: ['-l', '--local-time'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.ISODates;
           Keys: ['-i', '--iso-dates'];
           ExpectsValue: False
-        ),
+        )
+        ,
         (
           ID: TCommandID.FollowSymlinks;
           Keys: ['-sy', '-S', '--follow-symlinks'];
@@ -612,13 +625,10 @@ begin
       fVerbose := True;
       fExtraVerbose := True;
     end;
+    {$IF Defined(MSWINDOWS)}
     TCommandID.FollowShortcuts:
-      {$IF Defined(MSWINDOWS)}
       fFollowShortcuts := True;
-      {$ENDIF}
-      {$IF Defined(LINUX)}
-      raise EApplication.Create(sNoShortcutsOnLinux, EApplication.ErrBadSwitch);
-      {$ENDIF}
+    {$ENDIF}
     TCommandID.ComparisonOp:
       ParseCompareType(CommandInfo.Value);
     TCommandID.DateType:
