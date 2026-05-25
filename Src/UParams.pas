@@ -422,11 +422,6 @@ resourcestring
   sFileNamesSame = 'File names must be different';
   sBadCompareType = 'Invalid comparison type in -c or --compare command';
   sBadDateType = 'Invalid date type in -d or --date-type command';
-  {$IF Defined(LINUX)}
-  sNoShortcutsOnLinux =
-    'The -s, -sh or --follow-shortcuts commands are not supported on Linux';
-  {$ENDIF LINUX}
-  sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
 
 
 { TParams }
