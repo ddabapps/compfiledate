@@ -1163,14 +1163,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
     <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
     <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Linux64'">
-        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;
-&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc
-&amp;&amp;DEL .\VerInfo.virc
-&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc
-&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;
-</PreBuildEvent>
+        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc&amp;&amp;DEL .\VerInfo.virc&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
@@ -1179,14 +1172,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win32'">
-        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;
-&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc
-&amp;&amp;DEL .\VerInfo.virc
-&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc
-&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;
-</PreBuildEvent>
+        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc&amp;&amp;DEL .\VerInfo.virc&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
@@ -1195,14 +1181,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
-        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;
-&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc
-&amp;&amp;DEL .\VerInfo.virc
-&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc
-&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;
-</PreBuildEvent>
+        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc&amp;&amp;DEL .\VerInfo.virc&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
@@ -1211,14 +1190,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Linux64'">
-        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;
-&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc
-&amp;&amp;DEL .\VerInfo.virc
-&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc
-&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;
-</PreBuildEvent>
+        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc&amp;&amp;DEL .\VerInfo.virc&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
@@ -1227,14 +1199,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win32'">
-        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;
-&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc
-&amp;&amp;DEL .\VerInfo.virc
-&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc
-&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;
-</PreBuildEvent>
+        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc&amp;&amp;DEL .\VerInfo.virc&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
@@ -1243,14 +1208,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">
-        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;
-&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc
-&amp;&amp;DEL .\VerInfo.virc
-&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;
-&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc
-&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;
-</PreBuildEvent>
+        <PreBuildEvent>DEL &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot;&amp;&amp;&quot;$(VIEDROOT)\VIEd.exe&quot; -makerc  .\VerInfo.vi .\VerInfo.virc&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\VerInfo.res&quot; .\VerInfo.virc&amp;&amp;DEL .\VerInfo.virc&amp;&amp;DEL &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot;&amp;&amp;&quot;$(BDSBIN)\BRCC32&quot; -fo &quot;..\_build\$(Platform)\$(Config)\bin\Resources.res&quot; .\Resources.rc&amp;&amp;..\Tools\VerExtractor.bat &quot;$(PROJECTDIR)\VERSION&quot; &quot;$(PROJECTDIR)\AutoGen\VERSION.inc&quot;</PreBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
