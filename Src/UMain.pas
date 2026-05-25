@@ -218,7 +218,7 @@ resourcestring
 
   {$IF Defined(MSWINDOWS)}
   sHelpFollowShortcutsCmd = '''
-    -s, -sh, or --follow-shortcuts
+    -s, -sh or --follow-shortcuts
 
       Indicates that if either filename1 or filename2 is a shortcut file then
       the date of the target file will be used in comparisons. If neither option
@@ -254,7 +254,7 @@ resourcestring
   ''';
 
   sHelpExtraVerboseCmd = '''
-    -vv, -x, or --extra-verbose
+    -vv, -x or --extra-verbose
 
       Extra verbose. Behaves as if -v or --verbose had been specified except
       that file date comparison results are output in more detail.
@@ -262,7 +262,7 @@ resourcestring
   ''';
 
   sHelpHelpCmd = '''
-    -h or -? or --help
+    -h, -? or --help
 
       Displays help screen. Rest of command line ignored.
 

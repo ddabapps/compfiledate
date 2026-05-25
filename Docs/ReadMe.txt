@@ -213,12 +213,12 @@ options are:
     error occurs or to standard output when help or the program's version number
     are requested.
 
-  -vv, -x, or --extra-verbose
+  -vv, -x or --extra-verbose
 
     Extra verbose. Behaves as if -v or --verbose had been specified except
     that file date comparison results are output in more detail.
 
-  -h or -? or --help
+  -h, -? or --help
     
     Displays a help screen on standard output and halts. Any file names and
     other options are ignored.
