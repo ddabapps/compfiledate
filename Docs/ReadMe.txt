@@ -242,10 +242,14 @@ is written to standard error. The error codes are:
   102 - incorrect number of files specified (two required)
   103 - both file names are the same
   104 - one or both files cannot be found
-  105 - no comparison type was specified for the -c or --compare option
   106 - an invalid comparison type was specified for the -c or --compare option
-  107 - no date type was specified for the -d or --date-type option
   108 - an invalid date type was specified for the -d or --date-type option
+  109 - date information can't be read from a file
+  110 - file attributes can't be read from a file
+  111 - failed to resolve a symlink to its target file 
+  112 - failed to resolve a shortcut file to its target file*
+
+* Windows only.
 
 
 4. Source Code
