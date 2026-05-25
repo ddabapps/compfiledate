@@ -519,7 +519,7 @@ end;
 class function TParams.IsShortCommand(const AParam: string): Boolean;
 begin
   Result := (AParam.Length >= 2) and (AParam[1] = '-')
-    and AParam[2].IsLetterOrDigit;
+    and (AParam[2].IsLetterOrDigit or (AParam[2] = '?'));
 end;
 
 class function TParams.IsStrInArray(const AStr: string;
