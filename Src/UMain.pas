@@ -564,11 +564,6 @@ begin
   );
   // Record that we've signed on
   fSignedOn := True;
-  // Report any warnings
-  for var Warning in fParams.Warnings do
-    fConsole.WriteLn(
-      TConsole.TChannel.StdErr, string.Format(sWarning, [Warning])
-    );
 end;
 
 end.

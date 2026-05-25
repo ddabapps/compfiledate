@@ -202,8 +202,6 @@ type
       fFollowSymlinks: Boolean;
       fFileName2: string;
       fFileName1: string;
-      // List of warnings
-      fWarnings: TStrings;
 
     ///  <summary>Checks if string <c>AStr</c> is contained in string array
     ///  <c>AArr</c>, ignoring case.</summary>
@@ -320,8 +318,6 @@ type
     ///  present for a command that expects one.</exception>
     function GetCommandIDAndValue(var AParamIdx: Integer):
       TPair<TCommandID,string>;
-    ///  <summary>Read accessor for <c>Warnings</c> property.</summary>
-    function GetWarnings: TArray<string>;
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -395,9 +391,6 @@ type
     property FileName1: string read fFileName1;
     ///  <summary>Name of the 2nd file on the command line.</summary>
     property FileName2: string read fFileName2;
-    ///  <summary>Array of any warnings generated while parsing parameters.
-    ///  </summary>
-    property Warnings: TArray<string> read GetWarnings;
   end;
 
 
@@ -445,12 +438,10 @@ begin
   fDateFormat := TSysDate.TDateFormat.LocaleSpecific;
   fFollowShortcuts := False;
   fFollowSymlinks := False;
-  fWarnings := TStringList.Create;
 end;
 
 destructor TParams.Destroy;
 begin
-  fWarnings.Free;
   fParams.Free;
   inherited;
 end;
@@ -512,11 +503,6 @@ begin
     raise EApplication.Create(
       sNoValueExpected, [Param.Key], EApplication.ErrBadSwitch
     );
-end;
-
-function TParams.GetWarnings: TArray<string>;
-begin
-  Result := fWarnings.ToStringArray;
 end;
 
 class function TParams.IsCommand(const AParam: string): Boolean;
