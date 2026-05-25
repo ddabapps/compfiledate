@@ -25,7 +25,8 @@ uses
   UDateExtractor in 'UDateExtractor.pas',
   UAppInfo in 'UAppInfo.pas',
   UWinShellLink in 'UWinShellLink.pas',
-  USysDate in 'USysDate.pas';
+  USysDate in 'USysDate.pas',
+  USymlinks in 'USymlinks.pas';
 
 begin
   var App := TMain.Create;

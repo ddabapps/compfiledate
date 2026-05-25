@@ -42,6 +42,8 @@ type
       ErrNoDateType = 107;
       ErrBadDateType = 108;
       ErrCantReadFileDate = 109;
+      ErrCantReadFileAttrs = 110;
+      ErrCantResolveSymlink = 111;
   public
     ///  <summary>Object constructor.</summary>
     ///  <param name="Msg">[in] Error message.</param>

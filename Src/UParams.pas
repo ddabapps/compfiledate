@@ -46,7 +46,11 @@ type
         ComparisonOp,
         DateType,
         LocalTime,
-        ISODates
+        ISODates,
+        FollowSymlinks
+        {$IF Defined(MSWINDOWS)}
+        , FollowAllLinks
+        {$ENDIF}
       );
       {$SCOPEDENUMS OFF}
 
@@ -62,15 +66,64 @@ type
     const
       // Lookup table listing information about all supported commands
       CommandLookup: array[0..Ord(High(TCommandID))] of TCommandInfo = (
-        (ID: TCommandID.Help; Keys: ['-h', '-?', '--help']; ExpectsValue: False),
-        (ID: TCommandID.Version; Keys: ['-V', '--version']; ExpectsValue: False),
-        (ID: TCommandID.Verbose; Keys: ['-v', '--verbose']; ExpectsValue: False),
-        (ID: TCommandID.ExtraVerbose; Keys: ['-x', '-vv', '--extra-verbose']; ExpectsValue: False),
-        (ID: TCommandID.FollowShortcuts; Keys: ['-s', '--followshortcuts']; ExpectsValue: False),
-        (ID: TCommandID.ComparisonOp; Keys: ['-c', '--compare']; ExpectsValue: True),
-        (ID: TCommandID.DateType; Keys: ['-d', '--datetype']; ExpectsValue: True),
-        (ID: TCommandID.LocalTime; Keys: ['-l', '--local-time']; ExpectsValue: False),
-        (ID: TCommandID.ISODates; Keys: ['-i', '--iso-dates']; ExpectsValue: False)
+        (
+          ID: TCommandID.Help;
+          Keys: ['-h', '-?', '--help'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.Version;
+          Keys: ['-V', '--version'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.Verbose;
+          Keys: ['-v', '--verbose'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.ExtraVerbose;
+          Keys: ['-x', '-vv', '--extra-verbose'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.FollowShortcuts;
+          Keys: ['-sh', '-s', '--follow-shortcuts'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.ComparisonOp;
+          Keys: ['-c', '--compare'];
+          ExpectsValue: True
+        ),
+        (
+          ID: TCommandID.DateType;
+          Keys: ['-d', '--date-type'];
+          ExpectsValue: True
+        ),
+        (
+          ID: TCommandID.LocalTime;
+          Keys: ['-l', '--local-time'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.ISODates;
+          Keys: ['-i', '--iso-dates'];
+          ExpectsValue: False
+        ),
+        (
+          ID: TCommandID.FollowSymlinks;
+          Keys: ['-sy', '-S', '--follow-symlinks'];
+          ExpectsValue: False
+        )
+        {$IF Defined(MSWINDOWS)}
+        ,
+        (
+          ID: TCommandID.FollowAllLinks;
+          Keys: ['-ss', '--follow-all-links'];
+          ExpectsValue: False
+        )
+        {$ENDIF}
       );
     const
       // Map of date types to valid values
@@ -137,6 +190,7 @@ type
       fDateBasis: TSysDate.TDateBasis;
       fDateFormat: TSysDate.TDateFormat;
       fFollowShortcuts: Boolean;
+      fFollowSymlinks: Boolean;
       fFileName2: string;
       fFileName1: string;
       // List of warnings
@@ -299,7 +353,7 @@ type
     ///  <summary>Specifies whether to compare files' last-modified or creation
     ///  dates.</summary>
     ///  <remarks>Defaults to <c>TDateExtractor.TDateType.LastModified</c>
-    ///  unless either the -d or --datetype command are used to override this
+    ///  unless either the -d or --date-type command are used to override this
     ///  value.</remarks>
     property DateType: TDateExtractor.TDateType read fDateType;
     ///  <summary>Specifies the date format to be used when displaying file
@@ -318,9 +372,16 @@ type
     ///  comparing dates.</summary>
     ///  <remarks>When <c>True</c> the files targeted by any shortcut are used
     ///  in the date comparison; when <c>False</c> the date of the shortcut file
-    ///  itself is used. Defaults to <c>False</c> unless the -s or
-    ///  --followshortcuts command has been specified.</remarks>
+    ///  itself is used. Defaults to <c>False</c> unless the -s, -sh or
+    ///  --follow-shortcuts command has been specified.</remarks>
     property FollowShortcuts: Boolean read fFollowShortcuts;
+    ///  <summary>Specifies if symbolic links are to be expanded before
+    ///  comparing dates.</summary>
+    ///  <remarks>When <c>True</c> the files targeted by any symlink are used
+    ///  in the date comparison; when <c>False</c> the date of the symlink file
+    ///  itself is used. Defaults to <c>False</c> unless the -S, -sy or
+    ///  --follow-symlinks command has been specified.</remarks>
+    property FollowSymlinks: Boolean read fFollowSymlinks;
     ///  <summary>Name of the 1st file on the command line.</summary>
     property FileName1: string read fFileName1;
     ///  <summary>Name of the 2nd file on the command line.</summary>
@@ -351,17 +412,17 @@ resourcestring
   s2FilesNeeded = 'Exactly two file names must be specified';
   sFileNamesSame = 'File names must be different';
   sBadCompareType = 'Invalid comparison type in -c or --compare command';
-  sBadDateType = 'Invalid date type in -d or --datetype command';
+  sBadDateType = 'Invalid date type in -d or --date-type command';
   {$IF Defined(LINUX)}
   sNoShortcutsOnLinux =
-    'The -s or --followshortcuts command is not supported on Linux';
+    'The -s, -sh or --follow-shortcuts commands are not supported on Linux';
   {$ENDIF LINUX}
   sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
   // Warning messages
   {$IF Defined(LINUX)}
   sNoCreationDate =
     'The "%s" date type is deprecated on Linux. '
-    + 'Using "status-changed" instead.';
+    + 'Using "--status-changed" instead.';
   {$ENDIF LINUX}
 
 
@@ -385,6 +446,7 @@ begin
   fDateBasis := TSysDate.TDateBasis.UTC;
   fDateFormat := TSysDate.TDateFormat.LocaleSpecific;
   fFollowShortcuts := False;
+  fFollowSymlinks := False;
   fWarnings := TStringList.Create;
 end;
 
@@ -572,6 +634,15 @@ begin
       fDateBasis := TSysDate.TDateBasis.Local;
     TCommandID.ISODates:
       fDateFormat := TSysDate.TDateFormat.ISO8601;
+    TCommandID.FollowSymlinks:
+      fFollowSymlinks := True;
+    {$IF Defined(MSWINDOWS)}
+    TCommandID.FollowAllLinks:
+    begin
+      fFollowSymlinks := True;
+      fFollowShortcuts := True;
+    end;
+    {$ENDIF}
   end;
 end;
 

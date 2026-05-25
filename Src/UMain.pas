@@ -56,7 +56,6 @@ type
     ///  (.lnk) file and (4) the shortcut file references a valid file.
     ///  </remarks>
     function AdjustFileName(const AFileName: string): string;
-      {$IF not Defined(MSWINDOWS)}inline;{$ENDIF}
     ///  <summary>Performs date comparison on the two files then reports the
     ///  outcome. If the comparison is <c>True</c> then the program's exit code
     ///  is set to <c>1</c>, otherwise the exit code is set to <c>0</c>.
@@ -92,6 +91,7 @@ uses
   , UAppInfo
   , UDateComparer
   , UDateExtractor
+  , USymlinks
   {$IF Defined(MSWINDOWS)}
   , UWinShellLink
   {$ENDIF}
@@ -158,7 +158,7 @@ resourcestring
 
   {$IF Defined(MSWINDOWS)}
   sHelpDateTypeCmd = '''
-    -d <type> or --datetype=<type>
+    -d <type> or --date-type=<type>
 
       Determines whether last modification, last accessed or creation dates are
       compared.
@@ -174,7 +174,7 @@ resourcestring
   ''';
   {$ELSEIF Defined(LINUX)}
   sHelpDateTypeCmd = '''
-    -d <type> or --datetype=<type>
+    -d <type> or --date-type=<type>
 
       Determines whether last modification, last accessed or last status update
       dates are compared.
@@ -212,9 +212,19 @@ resourcestring
 
   ''';
 
+  sHelpFollowSymlinksCmd = '''
+    -S, -sy or --follow-symlinks
+
+      Indicates that if either filename1 or filename2 is a symlink then the date
+      of the target file will be used in comparisons. If neither option is
+      specified then the symlinks are not followed and the date of the symlink
+      file itself is used.
+
+  ''';
+
   {$IF Defined(MSWINDOWS)}
   sHelpFollowShortcutsCmd = '''
-    -s or --followshortcuts
+    -s, -sh, or --follow-shortcuts
 
       Indicates that if either filename1 or filename2 is a shortcut file then
       the date of the target file will be used in comparisons. If neither option
@@ -222,10 +232,26 @@ resourcestring
       file itself is used.
 
   ''';
+
   {$ELSEIF Defined(LINUX)}
   sHelpFollowShortcutsCmd = '''
-    -s or --followshortcuts
+    -s, -sh or --follow-shortcuts
       <<Not supported on Linux>>. Reports an error if used.
+
+  ''';
+  {$ENDIF}
+
+  {$IF Defined(MSWINDOWS)}
+  sHelpFollowAllLinksCmd = '''
+    -ss or --follow-all-links
+
+      Indicates that if either filename1 or filename2 is a shortcut or a symlink
+      file then the date of the target file will be used in comparisons. If this
+      option is not specified then shortcuts are not followed and the date of
+      the shortcut or symlink file itself is used.
+
+      Equivalent to using both --follow-shortcuts and --follow-symlinks, or -sh
+      and -sy.
 
   ''';
   {$ENDIF}
@@ -316,23 +342,35 @@ type
 { TMain }
 
 function TMain.AdjustFileName(const AFileName: string): string;
-begin
+
   {$IF Defined(MSWINDOWS)}
-  // Shortcut files are only supported on Windows
-  if not fParams.FollowShortcuts then
-    // not following shortcut file: return AFileName unchanged
-    Exit(AFileName);
-  if TPath.GetExtension(AFileName).CompareTo('.lnk') <> 0 then
-    // AFileName is not a shortcut file: return it unchanged
-    Exit(AFileName);
-  // AFileName is a shortcut file. Try to get file it points to in Result, but
-  // if this fails return AFileName unchanged.
-  if not TWinShellLink.TryResolveShortcut(AFileName, Result) then
-    Exit(AFileName);
-  {$ELSE}
-  // Windows shortcut files are not supported: just return AFileName unchaged
-  Result := AFileName;
+  // TODO: Try to check validity using COM rather than file ext
+  // TODO: Move to UWinShellLink unit
+  function IsWinShellLink(const AFileName: string): Boolean;
+  begin
+    Result := TPath.GetExtension(AFileName).CompareTo('.lnk') = 0;
+  end;
   {$ENDIF}
+
+resourcestring
+  sFileNotFound = 'File "%s" not found';
+
+begin
+  if not TFile.Exists(AFileName) then
+    raise EApplication.Create(
+      sFileNotFound, [AFileName], EApplication.ErrFileNameNotFound
+    );
+  if fParams.FollowSymlinks and IsSymLink(AFileName) then
+    Result := ResolveSymlink(AFileName)
+  {$IF Defined(MSWINDOWS)}
+  else if fParams.FollowShortcuts and IsWinShellLink(AFileName) then
+  begin
+    if not TWinShellLink.TryResolveShortcut(AFileName, Result) then
+      Exit(AFileName);
+  end
+  {$ENDIF}
+  else
+    Result := AFileName;
 end;
 
 procedure TMain.CompareFilesAndReport;
@@ -482,7 +520,11 @@ begin
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateTypeCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateFormatCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateBasisCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowSymlinksCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowShortcutsCmd);
+  {$IF Defined(MSWINDOWS)}
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowAllLinksCmd);
+  {$ENDIF}
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVerboseCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpExtraVerboseCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpHelpCmd);
