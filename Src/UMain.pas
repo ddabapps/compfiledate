@@ -424,7 +424,6 @@ begin
   // Sign on to stdout only if the verbosity flag is on
   SignOn;
   // Errors always written to stderr regardless of verbosity flag
-  fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdErr, string.Format(sError, [E.Message])
   );
@@ -491,7 +490,6 @@ end;
 
 procedure TMain.ShowHelp;
 begin
-  fConsole.Silent := False;
   SignOn;
 
   fConsole.WriteLn(TConsole.TChannel.StdOut);
@@ -517,7 +515,6 @@ end;
 
 procedure TMain.ShowShortHelp;
 begin
-  fConsole.Silent := False;
   SignOn;
   fConsole.WriteLn(TConsole.TChannel.StdOut);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sUsage);
@@ -527,7 +524,6 @@ end;
 
 procedure TMain.ShowVersion;
 begin
-  fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdOut,
     string.Format(
