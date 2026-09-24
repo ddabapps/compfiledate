@@ -28,11 +28,12 @@ uses
 
 type
 
-  ///  <summary>Record with methods that manipulate dates as accurately as
+  ///  <summary>Record with methods that manipulates dates as accurately as
   ///  possible for file date on the underlying OS.</summary>
   ///  <remarks>
   ///  <para>On Windows file dates are recorded with an 100ns.</para>
   ///  <para>On Linux file dates are recorded with an accuracy of 1ns.</para>
+  ///  </remarks>
   TSysDate = record
   strict private
     const
@@ -129,8 +130,8 @@ type
     constructor Create(const ASeconds: time_t; ANanoSeconds: Longint);
     {$ENDIF LINUX}
 
-    ///  <summary>Compares two dates and returns an integer representing the
-    ///  result of the comparison.</summary>
+    ///  <summary>Compares two dates and returns a value representing the result
+    ///  of the comparison.</summary>
     ///  <param name="Left">[in] The date on the left hand side of the
     ///  comparison.</param>
     ///  <param name="Right">[in] The date on the right hand side of the
@@ -150,7 +151,7 @@ type
     class operator LessThan(const Left, Right: TSysDate): Boolean;
     class operator LessThanOrEqual(const Left, Right: TSysDate): Boolean;
 
-    ///  <summary>Formats the wrapped date as a string.</summary>
+    ///  <summary>Formats the date property as a string.</summary>
     ///  <param name="AFormatType">[in] The desired string format.</param>
     ///  <param name="ADateBasis">[in] Whether the date is rendered in UTC or
     ///  local time.</param>
@@ -354,3 +355,4 @@ begin
 end;
 
 end.
+

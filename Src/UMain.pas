@@ -43,18 +43,14 @@ type
     procedure ShowShortHelp;
     ///  <summary>Writes the program version to standard output.</summary>
     procedure ShowVersion;
-    ///  <summary>Writes an error message to standard error. In verbosity mode
-    ///  the sign on message is written to standard output.</summary>
+    ///  <summary>Writes an error message to standard error.</summary>
     ///  <param name="E">[in] Exception whose message is to be reported.</param>
     procedure ReportError(const E: Exception);
-    ///  <summary>Adjusts the given file name if necessary according to target
-    ///  OS and command line options and return the adjusted file name or the
-    ///  unchanged file name if no adjustment is necessary.</summary>
-    ///  <remarks>The ONLY case where a file name is adjusted is when ALL of the
-    ///  following conditions apply: (1) Windows is the target OS, (2) the user
-    ///  has specified the follow shortcuts option, (3) the file is a shortcut
-    ///  (.lnk) file and (4) the shortcut file references a valid file.
-    ///  </remarks>
+    ///  <summary>Adjusts the given file name, if necessary, according to target
+    ///  OS and command line options.</summary>
+    ///  <param name="AFileName">[in] File name to be adjusted.</param>
+    ///  <returns><c>string</c>. The adjusted file name if adjustment required
+    ///  or the unchanged file name otherwise.</returns>
     function AdjustFileName(const AFileName: string): string;
     ///  <summary>Performs date comparison on the two files then reports the
     ///  outcome. If the comparison is <c>True</c> then the program's exit code
@@ -63,10 +59,24 @@ type
     procedure CompareFilesAndReport;
     ///  <summary>Briefly reports the result of the file date comparison.
     ///  </summary>
+    ///  <param name="FileName1">[in] Name of the file whose date is the left
+    ///  hand operand or the comparison.</param>
+    ///  <param name="FileName2">[in] Name of the file whose date is the right
+    ///  hand operand or the comparison.</param>
+    ///  <param name="CompareResult">[in] Result of the date comparison.</param>
     procedure ReportStandardResults(const FileName1, FileName2: string;
       const CompareResult: Boolean);
     ///  <summary>Reports the result of the file date comparison in detail.
     ///  </summary>
+    ///  <param name="FileName1">[in] Name of the file whose date is the left
+    ///  hand operand or the comparison.</param>
+    ///  <param name="FileName2">[in] Name of the file whose date is the right
+    ///  hand operand or the comparison.</param>
+    ///  <param name="FileDate1">[in] Date used as the left hand operand of the
+    ///  comparison.</param>
+    ///  <param name="FileDate2">[in] Date used as the right hand operand of the
+    ///  comparison.</param>
+    ///  <param name="CompareResult">[in] Result of the date comparison.</param>
     procedure ReportExtraVerboseResults(const FileName1, FileName2: string;
       const FileDate1, FileDate2: TSysDate; const CompareResult: Boolean);
   public

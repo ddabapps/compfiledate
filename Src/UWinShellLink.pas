@@ -5,8 +5,7 @@
  *
  * Copyright (C) 2026, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements advanced record that that expands any Windows .lnk shell link file
- * into the file it points to.
+ * Routines to check for and resolve Windows .lnk shell link files
  *
  * NOTE:
  *   This unit only provides functionality when compiled for Windows targets.
@@ -36,7 +35,7 @@ function IsWinShellLink(const ALinkFileName: string): Boolean;
 ///  <exception><c>EApplication</c> is raised if an error occurs while
 ///  dereferencing the shortcut.</exception>
 ///  <remarks><c>ALinkFileName</c> is expected to be a valid Windows shortcut
-///  file, with <c>.lnk</c<.</remarks>
+///  file, with <c>.lnk</c>.</remarks>
 function ResolveWinShellLink(const ALinkFileName: string): string;
 
 {$ENDIF}
@@ -118,3 +117,4 @@ CoUninitialize;
 {$ENDIF}
 
 end.
+
