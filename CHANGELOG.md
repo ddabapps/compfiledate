@@ -6,7 +6,35 @@ All notable changes to this project are documented in this file.
 
 This change log begins with the first public release version of _CompFileDate_. Releases are listed in reverse version number order.
 
-## Release v2.5.0 of 11 February
+## Release v3.0.0 of 24 September 2026
+
+New major release. Breaking changes are marked ⚠️.
+
+* Renamed the `--followshortcuts` and `--datetype` commands as `--follow-shortcuts` and `--date-type`, respectively. The un-hyphenated commands were removed ⚠️.
+* Added new `--local-time` (or `-l`) option that causes dates to be reported in local time instead of the default UTC [[issue #43](https://github.com/ddabapps/compfiledate/issues/43)].
+* Added new `--iso-dates` or (`-i`) option to enable dates to be displayed in ISO-8601 date format instead of using the date format of the user's own locale [[issue #43](https://github.com/ddabapps/compfiledate/issues/43)].
+* Added new `--extra-verbose` (or `-x` or `-vv`) option that reports file date comparisons in greater detail than when just the `--version` (or `-v`) commmand is used [[issue #38](https://github.com/ddabapps/compfiledate/issues/38)]. This option causes the file dates being examined to be displayed on standard output. By default the file dates are reported in UTC and in the format specified by the user's current locale. Both defaults can be overridden by the `--local-time` and `--iso-dates` formats, respectively.
+* Added new `--follow-symlinks` (or `-S` or `-sy`) option to enable symlinks to be followed on both Windows and Linux [[#issue #46](https://github.com/ddabapps/compfiledate/issues/46)].
+* Added new `--follow-all-links` (or `-ss`) option on Windows only. This option causes both symlinks and shell links to be expanded. This is the same as specifying both the `--follow-shortcuts` and `--follow-symlinks` options. The command results in an error on Linux.
+* Added new `-sh` alias for the `--follow-shortcuts` (or `-s-`) command on Windows only.
+* The deprecated values `c`, `created` and `creation` of the `--date-type` command now trigger an error, instead of a warning, if used with the Linux build [[issue #50](https://github.com/ddabapps/compfiledate/issues/50)] ⚠️.
+* Changed handling of the `--follow-shortcuts` on command Linux. It now causes an normal unsupported command error instead of a special error message that explained that the command was Windows only.
+* Updated accuracy of date extraction and comparison code. Dates are now read from files in the maximum accuracy supported by the underlying OS.
+* Fixed bug in processing `--xxx=yyy` format commands where `--xxx=yyy` and `--xxxabc=yyy` were treated as the same command [[issue #45](https://github.com/ddabapps/compfiledate/issues/45)].
+* Fixed bug that occured when parsing commands containing punctuation. The valid `-?` alias for the `--help` option previously caused an assertion failure and now works as expected. Invalid options such as `-:` now raise `EApplication` exceptions, as expected, instead of causing assertion failures [[issue #49](https://github.com/ddabapps/compfiledate/issues/49)].
+* Fixed bug in `Deploy.bat` that was failing to convert line endings in bundled text files from Windows CRLF to Unix LF format when packaging the Linux 64 release.
+* Updated supported error codes. Unused codes 105 & 107 were removed and new error code 110 ("Can''t access file X") was introduced.
+* Updated the program to compile with Delphi 13.2 [[issue #51](https://github.com/ddabapps/compfiledate/issues/51)].
+* A significant amount of code was refactored, heavily overhauled or rewritten.
+* Removed unused code and declarations.
+* Updated documentation:
+    * The help text in `UMain.pas` and the usage section of `Docs/ReadMe.txt` were updated re the new and removed options and related values.
+    * `Docs/ReadMe.txt` and `Build.txt` were updated re changes in this release, clarified and corrected.
+    * Updated and corrected comments in various source code files.
+    * Fixed formatting error in `README.md`.
+    * Fixed minor error in `CHANGELOG.md`.
+
+## Release v2.5.0 of 11 February 2026
 
 * Added support for comparing last access dates of the files being compared [[issue #37](https://github.com/ddabapps/compfiledate/issues/37)].
 * Added support to the Linux build for comparing last status change events of file instead of creation dates, which Linux doesn't support. This option is not supported on Windows. Passing the `c`,  `created` or `creation` values to the `-d` / `--datetype` command on Linux results in a warning being issued and the last status change date being used instead [[issue #39](https://github.com/ddabapps/compfiledate/issues/39) & [issue #41](https://github.com/ddabapps/compfiledate/issues/41)].

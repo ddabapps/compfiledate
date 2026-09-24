@@ -245,7 +245,7 @@ copy "%ChangeLogFilePath%" "%Linux64BundleDir%"
 setlocal
 echo ------ Converting text file EOL characters for Linux
 cd "%Linux64BundleDir%"
-"%DOS2UnixExe%" -b -k -e "%ReadMeFileName%" "%LicenseFile%" "%ChangeLogFile%"
+"%DOS2UnixExe%" -b -k -e "%ReadMeFileName%" "%LicenseFileName%" "%ChangeLogFileName%"
 endlocal
 
 :: Create archive files for Windows builds

@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2014-2026, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Static class for comparing dates using various equality operators.
+ * Static class for comparing dates using various operators.
 }
 
 
@@ -21,7 +21,7 @@ uses
 
 
 type
-  ///  <summary>Method only record that exposes a method that performs date
+  ///  <summary>Method-only record that exposes a method that performs date
   ///  comparisons for all supported date comparison operations.</summary>
   TDateComparer = record
   public
@@ -30,15 +30,17 @@ type
       ///  <summary>Type of comparison operator to be used when comparing two
       ///  dates.</summary>
       ///  <remarks>
-      ///  <para>Assuming dates Left and Right, the values are as follows:
+      ///  <para>Assuming dates <c>Left</c> and <c>Right</c>, the operations
+      ///  are as follows:</para>
+      ///  <para>- <c>EQ</c>: check if both dates are equal.</para>
+      ///  <para>- <c>LT</c>: check if <c>Left</c> is less than <c>Right</c>.
       ///  </para>
-      ///  <para>- <c>EQ</c>: check if the dates are equal.</para>
-      ///  <para>- <c>LT</c>: check if Left is less than Right.</para>
-      ///  <para>- <c>GT</c>: check if Left is greater than Right.</para>
-      ///  <para>- <c>LTE</c>: check if Left is less than or equal to Right.
+      ///  <para>- <c>GT</c>: check if <c>Left</c> is greater than <c>Right</c>.
       ///  </para>
-      ///  <para>- <c>GTE</c>: check if Left is greater than or equal to Right.
-      ///  </para>
+      ///  <para>- <c>LTE</c>: check if <c>Left</c> is less than or equal to
+      ///  <c>Right</c>.</para>
+      ///  <para>- <c>GTE</c>: check if <c>Left</c> is greater than or equal to
+      ///  <c>Right</c>.</para>
       ///  <para>- <c>NEQ</c>: check if the dates are not equal.</para>
       ///  </remarks>
       TOp = (EQ, LT, GT, LTE, GTE, NEQ);
@@ -57,7 +59,7 @@ type
       fMap: TComparerMap;
   public
     ///  <summary>Class constructor. Intialises the map of comparison types to
-    ///  the implementing functions.</summary>
+    ///  their implementing functions.</summary>
     class constructor Create;
     ///  <summary>Compares two <c>TSysDate</c> values using a given operator.
     ///  </summary>

@@ -21,8 +21,8 @@ uses
 
 type
 
-  ///  <summary>Method only record that exposes a method that gets either the
-  ///  creation, last-accessed or last-modified date from a file.</summary>
+  ///  <summary>Method-only record that exposes a method that gets a given type
+  ///  of file-change date from a file.</summary>
   TDateExtractor = record
   public
     type
@@ -31,8 +31,8 @@ type
       ///  <remarks>
       ///  <para>- LastModified - get date file was last modified.</para>
       ///  <para>- Created - get date file was created (Windows only).</para>
-      ///  <para>- StatusChanged - get date when the file's status was was
-      ///  changed (Linux only).</para>
+      ///  <para>- StatusChanged - get date when the file's status was changed
+      ///  (Linux only).</para>
       ///  <para>- LastAccessed - get date file was last accessed.</para>
       ///  </remarks>
       TDateType = (

@@ -60,7 +60,7 @@ type
     ///  exception.</param>
     constructor Create(const Msg: string; const Args: array of const;
       const ExitCode: Integer); overload;
-    ///  <summary>Program exit code associated with the object.</summary>
+    ///  <summary>Program exit code associated with the exception.</summary>
     property ExitCode: Integer read fExitCode;
   end;
 

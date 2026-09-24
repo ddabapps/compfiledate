@@ -37,7 +37,7 @@ type
       // IDs for all supported commands
       TCommandID = (
         // DO NOT assign values to this enumeration - following code assumes
-        // Ord(first-value) = 0 and Ord(last-value) = Pred(number of elements)
+        // Ord(first-value) = 0 and Ord(last-value) = Pred(number-of-elements)
         Help
         , Version
         , Verbose
@@ -203,8 +203,14 @@ type
       fFileName2: string;
       fFileName1: string;
 
-    ///  <summary>Checks if string <c>AStr</c> is contained in string array
-    ///  <c>AArr</c>, ignoring case.</summary>
+    ///  <summary>Checks if a string is contained in a string array.</summary>
+    ///  <param name="AStr">[in] String to be checked for in array.</param>
+    ///  <param name="AArr">[in] Array of strings containing valid values.
+    ///  </param>
+    ///  <param name="AIgnoreCase">[in] Flag that determines whether case is
+    ///  ignored when searching <c>AArr</c>.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if <c>AStr</c> is found in
+    ///  <c>AArr</c> or <c>False</c> otherwise.</returns>
     class function IsStrInArray(const AStr: string; const AArr: array of string;
       const AIgnoreCase: Boolean): Boolean;
     ///  <summary>Parses the command at a given index on the command line.
@@ -266,8 +272,8 @@ type
     class function IsCommand(const AParam: string): Boolean;
     ///  <summary>Checks if a given command is contained in a given array of
     ///  valid commands.</summary>
-    ///  <param name="AParam">[in] Command to be tested.</param>
-    ///  <param name="AValidParams">[in] Array containing the valid commands.
+    ///  <param name="ACommand">[in] Command to be tested.</param>
+    ///  <param name="AValidCommands">[in] Array containing the valid commands.
     ///  </param>
     ///  <returns><c>Boolean</c>. <c>True</c> if <c>AParam</c> is valid,
     ///  <c>False</c> if not.</returns>
@@ -302,7 +308,7 @@ type
     ///  </remarks>
     function GetCommandAndValue(var AParamIdx: Integer): TPair<string,string>;
     ///  <summary>Gets the ID and any associated value of a supported command
-    ///  tarting at the given index in the parameter list.</summary>
+    ///  starting at the given index in the parameter list.</summary>
     ///  <param name="AParamIdx">[in/out]. The index where the command begins in
     ///  the parameter list. On return this value may be incremented by <c>1</c>
     ///  if any value is in the next item on the command line.</param>
@@ -313,9 +319,10 @@ type
     ///  associated value then <c>Value</c> is set to the empty string.
     ///  </returns>
     ///  <exception><c>EApplication</c> is raised if the referenced parameter is
-    ///  not a correctly formatted command, not a supported command, if a value
-    ///  is present for a command that expects no value or if a value is not
-    ///  present for a command that expects one.</exception>
+    ///  any of the following: (a) not a correctly formatted command; (b) not a
+    ///  supported command; (c) if a value is present for a command that expects
+    ///  no value; (d) if a value is not present for a command that expects one.
+    ///  </exception>
     function GetCommandIDAndValue(var AParamIdx: Integer):
       TPair<TCommandID,string>;
   public
@@ -329,17 +336,19 @@ type
     procedure Parse;
     ///  <summary>Specifies whether the program is to be run in verbose mode.
     ///  </summary>
-    ///  <remarks><c>True</c> if either the -v or --verbose command has been
-    ///  specified, <c>False</c> if not.</remarks>
+    ///  <remarks><c>True</c> if either the <c>-v</c> or <c>--verbose</c>
+    ///  command has been specified or <c>False</c> if not.</remarks>
     property Verbose: Boolean read fVerbose;
     ///  <summary>Specifies whether the program is to be run in extra verbose
     ///  mode.</summary>
-    ///  <remarks><c>True</c> if any of the -x, -vv or --extra-verbose command
-    ///  has been specified, <c>False</c> if not.</remarks>
+    ///  <remarks><c>True</c> if any of the <c>-x</c>, <c>-vv</c> or
+    ///  <c>--extra-verbose</c> command has been specified or <c>False</c> if
+    ///  not.</remarks>
     property ExtraVerbose: Boolean read fExtraVerbose;
     ///  <summary>Specifies whether help text is to be displayed.</summary>
-    ///  <remarks><c>True</c> if either the -h, -? or --help command has been
-    ///  specified, <c>False</c> if not.</remarks>
+    ///  <remarks><c>True</c> if either the <c>-h</c>, <c>-?</c> or
+    ///  <c>--help</c> command has been specified or <c>False</c> if not.
+    ///  </remarks>
     property Help: Boolean read fHelp;
     ///  <summary>Specifies whether short help text is to be displayed.
     ///  </summary>
@@ -348,18 +357,19 @@ type
     property ShortHelp: Boolean read fShortHelp;
     ///  <summary>Specifies whether the program's version information is to be
     ///  displayed.</summary>
-    ///  <remarks><c>True</c> if either the -V or --version command has been
-    ///  specified, <c>False</c> otherwise.</remarks>
+    ///  <remarks><c>True</c> if either the <c>-V</c> or <c>--version</c>
+    ///  command has been specified or <c>False</c> otherwise.</remarks>
     property Version: Boolean read fVersion;
     ///  <summary>Type of comparison to be applied to dates.</summary>
-    ///  <remarks>Defaults to <c>TDateComparer.TOp.LT</c> unless either the -c
-    ///  or --compare commands are used to override this value.</remarks>
+    ///  <remarks>Defaults to <c>TDateComparer.TOp.LT</c> unless either the
+    ///  <c>-c</c> or <c>--compare</c> commands are used to override this value.
+    ///  </remarks>
     property ComparisonOp: TDateComparer.TOp read fComparisonOp;
     ///  <summary>Specifies whether to compare files' last-modified or creation
     ///  dates.</summary>
     ///  <remarks>Defaults to <c>TDateExtractor.TDateType.LastModified</c>
-    ///  unless either the -d or --date-type command are used to override this
-    ///  value.</remarks>
+    ///  unless either the <c>-d</c> or <c>--date-type</c> command are used to
+    ///  override this value.</remarks>
     property DateType: TDateExtractor.TDateType read fDateType;
     ///  <summary>Specifies the date format to be used when displaying file
     ///  dates.</summary>
@@ -369,23 +379,25 @@ type
     property DateFormat: TSysDate.TDateFormat read fDateFormat;
     ///  <summary>Specifies the time zone to be used as the basis when
     ///  displaying file dates.</summary>
-    ///  <remarks>Default to displaying dates in UTC unless the
-    ///  <c>--local-time</c> or <c>-l</c> is specified when dates are displayed
-    ///  in local time.</remarks>
+    ///  <remarks>Defaults to displaying dates in UTC unless the
+    ///  <c>--local-time</c> or <c>-l</c> command is specified when dates are
+    ///  displayed in local time.</remarks>
     property DateBasis: TSysDate.TDateBasis read fDateBasis;
     ///  <summary>Specifies if shortcut files are to be expanded before
     ///  comparing dates.</summary>
     ///  <remarks>When <c>True</c> the files targeted by any shortcut are used
     ///  in the date comparison; when <c>False</c> the date of the shortcut file
-    ///  itself is used. Defaults to <c>False</c> unless the -s, -sh or
-    ///  --follow-shortcuts command has been specified.</remarks>
+    ///  itself is used. Defaults to <c>False</c> unless the <c>-s</c>,
+    ///  <c>-sh</c> or <c>--follow-shortcuts</c> command has been specified.
+    ///  </remarks>
     property FollowShortcuts: Boolean read fFollowShortcuts;
     ///  <summary>Specifies if symbolic links are to be expanded before
     ///  comparing dates.</summary>
     ///  <remarks>When <c>True</c> the files targeted by any symlink are used
     ///  in the date comparison; when <c>False</c> the date of the symlink file
-    ///  itself is used. Defaults to <c>False</c> unless the -S, -sy or
-    ///  --follow-symlinks command has been specified.</remarks>
+    ///  itself is used. Defaults to <c>False</c> unless the <c>-S</c>,
+    ///  <c>-sy</c> or <c>--follow-symlinks</c> command has been specified.
+    ///  </remarks>
     property FollowSymlinks: Boolean read fFollowSymlinks;
     ///  <summary>Name of the 1st file on the command line.</summary>
     property FileName1: string read fFileName1;

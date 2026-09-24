@@ -1,5 +1,5 @@
-DelphiDabbler CompFileDate Readme
-=================================
+DelphiDabbler CompFileDate v3 Readme
+====================================
 
 
 Contents
@@ -19,22 +19,26 @@ Contents
 
 CompFileDate is a console application that compares the dates of two files whose
 names are passed on the command line. The result of the comparison is given by
-the program's exit code.
+the program's exit code and can be written to standard output.
 
 Versions of the program are available for Windows and Linux.
 
-For Windows the program is available in 64 and 32 bit versions. Users of 64 bit
-Windows SHOULD use the 64 bit version but the 32 bit version will work. 32 bit
-Windows users MUST use the 32 bit version.
+For Windows the program is available in 64-bit and 32-bit versions. Users of
+64-bit Windows SHOULD use the 64-bit version in preference to the 32-bit
+version. 32-bit Windows users MUST use the 32-bit version.
 
-Only 64 bit Linux is supported.
+Only 64-bit Linux is supported.
+
+WARNING: CompFileDate v3 is not backward compatible with v1 or v2. Be aware that
+any scripts that call older versions may need to be updated to work successfully
+with v3.
 
 
 2. Download & Installation
 --------------------------
 
 CompFileDate can be downloaded from
-https://github.com/ddabapps/compfiledate/releases. You should always download
+https://github.com/ddabapps/compfiledate/releases. You are advised to download
 the latest version.
 
 All downloads are compressed archives that contain the CompFileDate executable
@@ -52,7 +56,7 @@ where
     <os>
       Specifies the operating system. It will be "linux64", "win32" or "win64".
     <version>
-      The release version number, for example "2.4.0".
+      The release version number, for example "3.0.0".
     <ext>
       The archive file type. This will either be "zip" or "tar.gz"
 
@@ -127,11 +131,10 @@ options are:
       enclosed in double quotes. On Linux single quotes may also be used. For
       example --convert="<=" and -c "<>"
         
-
   -d <type> or --date-type=<type>
   
-    Determines which date property of the files is used in the comparison.
-    <type> must be one of the following:
+    Determines which date property is used in the comparison. <type> must be one
+    of the following:
     
       m, modify, modified, last-modified, modification, update, updated,
       last-updated, write, written, last-written
@@ -176,7 +179,7 @@ options are:
   -S, -sy or --follow-symlinks
 
     Indicates that if either filename1 or filename2 is a symlink then the date
-    of the target file will be used in comparisons. If neither option is 
+    of the target file will be used in comparisons. If none of these options are 
     specified then the symlinks are not followed and the date of the symlink 
     file itself is used.
 
@@ -185,7 +188,7 @@ options are:
     Windows:
       Indicates that if either filename1 or filename2 is a shortcut (.lnk)
       file then the date of the shortcut's target file will be used in
-      comparisons. If neither option is specified then shortcuts are not
+      comparisons. If none of these options are specified then shortcuts are not
       followed and the date of the shortcut file itself is used in the
       comparison.
     
@@ -198,9 +201,9 @@ options are:
 
     Windows:
       Indicates that if either filename1 or filename2 is a shortcut or a symlink
-      file then the date of the target file will be used in comparisons. If this
-      option is not specified then shortcuts are not followed and the date of
-      the shortcut or symlink file itself is used.
+      file then the date of the target file will be used in comparisons. If
+      none of these options are specified then the dates of the shortcut or 
+      symlink files are used.
     
     Linux:
       Not supported because Linux only supports symlinks and not shortcuts. The
@@ -208,15 +211,15 @@ options are:
 
   -v or --verbose
     
-    Verbose. Writes output to standard output. No output is written if the
-    option is not provided. Output is always written to standard error when an
-    error occurs or to standard output when help or the program's version number
-    are requested.
+    Verbose. Writes output to standard output. No output is written if neither
+    option is provided. However, output is always written to standard error when
+    an error occurs or to standard output when help or the program's version
+    number are requested, regardless of these options.
 
   -vv, -x or --extra-verbose
 
-    Extra verbose. Behaves as if -v or --verbose had been specified except
-    that file date comparison results are output in more detail.
+    Extra verbose. Behaves as if -v or --verbose had been specified, except
+    that a more detailed description of the file date comparison is output.
 
   -h, -? or --help
     
@@ -229,7 +232,8 @@ options are:
     halts. Any file names and other options are ignored.
 
 If no file names are provided on the command line and neither the help nor
-version commands are specified then a brief help message is displayed.
+version commands are specified then a brief help message is displayed on
+standard output.
 
 File names are case sensitive on Linux and case insensitive on Windows.
 
@@ -241,22 +245,20 @@ is written to standard error. The error codes are:
   101 - invalid command or option
   102 - incorrect number of files specified (two required)
   103 - both file names are the same
-  104 - one or both files cannot be found
+  104 - at least one file does not exist
   106 - an invalid comparison type was specified for the -c or --compare option
   108 - an invalid date type was specified for the -d or --date-type option
   109 - date information can't be read from a file
   110 - file attributes can't be read from a file
   111 - failed to resolve a symlink to its target file 
-  112 - failed to resolve a shortcut file to its target file*
-
-* Windows only.
+  112 - failed to resolve a shortcut file to its target file (Windows only)
 
 
 4. Source Code
 --------------
 
-The program's source code is available on GitHub. See ddabapps/compfiledate
-at https://github.com/ddabapps/compfiledate
+The program's source code is available on GitHub. See the ddabapps/compfiledate
+repository at https://github.com/ddabapps/compfiledate
 
 
 5. Copyright and License
