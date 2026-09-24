@@ -6,7 +6,7 @@ All notable changes to this project are documented in this file.
 
 This change log begins with the first public release version of _CompFileDate_. Releases are listed in reverse version number order.
 
-## Release v2.5.0 of 11 February
+## Release v2.5.0 of 11 February 2026
 
 * Added support for comparing last access dates of the files being compared [[issue #37](https://github.com/ddabapps/compfiledate/issues/37)].
 * Added support to the Linux build for comparing last status change events of file instead of creation dates, which Linux doesn't support. This option is not supported on Windows. Passing the `c`,  `created` or `creation` values to the `-d` / `--datetype` command on Linux results in a warning being issued and the last status change date being used instead [[issue #39](https://github.com/ddabapps/compfiledate/issues/39) & [issue #41](https://github.com/ddabapps/compfiledate/issues/41)].
