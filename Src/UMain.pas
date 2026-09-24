@@ -192,8 +192,8 @@ resourcestring
           Use date files were last modified (default if option is not provided).
         a, accessed, last-accessed, access, read, last-read:
           Use date files were last accessed.
-        s, status, status-change, last-status-change, status-changed,
-        metadata, metadata-change, last-metadata-change, metadata-changed:
+        s, status, status-change, last-status-change, status-changed, metadata,
+        metadata-change, last-metadata-change, metadata-changed:
           Use date files last had status updates.
 
   ''';
@@ -259,15 +259,15 @@ resourcestring
       Verbose. Writes output to standard output. No output is written if the
       option is not provided. Output is always written to standard error when an
       error occurs or to standard output when help or the program's version
-      number are requested.
+      number are requested, regardless of this option.
 
   ''';
 
   sHelpExtraVerboseCmd = '''
     -vv, -x or --extra-verbose
 
-      Extra verbose. Behaves as if -v or --verbose had been specified except
-      that file date comparison results are output in more detail.
+      Extra verbose. Behaves as if -v or --verbose had been specified, except
+      that a more detailed description of the file date comparison is output.
 
   ''';
 
