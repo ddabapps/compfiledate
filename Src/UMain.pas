@@ -20,7 +20,8 @@ uses
   System.SysUtils,
   // Project
   UConsole,
-  UParams;
+  UParams,
+  USysDate;
 
 
 type
@@ -42,30 +43,42 @@ type
     procedure ShowShortHelp;
     ///  <summary>Writes the program version to standard output.</summary>
     procedure ShowVersion;
-    ///  <summary>Writes an error message to standard error. In verbosity mode
-    ///  the sign on message is written to standard output.</summary>
+    ///  <summary>Writes an error message to standard error.</summary>
     ///  <param name="E">[in] Exception whose message is to be reported.</param>
     procedure ReportError(const E: Exception);
-    ///  <summary>Adjusts the given file name if necessary according to target
-    ///  OS and command line options and return the adjusted file name or the
-    ///  unchanged file name if no adjustment is necessary.</summary>
-    ///  <remarks>The ONLY case where a file name is adjusted is when ALL of the
-    ///  following conditions apply: (1) Windows is the target OS, (2) the user
-    ///  has specified the follow shortcuts option, (3) the file is a shortcut
-    ///  (.lnk) file and (4) the shortcut file references a valid file.
-    ///  </remarks>
+    ///  <summary>Adjusts the given file name, if necessary, according to target
+    ///  OS and command line options.</summary>
+    ///  <param name="AFileName">[in] File name to be adjusted.</param>
+    ///  <returns><c>string</c>. The adjusted file name if adjustment required
+    ///  or the unchanged file name otherwise.</returns>
     function AdjustFileName(const AFileName: string): string;
-      {$IF not Defined(MSWINDOWS)}inline;{$ENDIF}
-    ///  <summary>Compares dates of the two files passed on the command line
-    ///  using the user's chosen comparison operation and returns True if the
-    ///  comparison succeeds or False if not.</summary>
-    ///  <param name="File1">[in] Information about the file that is the left
-    ///  hand operand of the comparison.</param>
-    ///  <param name="File2">[in] Information about the file that is the right
-    ///  hand operand of the comparison.</param>
-    ///  <returns><c>Boolean</c>. <c>True</c> if the operation succeeds or
-    ///  <c>False</c> if not.</returns>
-    function CompareFileDates(const FileName1, FileName2: string): Boolean;
+    ///  <summary>Performs date comparison on the two files then reports the
+    ///  outcome. If the comparison is <c>True</c> then the program's exit code
+    ///  is set to <c>1</c>, otherwise the exit code is set to <c>0</c>.
+    ///  </summary>
+    procedure CompareFilesAndReport;
+    ///  <summary>Briefly reports the result of the file date comparison.
+    ///  </summary>
+    ///  <param name="FileName1">[in] Name of the file whose date is the left
+    ///  hand operand or the comparison.</param>
+    ///  <param name="FileName2">[in] Name of the file whose date is the right
+    ///  hand operand or the comparison.</param>
+    ///  <param name="CompareResult">[in] Result of the date comparison.</param>
+    procedure ReportStandardResults(const FileName1, FileName2: string;
+      const CompareResult: Boolean);
+    ///  <summary>Reports the result of the file date comparison in detail.
+    ///  </summary>
+    ///  <param name="FileName1">[in] Name of the file whose date is the left
+    ///  hand operand or the comparison.</param>
+    ///  <param name="FileName2">[in] Name of the file whose date is the right
+    ///  hand operand or the comparison.</param>
+    ///  <param name="FileDate1">[in] Date used as the left hand operand of the
+    ///  comparison.</param>
+    ///  <param name="FileDate2">[in] Date used as the right hand operand of the
+    ///  comparison.</param>
+    ///  <param name="CompareResult">[in] Result of the date comparison.</param>
+    procedure ReportExtraVerboseResults(const FileName1, FileName2: string;
+      const FileDate1, FileDate2: TSysDate; const CompareResult: Boolean);
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -88,6 +101,7 @@ uses
   , UAppInfo
   , UDateComparer
   , UDateExtractor
+  , USymlinks
   {$IF Defined(MSWINDOWS)}
   , UWinShellLink
   {$ENDIF}
@@ -154,11 +168,10 @@ resourcestring
 
   {$IF Defined(MSWINDOWS)}
   sHelpDateTypeCmd = '''
-    -d <type> or --datetype=<type>
+    -d <type> or --date-type=<type>
 
       Determines whether last modification, last accessed or creation dates are
-      compared.
-      <type> must be one of the following:
+      compared. <type> must be one of the following:
         m, modify, modified, last-modified, modification, update, updated,
         last-updated, write, written, last-written:
           Use date files were last modified (default if option is not provided).
@@ -170,30 +183,52 @@ resourcestring
   ''';
   {$ELSEIF Defined(LINUX)}
   sHelpDateTypeCmd = '''
-    -d <type> or --datetype=<type>
+    -d <type> or --date-type=<type>
 
       Determines whether last modification, last accessed or last status update
-      dates are compared.
-      <type> must be one of the following:
+      dates are compared. <type> must be one of the following:
         m, modify, modified, last-modified, modification, update, updated,
         last-updated, write, written, last-written:
           Use date files were last modified (default if option is not provided).
         a, accessed, last-accessed, access, read, last-read:
           Use date files were last accessed.
-        s, status, status-change, last-status-change, status-changed,
-        metadata, metadata-change, last-metadata-change, metadata-changed:
+        s, status, status-change, last-status-change, status-changed, metadata,
+        metadata-change, last-metadata-change, metadata-changed:
           Use date files last had status updates.
-        c, created, creation:
-          DEPRECATED: use status-changed instead.
-          These values are treated as aliases for status-changed and a warning
-          is displayed.
 
   ''';
   {$ENDIF}
 
+  sHelpDateFormatCmd = '''
+    -i or --iso-dates
+
+      Specifies that dates should be output in ISO8601 format. If this command
+      is not used then dates are output in the correct format for the user's
+      current locale.
+
+  ''';
+
+  sHelpDateBasisCmd = '''
+    -l or --local-time
+
+      Specifies that all file dates relate to the local time zone. If this
+      command is not used then file dates are taken to be in UTC.
+
+  ''';
+
+  sHelpFollowSymlinksCmd = '''
+    -S, -sy or --follow-symlinks
+
+      Indicates that if either filename1 or filename2 is a symlink then the date
+      of the target file will be used in comparisons. If neither option is
+      specified then the symlinks are not followed and the date of the symlink
+      file itself is used.
+
+  ''';
+
   {$IF Defined(MSWINDOWS)}
   sHelpFollowShortcutsCmd = '''
-    -s or --followshortcuts
+    -s, -sh or --follow-shortcuts
 
       Indicates that if either filename1 or filename2 is a shortcut file then
       the date of the target file will be used in comparisons. If neither option
@@ -201,10 +236,19 @@ resourcestring
       file itself is used.
 
   ''';
-  {$ELSEIF Defined(LINUX)}
-  sHelpFollowShortcutsCmd = '''
-    -s or --followshortcuts
-      <<Not supported on Linux>>. Reports an error if used.
+  {$ENDIF}
+
+  {$IF Defined(MSWINDOWS)}
+  sHelpFollowAllLinksCmd = '''
+    -ss or --follow-all-links
+
+      Indicates that if either filename1 or filename2 is a shortcut or a symlink
+      file then the date of the target file will be used in comparisons. If this
+      option is not specified then shortcuts are not followed and the date of
+      the shortcut or symlink file itself is used.
+
+      Equivalent to using both --follow-shortcuts and --follow-symlinks, or -sh
+      and -sy.
 
   ''';
   {$ENDIF}
@@ -215,12 +259,20 @@ resourcestring
       Verbose. Writes output to standard output. No output is written if the
       option is not provided. Output is always written to standard error when an
       error occurs or to standard output when help or the program's version
-      number are requested.
+      number are requested, regardless of this option.
+
+  ''';
+
+  sHelpExtraVerboseCmd = '''
+    -vv, -x or --extra-verbose
+
+      Extra verbose. Behaves as if -v or --verbose had been specified, except
+      that a more detailed description of the file date comparison is output.
 
   ''';
 
   sHelpHelpCmd = '''
-    -h or -? or --help
+    -h, -? or --help
 
       Displays help screen. Rest of command line ignored.
 
@@ -281,33 +333,49 @@ const
   );
 
 
+type
+  TOpArray = array[TDateComparer.TOp] of string;
+
 { TMain }
 
 function TMain.AdjustFileName(const AFileName: string): string;
+resourcestring
+  sFileNotFound = 'File "%s" not found';
 begin
+  if not TFile.Exists(AFileName) then
+    raise EApplication.Create(
+      sFileNotFound, [AFileName], EApplication.ErrFileNameNotFound
+    );
+  if fParams.FollowSymlinks and IsSymLink(AFileName) then
+    Result := ResolveSymlink(AFileName)
   {$IF Defined(MSWINDOWS)}
-  // Shortcut files are only supported on Windows
-  if not fParams.FollowShortcuts then
-    // not following shortcut file: return AFileName unchanged
-    Exit(AFileName);
-  if TPath.GetExtension(AFileName).CompareTo('.lnk') <> 0 then
-    // AFileName is not a shortcut file: return it unchanged
-    Exit(AFileName);
-  // AFileName is a shortcut file. Try to get file it points to in Result, but
-  // if this fails return AFileName unchanged.
-  if not TWinShellLink.TryResolveShortcut(AFileName, Result) then
-    Exit(AFileName);
-  {$ELSE}
-  // Windows shortcut files are not supported: just return AFileName unchaged
-  Result := AFileName;
+  else if fParams.FollowShortcuts and IsWinShellLink(AFileName) then
+    Result := ResolveWinShellLink(AFileName)
   {$ENDIF}
+  else
+    Result := AFileName;
 end;
 
-function TMain.CompareFileDates(const FileName1, FileName2: string): Boolean;
+procedure TMain.CompareFilesAndReport;
 begin
+  var FileName1 := AdjustFileName(fParams.FileName1);
+  var FileName2 := AdjustFileName(fParams.FileName2);
   var FileDate1 := TDateExtractor.GetDate(FileName1, fParams.DateType);
   var FileDate2 := TDateExtractor.GetDate(FileName2, fParams.DateType);
-  Result := TDateComparer.Compare(FileDate1, FileDate2, fParams.ComparisonOp);
+  var CompareResult := TDateComparer.Compare(
+    FileDate1, FileDate2, fParams.ComparisonOp
+  );
+  fConsole.Silent := not fParams.Verbose;
+  SignOn;
+  if fParams.ExtraVerbose then
+    ReportExtraVerboseResults(
+      FileName1, FileName2, FileDate1, FileDate2, CompareResult
+    )
+  else
+    ReportStandardResults(
+      FileName1, FileName2, CompareResult
+    );
+  ExitCode := if CompareResult then 1 else 0;
 end;
 
 constructor TMain.Create;
@@ -335,43 +403,7 @@ begin
     else if fParams.Version then
       ShowVersion
     else
-    begin
-      // Normal execution
-      fConsole.Silent := not fParams.Verbose;
-      SignOn;
-      var FileName1 := AdjustFileName(fParams.FileName1);
-      var FileName2 := AdjustFileName(fParams.FileName2);
-      if CompareFileDates(FileName1, FileName2) then
-      begin
-        fConsole.WriteLn(
-          TConsole.TChannel.StdOut,
-          string.Format(sSuccessReport, [DateTypeResponses[fParams.DateType]])
-        );
-        fConsole.WriteLn(
-          TConsole.TChannel.StdOut,
-          string.Format(
-            TrueResponses[fParams.ComparisonOp],
-            [FileName1, FileName2]
-          )
-        );
-        ExitCode := 1;
-      end
-      else
-      begin
-        fConsole.WriteLn(
-          TConsole.TChannel.StdOut,
-          string.Format(sFailureReport, [DateTypeResponses[fParams.DateType]])
-        );
-        fConsole.WriteLn(
-          TConsole.TChannel.StdOut,
-          string.Format(
-            FalseResponses[fParams.ComparisonOp],
-            [FileName1, FileName2]
-          )
-        );
-        ExitCode := 0;
-      end;
-    end;
+      CompareFilesAndReport;
   except
     // Report any errors
     on E: EApplication do
@@ -392,15 +424,72 @@ begin
   // Sign on to stdout only if the verbosity flag is on
   SignOn;
   // Errors always written to stderr regardless of verbosity flag
-  fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdErr, string.Format(sError, [E.Message])
   );
 end;
 
+procedure TMain.ReportExtraVerboseResults(const FileName1, FileName2: string;
+  const FileDate1, FileDate2: TSysDate; const CompareResult: Boolean);
+const
+  Indent = '  ';
+  Operators: TOpArray = ('=', '<', '>', '<=', '>=', '<>');
+
+  procedure WriteFileInfo(const AFileName: string; const ADate: TSysDate);
+  begin
+    fConsole.WriteLn(TConsole.TChannel.StdOut, Indent + AFileName);
+    fConsole.WriteLn(
+      TConsole.TChannel.StdOut,
+      Indent + ADate.ToString(fParams.DateFormat, fParams.DateBasis)
+    );
+  end;
+
+begin
+  fConsole.Write(TConsole.TChannel.StdOut, 'Comparing ');
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, DateTypeResponses[fParams.DateType] + ' of:'
+  );
+  WriteFileInfo(FileName1, FileDate1);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, 'and:');
+  WriteFileInfo(FileName2, FileDate2);
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, 'Using comparision operator:'
+  );
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, Indent + Operators[fParams.ComparisonOp]
+  );
+  fConsole.WriteLn(TConsole.TChannel.StdOut, 'Result:');
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut, Indent + BoolToStr(CompareResult, True)
+  );
+end;
+
+procedure TMain.ReportStandardResults(const FileName1, FileName2: string;
+  const CompareResult: Boolean);
+const
+  Reports: array[Boolean] of string = (sFailureReport, sSuccessReport);
+  Responses: array[Boolean] of TOpArray = (
+    (sNEQ, sGTE, sLTE, sGT, sLT, SEQ),
+    (sEQ, sLT, sGT, sLTE, sGTE, sNEQ)
+  );
+begin
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut,
+    string.Format(
+      Reports[CompareResult], [DateTypeResponses[fParams.DateType]]
+    )
+  );
+  fConsole.WriteLn(
+    TConsole.TChannel.StdOut,
+    string.Format(
+      Responses[CompareResult, fParams.ComparisonOp],
+      [FileName1, FileName2]
+    )
+  );
+end;
+
 procedure TMain.ShowHelp;
 begin
-  fConsole.Silent := False;
   SignOn;
 
   fConsole.WriteLn(TConsole.TChannel.StdOut);
@@ -410,8 +499,15 @@ begin
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpIntro);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpCompareCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateTypeCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateFormatCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpDateBasisCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowSymlinksCmd);
+  {$IF Defined(MSWINDOWS)}
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowShortcutsCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpFollowAllLinksCmd);
+  {$ENDIF}
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVerboseCmd);
+  fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpExtraVerboseCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpHelpCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpVersionCmd);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sHelpOutro);
@@ -419,7 +515,6 @@ end;
 
 procedure TMain.ShowShortHelp;
 begin
-  fConsole.Silent := False;
   SignOn;
   fConsole.WriteLn(TConsole.TChannel.StdOut);
   fConsole.WriteLn(TConsole.TChannel.StdOut, sUsage);
@@ -429,7 +524,6 @@ end;
 
 procedure TMain.ShowVersion;
 begin
-  fConsole.Silent := False;
   fConsole.WriteLn(
     TConsole.TChannel.StdOut,
     string.Format(
@@ -449,11 +543,6 @@ begin
   );
   // Record that we've signed on
   fSignedOn := True;
-  // Report any warnings
-  for var Warning in fParams.Warnings do
-    fConsole.WriteLn(
-      TConsole.TChannel.StdErr, string.Format(sWarning, [Warning])
-    );
 end;
 
 end.

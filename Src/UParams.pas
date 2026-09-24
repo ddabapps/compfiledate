@@ -17,10 +17,13 @@ interface
 
 uses
   // Delphi
+  System.Types,
   System.Classes,
+  System.Generics.Collections,
   // Project
   UDateComparer,
-  UDateExtractor;
+  UDateExtractor,
+  USysDate;
 
 
 type
@@ -29,63 +32,187 @@ type
   ///  properties.</summary>
   TParams = class(TObject)
   strict private
+    type
+      {$SCOPEDENUMS ON}
+      // IDs for all supported commands
+      TCommandID = (
+        // DO NOT assign values to this enumeration - following code assumes
+        // Ord(first-value) = 0 and Ord(last-value) = Pred(number-of-elements)
+        Help
+        , Version
+        , Verbose
+        , ExtraVerbose
+        {$IF Defined(MSWINDOWS)}
+        , FollowShortcuts
+        {$ENDIF}
+        , ComparisonOp
+        , DateType
+        , LocalTime
+        , ISODates
+        , FollowSymlinks
+        {$IF Defined(MSWINDOWS)}
+        , FollowAllLinks
+        {$ENDIF}
+      );
+      {$SCOPEDENUMS OFF}
+
+      // Container for a command's ID, an array of text commands (keys) that
+      // represent the command and a flag that indicates whether the command
+      // has an associated value.
+      TCommandInfo = record
+        ID: TCommandID;
+        Keys: array of string;
+        ExpectsValue: Boolean;
+      end;
+
     const
-      // Valid values of date type command
-      DateTypeCreateValues: array of string = [
-        // Values that existed a v2.4.0: generate warning on Linux
-        'c', 'created', 'creation'
-        // Value added after v2.4.0: error on Linux
-        {$IF Defined(MSWINDOWS)}, 'create'{$ENDIF}
-      ];
-      DateTypeModifyValues: array of string = [
-        'm', 'modify', 'modified', 'last-modified', 'modification', 'update',
-        'updated', 'last-updated', 'write', 'written', 'last-written'
-      ];
-      DateTypeAccessValues: array of string = [
-        'a', 'accessed', 'last-accessed', 'access', 'read', 'last-read'
-      ];
-      DateTypeStatusChangeValues: array of string = [
-        's', 'status', 'status-change', 'last-status-change', 'status-changed',
-        'metadata', 'metadata-change', 'last-metadata-change',
-        'metadata-changed'
-      ];
-      // Valid values of compare command
-      CompareEQValues: array of string = [
-        '=', '==', 'eq', 'eql', 'equal', 'same'
-      ];
-      CompareGTValues: array of string = [
-        '>', 'gt', 'newer', 'later', 'after'
-      ];
-      CompareGTEValues: array of string = [
-        '>=', 'gte', 'ge', 'goe', 'no-older', 'not-older', 'no-earlier',
-        'not-earlier', 'not-before'
-      ];
-      CompareLTValues: array of string = [
-        '<', 'lt', 'older', 'earlier', 'before'
-      ];
-      CompareLTEValues: array of string = [
-        '<=', 'lte', 'le', 'loe', 'no-newer', 'not-newer', 'no-later',
-        'not-later', 'not-after'
-      ];
-      CompareNEQValues: array of string = [
-        '<>', '!=', '~=', 'neq', 'ne', 'not-equal', 'not-same', 'different'
-      ];
-  strict private
+      // Lookup table listing information about all supported commands
+      CommandLookup: array[0..Ord(High(TCommandID))] of TCommandInfo = (
+        (
+          ID: TCommandID.Help;
+          Keys: ['-h', '-?', '--help'];
+          ExpectsValue: False
+        )
+        ,
+        (
+          ID: TCommandID.Version;
+          Keys: ['-V', '--version'];
+          ExpectsValue: False
+        )
+        ,
+        (
+          ID: TCommandID.Verbose;
+          Keys: ['-v', '--verbose'];
+          ExpectsValue: False
+        )
+        ,
+        (
+          ID: TCommandID.ExtraVerbose;
+          Keys: ['-x', '-vv', '--extra-verbose'];
+          ExpectsValue: False
+        )
+        {$IF Defined(MSWINDOWS)}
+        ,
+        (
+          ID: TCommandID.FollowShortcuts;
+          Keys: ['-sh', '-s', '--follow-shortcuts'];
+          ExpectsValue: False
+        )
+        {$ENDIF}
+        ,
+        (
+          ID: TCommandID.ComparisonOp;
+          Keys: ['-c', '--compare'];
+          ExpectsValue: True
+        )
+        ,
+        (
+          ID: TCommandID.DateType;
+          Keys: ['-d', '--date-type'];
+          ExpectsValue: True
+        )
+        ,
+        (
+          ID: TCommandID.LocalTime;
+          Keys: ['-l', '--local-time'];
+          ExpectsValue: False
+        )
+        ,
+        (
+          ID: TCommandID.ISODates;
+          Keys: ['-i', '--iso-dates'];
+          ExpectsValue: False
+        )
+        ,
+        (
+          ID: TCommandID.FollowSymlinks;
+          Keys: ['-sy', '-S', '--follow-symlinks'];
+          ExpectsValue: False
+        )
+        {$IF Defined(MSWINDOWS)}
+        ,
+        (
+          ID: TCommandID.FollowAllLinks;
+          Keys: ['-ss', '--follow-all-links'];
+          ExpectsValue: False
+        )
+        {$ENDIF}
+      );
+    const
+      // Map of date types to valid values
+      DateTypeMap: array[TDateExtractor.TDateType] of TStringDynArray = (
+        [ // LastModified
+          'm', 'modify', 'modified', 'last-modified', 'modification', 'update',
+          'updated', 'last-updated', 'write', 'written', 'last-written'
+        ],
+        {$IF Defined(MSWINDOWS)}
+        [ // Created
+          'c', 'created', 'creation', 'create'
+        ],
+        {$ENDIF}
+        {$IF Defined(LINUX)}
+        [ // StatusChanged
+          's', 'status', 'status-change', 'last-status-change',
+          'status-changed', 'metadata', 'metadata-change',
+          'last-metadata-change', 'metadata-changed'
+        ],
+        {$ENDIF}
+        [ // LastAccessed
+          'a', 'accessed', 'last-accessed', 'access', 'read', 'last-read'
+        ]
+      );
+
+      // Map of compare operators to valid values
+      CompareMap: array[TDateComparer.TOp] of TStringDynArray = (
+        [ // TOp.EQ
+          '=', '==', 'eq', 'eql', 'equal', 'same'
+        ],
+        [ // TOp.LT
+          '<', 'lt', 'older', 'earlier', 'before'
+        ],
+        [ // TOp.GT
+          '>', 'gt', 'newer', 'later', 'after'
+        ],
+        [ // TOp.LTE
+          '<=', 'lte', 'le', 'loe', 'no-newer', 'not-newer', 'no-later',
+          'not-later', 'not-after'
+        ],
+        [ // TOp.GTE
+          '>=', 'gte', 'ge', 'goe', 'no-older', 'not-older', 'no-earlier',
+          'not-earlier', 'not-before'
+        ],
+        [ // TOp.NEQ
+          '<>', '!=', '~=', 'neq', 'ne', 'not-equal', 'not-same', 'different'
+        ]
+      );
     var
       // List of command line parameters
       fParams: TStringList;
       // Property values
       fVerbose: Boolean;
+      fExtraVerbose: Boolean;
       fHelp: Boolean;
       fShortHelp: Boolean;
       fVersion: Boolean;
       fComparisonOp: TDateComparer.TOp;
       fDateType: TDateExtractor.TDateType;
+      fDateBasis: TSysDate.TDateBasis;
+      fDateFormat: TSysDate.TDateFormat;
       fFollowShortcuts: Boolean;
+      fFollowSymlinks: Boolean;
       fFileName2: string;
       fFileName1: string;
-      // List of warnings
-      fWarnings: TStrings;
+
+    ///  <summary>Checks if a string is contained in a string array.</summary>
+    ///  <param name="AStr">[in] String to be checked for in array.</param>
+    ///  <param name="AArr">[in] Array of strings containing valid values.
+    ///  </param>
+    ///  <param name="AIgnoreCase">[in] Flag that determines whether case is
+    ///  ignored when searching <c>AArr</c>.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if <c>AStr</c> is found in
+    ///  <c>AArr</c> or <c>False</c> otherwise.</returns>
+    class function IsStrInArray(const AStr: string; const AArr: array of string;
+      const AIgnoreCase: Boolean): Boolean;
     ///  <summary>Parses the command at a given index on the command line.
     ///  </summary>
     ///  <param name="Idx">[in/out] When called <c>Idx</c> is set to the index
@@ -106,6 +233,54 @@ type
     ///  <exception><c>EApplication</c> raised if <c>DT</c> is not a valid
     ///  date type name.</exception>
     procedure ParseDateType(DT: string);
+    ///  <summary>Attempts to look up information about a command.</summary>
+    ///  <param name="ACommand">[in] Command to look up.</param>
+    ///  <param name="AID">[out] Set to the command's ID. Undefined if the
+    ///  command is not found.</param>
+    ///  <param name="AExpectsValue">[out] Set to a flag the indicates if the
+    ///  command has an associated value. Undefined if the command is not found.
+    ///  </param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the command is found or
+    ///  <c>False</c> if not.</returns>
+    class function TryLookupCommandInfo(const ACommand: string;
+      out AID: TCommandID; out AExpectsValue: Boolean): Boolean;
+    ///  <summary>Checks if a parameter represents a correctly formatted long
+    ///  form command.</summary>
+    ///  <param name="AParam">[in] Parameter to be checked</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the parameter begins with a
+    ///  long form command, <c>False</c> otherwise.</returns>
+    ///  <remarks>This method only checks for a command in the correct format
+    ///  (i.e. <c>--xxx</c>) but doesn't check that the command is supported.
+    ///  </remarks>
+    class function IsLongCommand(const AParam: string): Boolean;
+    ///  <summary>Checks if a parameter represents a correctly formatted short
+    ///  form command.</summary>
+    ///  <param name="AParam">[in] Parameter to be checked.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the parameter begins with a
+    ///  short form command, <c>False</c> otherwise.</returns>
+    ///  <remarks>This method only checks for a command in the correct format
+    ///  (i.e. <c>-x</c>) but doesn't check that the command is supported.
+    ///  </remarks>
+    class function IsShortCommand(const AParam: string): Boolean;
+    ///  <summary>Checks if the parameter contains a correctly formatted command
+    ///  in either long or short format.</summary>
+    ///  <param name="AParam">[in] Parameter to be checked.</param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if the parameter begins with a
+    ///  correctly formatted command, <c>False</c> otherwise.</returns>
+    ///  <remarks>This method only checks for a command in the correct format
+    ///  but doesn't check that the command is supported.</remarks>
+    class function IsCommand(const AParam: string): Boolean;
+    ///  <summary>Checks if a given command is contained in a given array of
+    ///  valid commands.</summary>
+    ///  <param name="ACommand">[in] Command to be tested.</param>
+    ///  <param name="AValidCommands">[in] Array containing the valid commands.
+    ///  </param>
+    ///  <returns><c>Boolean</c>. <c>True</c> if <c>AParam</c> is valid,
+    ///  <c>False</c> if not.</returns>
+    ///  <remarks>The test for validity is case sensitive. Commands that differ
+    ///  only in case are treated as different commands.</remarks>
+    class function IsValidCommand(const ACommand: string;
+      const AValidCommands: array of string): Boolean;
     ///  <summary>Checks if a given value is contained in a given array of valid
     ///  values.</summary>
     ///  <param name="AValue">[in] Value to be tested.</param>
@@ -113,11 +288,43 @@ type
     ///  </param>
     ///  <returns><c>Boolean</c>. <c>True</c> if <c>AValue</c> is valid,
     ///  <c>False</c> if not.</returns>
-    ///  <remarks>The test for validity is case insensitive.</remarks>
+    ///  <remarks>The test for validity is case insensitive. Values that differ
+    ///  only in case are treated as the same values.</remarks>
     class function IsValidValue(const AValue: string;
       const AValidValues: array of string): Boolean;
-    ///  <summary>Read accessor for <c>Warnings</c> property.</summary>
-    function GetWarnings: TArray<string>;
+    ///  <summary>Gets the command and any associated value starting at the
+    ///  given index in the parameter list.</summary>
+    ///  <param name="AParamIdx">[in/out]. The index where the command begins in
+    ///  the parameter list. On return this value may be incremented by <c>1</c>
+    ///  if any value is in the next item on the command line.</param>
+    ///  <returns><c>TPair&lt;string,string&gt;</c>. A key/value pair of strings
+    ///  where the command is stored in the <c>Key</c> field and any value is
+    ///  stored in the <c>Value</c> field. If the command has no associated
+    ///  value then <c>Value</c> is set to the empty string.</returns>
+    ///  <exception><c>EApplication</c> is raised if the referenced parameter is
+    ///  not a correctly formatted command.</exception>
+    ///  <remarks>This method only checks for correctly formatted commands and
+    ///  values. It does not check if the commands or values are supported.
+    ///  </remarks>
+    function GetCommandAndValue(var AParamIdx: Integer): TPair<string,string>;
+    ///  <summary>Gets the ID and any associated value of a supported command
+    ///  starting at the given index in the parameter list.</summary>
+    ///  <param name="AParamIdx">[in/out]. The index where the command begins in
+    ///  the parameter list. On return this value may be incremented by <c>1</c>
+    ///  if any value is in the next item on the command line.</param>
+    ///  <returns><c>TPair&lt;TCommandID,string&gt;</c>. A key/value pair
+    ///  representing the ID of the command and any value associated with the
+    ///  command. The command ID is stored in the <c>Key</c> field and any
+    ///  value is stored in the <c>Value</c> field. If the command has no
+    ///  associated value then <c>Value</c> is set to the empty string.
+    ///  </returns>
+    ///  <exception><c>EApplication</c> is raised if the referenced parameter is
+    ///  any of the following: (a) not a correctly formatted command; (b) not a
+    ///  supported command; (c) if a value is present for a command that expects
+    ///  no value; (d) if a value is not present for a command that expects one.
+    ///  </exception>
+    function GetCommandIDAndValue(var AParamIdx: Integer):
+      TPair<TCommandID,string>;
   public
     ///  <summary>Object constructor.</summary>
     constructor Create;
@@ -129,12 +336,19 @@ type
     procedure Parse;
     ///  <summary>Specifies whether the program is to be run in verbose mode.
     ///  </summary>
-    ///  <remarks><c>True</c> if either the -v or --verbose command has been
-    ///  specified, <c>False</c> if not.</remarks>
+    ///  <remarks><c>True</c> if either the <c>-v</c> or <c>--verbose</c>
+    ///  command has been specified or <c>False</c> if not.</remarks>
     property Verbose: Boolean read fVerbose;
+    ///  <summary>Specifies whether the program is to be run in extra verbose
+    ///  mode.</summary>
+    ///  <remarks><c>True</c> if any of the <c>-x</c>, <c>-vv</c> or
+    ///  <c>--extra-verbose</c> command has been specified or <c>False</c> if
+    ///  not.</remarks>
+    property ExtraVerbose: Boolean read fExtraVerbose;
     ///  <summary>Specifies whether help text is to be displayed.</summary>
-    ///  <remarks><c>True</c> if either the -h, -? or --help command has been
-    ///  specified, <c>False</c> if not.</remarks>
+    ///  <remarks><c>True</c> if either the <c>-h</c>, <c>-?</c> or
+    ///  <c>--help</c> command has been specified or <c>False</c> if not.
+    ///  </remarks>
     property Help: Boolean read fHelp;
     ///  <summary>Specifies whether short help text is to be displayed.
     ///  </summary>
@@ -143,32 +357,52 @@ type
     property ShortHelp: Boolean read fShortHelp;
     ///  <summary>Specifies whether the program's version information is to be
     ///  displayed.</summary>
-    ///  <remarks><c>True</c> if either the -V or --version command has been
-    ///  specified, <c>False</c> otherwise.</remarks>
+    ///  <remarks><c>True</c> if either the <c>-V</c> or <c>--version</c>
+    ///  command has been specified or <c>False</c> otherwise.</remarks>
     property Version: Boolean read fVersion;
     ///  <summary>Type of comparison to be applied to dates.</summary>
-    ///  <remarks>Defaults to <c>TDateComparer.TOp.LT</c> unless either the -c
-    ///  or --compare commands are used to override this value.</remarks>
+    ///  <remarks>Defaults to <c>TDateComparer.TOp.LT</c> unless either the
+    ///  <c>-c</c> or <c>--compare</c> commands are used to override this value.
+    ///  </remarks>
     property ComparisonOp: TDateComparer.TOp read fComparisonOp;
     ///  <summary>Specifies whether to compare files' last-modified or creation
     ///  dates.</summary>
     ///  <remarks>Defaults to <c>TDateExtractor.TDateType.LastModified</c>
-    ///  unless either the -d or --datetype command are used to override this
-    ///  value.</remarks>
+    ///  unless either the <c>-d</c> or <c>--date-type</c> command are used to
+    ///  override this value.</remarks>
     property DateType: TDateExtractor.TDateType read fDateType;
+    ///  <summary>Specifies the date format to be used when displaying file
+    ///  dates.</summary>
+    ///  <remarks>Defaults to the locale specific date format unless the
+    ///  <c>--iso-dates</c> or <c>-i</c> command is specified when ISO 8601 date
+    ///  format is used instead.</remarks>
+    property DateFormat: TSysDate.TDateFormat read fDateFormat;
+    ///  <summary>Specifies the time zone to be used as the basis when
+    ///  displaying file dates.</summary>
+    ///  <remarks>Defaults to displaying dates in UTC unless the
+    ///  <c>--local-time</c> or <c>-l</c> command is specified when dates are
+    ///  displayed in local time.</remarks>
+    property DateBasis: TSysDate.TDateBasis read fDateBasis;
     ///  <summary>Specifies if shortcut files are to be expanded before
     ///  comparing dates.</summary>
     ///  <remarks>When <c>True</c> the files targeted by any shortcut are used
     ///  in the date comparison; when <c>False</c> the date of the shortcut file
-    ///  itself is used. Defaults to <c>False</c> unless the -s or
-    ///  --followshortcuts command has been specified.</remarks>
+    ///  itself is used. Defaults to <c>False</c> unless the <c>-s</c>,
+    ///  <c>-sh</c> or <c>--follow-shortcuts</c> command has been specified.
+    ///  </remarks>
     property FollowShortcuts: Boolean read fFollowShortcuts;
+    ///  <summary>Specifies if symbolic links are to be expanded before
+    ///  comparing dates.</summary>
+    ///  <remarks>When <c>True</c> the files targeted by any symlink are used
+    ///  in the date comparison; when <c>False</c> the date of the symlink file
+    ///  itself is used. Defaults to <c>False</c> unless the <c>-S</c>,
+    ///  <c>-sy</c> or <c>--follow-symlinks</c> command has been specified.
+    ///  </remarks>
+    property FollowSymlinks: Boolean read fFollowSymlinks;
     ///  <summary>Name of the 1st file on the command line.</summary>
     property FileName1: string read fFileName1;
     ///  <summary>Name of the 2nd file on the command line.</summary>
     property FileName2: string read fFileName2;
-    ///  <summary>Array of any warnings generated while parsing parameters
-    property Warnings: TArray<string> read GetWarnings;
   end;
 
 
@@ -178,26 +412,21 @@ implementation
 uses
   // Delphi
   System.SysUtils,
+  System.Character,
   // Project
   UAppException;
 
 
 resourcestring
   // Error messages
-  sBadSwitch = 'Invalid command "%s"';
+  sUnknownCommand = 'Unknown command "%s"';
+  sBadCommandFormat = 'Invalid command format: "%s"';
+  sValueExpected = 'Value expected for command "%s"';
+  sNoValueExpected = 'Command "%s" does not expect a value';
   s2FilesNeeded = 'Exactly two file names must be specified';
   sFileNamesSame = 'File names must be different';
-  sNoCompareType = 'No comparison type specified for -c or --compare command';
   sBadCompareType = 'Invalid comparison type in -c or --compare command';
-  sNoDateType = 'No date type specified for -d or --datetype command';
-  sBadDateType = 'Invalid date type in -d or --datetype command';
-  sNoShortcutsOnLinux =
-    'The -s or --followshortcuts command is not supported on Linux';
-  sNoCTimeOnWindows = 'The "%s" date type is not supported on Windows';
-  // Warning messages
-  sNoCreationDate =
-    'The "%s" date type is deprecated on Linux. '
-    + 'Using "status-changed" instead.';
+  sBadDateType = 'Invalid date type in -d or --date-type command';
 
 
 { TParams }
@@ -217,29 +446,113 @@ begin
   fFileName2 := string.Empty;
   fComparisonOp := TDateComparer.TOp.LT;
   fDateType := TDateExtractor.TDateType.LastModified;
+  fDateBasis := TSysDate.TDateBasis.UTC;
+  fDateFormat := TSysDate.TDateFormat.LocaleSpecific;
   fFollowShortcuts := False;
-  fWarnings := TStringList.Create;
+  fFollowSymlinks := False;
 end;
 
 destructor TParams.Destroy;
 begin
-  fWarnings.Free;
   fParams.Free;
   inherited;
 end;
 
-function TParams.GetWarnings: TArray<string>;
+function TParams.GetCommandAndValue(var AParamIdx: Integer):
+  TPair<string, string>;
 begin
-  Result := fWarnings.ToStringArray;
+  Assert(AParamIdx < fParams.Count);
+  var Param := fParams[AParamIdx];
+  if IsShortCommand(Param) then
+  begin
+    Result.Key := Param;
+    if AParamIdx < Pred(fParams.Count) then
+    begin
+      var NextParam := fParams[Succ(AParamIdx)];
+      if not IsCommand(NextParam) then
+      begin
+        Result.Value := NextParam;
+        Inc(AParamIdx);
+      end
+      else
+        Result.Value := string.Empty;
+    end
+    else
+      Result.Value := string.Empty;
+  end
+  else if IsLongCommand(Param) then
+  begin
+    var EqualsPos := Param.IndexOf('=');
+    if EqualsPos > 0 then
+    begin
+      Result.Key := Param.Substring(0, EqualsPos);
+      Result.Value := Param.Substring(EqualsPos + 1);
+    end
+    else
+      Result := TPair<string,string>.Create(Param, string.Empty);
+  end
+  else
+    raise EApplication.Create(
+      sBadCommandFormat, [Param], EApplication.ErrBadSwitch
+    );
+end;
+
+function TParams.GetCommandIDAndValue(var AParamIdx: Integer):
+  TPair<TCommandID, string>;
+begin
+  var Param := GetCommandAndValue(AParamIdx);
+  var ExpectsValue: Boolean;
+  if not TryLookupCommandInfo(Param.Key, Result.Key, ExpectsValue) then
+    raise EApplication.Create(
+      sUnknownCommand, [Param.Key], EApplication.ErrBadSwitch
+    );
+  Result.Value := Param.Value;
+  if ExpectsValue and Result.Value.IsEmpty then
+    raise EApplication.Create(
+      sValueExpected, [Param.Key], EApplication.ErrBadSwitch
+    );
+  if not ExpectsValue and not Result.Value.IsEmpty then
+    raise EApplication.Create(
+      sNoValueExpected, [Param.Key], EApplication.ErrBadSwitch
+    );
+end;
+
+class function TParams.IsCommand(const AParam: string): Boolean;
+begin
+  Result := IsLongCommand(AParam) or IsShortCommand(AParam);
+end;
+
+class function TParams.IsLongCommand(const AParam: string): Boolean;
+begin
+  Result := (AParam.Length >= 3) and (AParam[1] = '-') and (AParam[2] = '-')
+    and AParam[3].IsLetterOrDigit;
+end;
+
+class function TParams.IsShortCommand(const AParam: string): Boolean;
+begin
+  Result := (AParam.Length >= 2) and (AParam[1] = '-')
+    and (AParam[2].IsLetterOrDigit or (AParam[2] = '?'));
+end;
+
+class function TParams.IsStrInArray(const AStr: string;
+  const AArr: array of string; const AIgnoreCase: Boolean): Boolean;
+begin
+  Result := False;
+  for var Item in AArr do
+    if string.Compare(Item, AStr, AIgnoreCase) = 0 then
+      Exit(True);
+end;
+
+class function TParams.IsValidCommand(const ACommand: string;
+  const AValidCommands: array of string): Boolean;
+begin
+  Result := IsStrInArray(ACommand, AValidCommands, False);
 end;
 
 class function TParams.IsValidValue(const AValue: string;
   const AValidValues: array of string): Boolean;
 begin
-  Result := False;
-  for var ValidValue in AValidValues do
-    if string.Compare(ValidValue, AValue, True) = 0 then
-      Exit(True);
+  Result := IsStrInArray(AValue, AValidValues, True);
 end;
 
 procedure TParams.Parse;
@@ -281,108 +594,97 @@ end;
 
 procedure TParams.ParseCommand(var Idx: Integer);
 begin
-  var Command := fParams[Idx];
-  Assert(Command.StartsWith('-'));
-  if (Command = '-h') or (Command = '-?') or (Command = '--help') then
-  begin
-    if not fVersion then
-      fHelp := True;
-  end
-  else if (Command = '-V') or (Command = '--version') then
-  begin
-    if not fHelp then
-      fVersion := True
-  end
-  else if (Command = '-v') or (Command = '--verbose') then
-    fVerbose := True
-  else if (Command = '-s') or (Command = '--followshortcuts') then
+  Assert((Idx >= 0) and (Idx <= fParams.Count),
+    ClassName + '.ParseCommand: Idx is out of range of fParams');
+
+  if not IsCommand(fParams[Idx]) then
+    raise EApplication.Create(
+      sBadCommandFormat, [fParams[Idx]], EApplication.ErrBadSwitch
+    );
+
+  var CommandInfo := GetCommandIDAndValue(Idx);
+
+  case CommandInfo.Key of
+    TCommandID.Help:
+      if not fVersion then
+        fHelp := True;
+    TCommandID.Version:
+      if not fHelp then
+        fVersion := True;
+    TCommandID.Verbose:
+      fVerbose := True;
+    TCommandID.ExtraVerbose:
+    begin
+      fVerbose := True;
+      fExtraVerbose := True;
+    end;
     {$IF Defined(MSWINDOWS)}
-    fFollowShortcuts := True
+    TCommandID.FollowShortcuts:
+      fFollowShortcuts := True;
     {$ENDIF}
-    {$IF Defined(LINUX)}
-    raise EApplication.Create(sNoShortcutsOnLinux, EApplication.ErrBadSwitch)
+    TCommandID.ComparisonOp:
+      ParseCompareType(CommandInfo.Value);
+    TCommandID.DateType:
+      ParseDateType(CommandInfo.Value);
+    TCommandID.LocalTime:
+      fDateBasis := TSysDate.TDateBasis.Local;
+    TCommandID.ISODates:
+      fDateFormat := TSysDate.TDateFormat.ISO8601;
+    TCommandID.FollowSymlinks:
+      fFollowSymlinks := True;
+    {$IF Defined(MSWINDOWS)}
+    TCommandID.FollowAllLinks:
+    begin
+      fFollowSymlinks := True;
+      fFollowShortcuts := True;
+    end;
     {$ENDIF}
-  else if (Command = '-c') then
-  begin
-    Inc(Idx);
-    ParseCompareType(
-      if Idx < fParams.Count then fParams[Idx] else string.Empty
-    );
-  end
-  else if (Command = '-d') then
-  begin
-    Inc(Idx);
-    ParseDateType(if Idx < fParams.Count then fParams[Idx] else string.Empty);
-  end
-  else if Command.StartsWith('--compare') then
-  begin
-    var EqualsPos := Command.IndexOf('=') + 1;
-    ParseCompareType(
-      if EqualsPos > 0 then Command.Substring(EqualsPos) else string.Empty
-    );
-  end
-  else if Command.StartsWith('--datetype') then
-  begin
-    var EqualsPos := Command.IndexOf('=') + 1;
-    ParseDateType(
-      if EqualsPos > 0 then Command.Substring(EqualsPos) else string.Empty
-    );
-  end
-  else
-    raise EApplication.CreateFmt(
-      sBadSwitch, [fParams[Idx], EApplication.ErrBadSwitch]
-    );
+  end;
 end;
 
 procedure TParams.ParseCompareType(CT: string);
 begin
-  if CT.IsEmpty then
-    raise EApplication.Create(sNoCompareType, EApplication.ErrNoCompareType);
-  if IsValidValue(CT, CompareEQValues) then
-    fComparisonOp := TDateComparer.TOp.EQ
-  else if IsValidValue(CT, CompareGTValues) then
-    fComparisonOp := TDateComparer.TOp.GT
-  else if IsValidValue(CT, CompareGTEValues) then
-    fComparisonOp := TDateComparer.TOp.GTE
-  else if IsValidValue(CT, CompareLTValues) then
-    fComparisonOp := TDateComparer.TOp.LT
-  else if IsValidValue(CT, CompareLTEValues) then
-    fComparisonOp := TDateComparer.TOp.LTE
-  else if IsValidValue(CT, CompareNEQValues) then
-    fComparisonOp := TDateComparer.TOp.NEQ
-  else
+  Assert(not CT.IsEmpty, ClassName + '.ParseCompareType: CT is empty string');
+  var Found: Boolean := False;
+  for var Op := Low(CompareMap) to High(CompareMap) do
+    if IsValidValue(CT, CompareMap[Op]) then
+    begin
+      fComparisonOp := Op;
+      Found := True;
+      Break;
+    end;
+  if not Found then
     raise EApplication.Create(sBadCompareType, EApplication.ErrBadCompareType);
 end;
 
 procedure TParams.ParseDateType(DT: string);
 begin
-  if DT.IsEmpty then
-    raise EApplication.Create(sNoDateType, EApplication.ErrNoDateType);
-  if IsValidValue(DT, DateTypeModifyValues) then
-    fDateType := TDateExtractor.TDateType.LastModified
-  else if IsValidValue(DT, DateTypeCreateValues) then
-  begin
-    {$IF Defined(MSWINDOWS)}
-    fDateType := TDateExtractor.TDateType.Created;
-    {$ELSEIF Defined(LINUX)}
-    fDateType := TDateExtractor.TDateType.StatusChanged;
-    fWarnings.Add(string.Format(sNoCreationDate, [DT]));
-    {$ENDIF}
-  end
-  else if IsValidValue(DT, DateTypeAccessValues) then
-    fDateType := TDateExtractor.TDateType.LastAccessed
-  else if IsValidValue(DT, DateTypeStatusChangeValues) then
-  begin
-    {$IF Defined(MSWINDOWS)}
-    raise EApplication.Create(
-      sNoCTimeOnWindows, [DT], EApplication.ErrBadDateType
-    );
-    {$ELSEIF Defined(LINUX)}
-    fDateType := TDateExtractor.TDateType.StatusChanged;
-    {$ENDIF}
-  end
-  else
+  Assert(not DT.IsEmpty, ClassName + '.ParseDateType: DT is empty string');
+  var Found: Boolean := False;
+  for var DateType := Low(DateTypeMap) to High(DateTypeMap) do
+    if IsValidValue(DT, DateTypeMap[DateType]) then
+    begin
+      fDateType := DateType;
+      Found := True;
+      Break;
+    end;
+  if not Found then
     raise EApplication.Create(sBadDateType, EApplication.ErrBadDateType);
+end;
+
+class function TParams.TryLookupCommandInfo(const ACommand: string;
+  out AID: TCommandID; out AExpectsValue: Boolean): Boolean;
+begin
+  Result := False;
+  for var Item in CommandLookup do
+  begin
+    if IsValidCommand(ACommand, Item.Keys) then
+    begin
+      AID := Item.ID;
+      AExpectsValue := Item.ExpectsValue;
+      Exit(True);
+    end;
+  end;
 end;
 
 end.

@@ -10,7 +10,7 @@ Usage
 
 For a full explanation of how to use the program see [`ReadMe.txt`](Docs/ReadMe.txt).
 
-You can also view a help screen from within CompFileDate by using the command:
+You can also view a help screen from within _CompFileDate_ by using the command:
 
     CompFileDate -h
 

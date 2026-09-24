@@ -19,8 +19,10 @@ following directory structure will be created within your nominated directory:
     +-- Docs
     |
     +-- Src
-        |
-        +-- Assets
+    |   |
+    |   +-- Assets
+    |
+    +-- Tools
 
 
 Step 2: Configure the Build Environment
@@ -61,8 +63,8 @@ https://github.com/ddabapps/compfiledate/blob/master/LICENSE.md for details.
 Step 4: Compile
 ---------------
 
-From the IDE you have the choice of building Windows 32 bit, Windows 64 bit or
-Linux 64 bit operating systems. Debug and Release build configurations are
+From the IDE you have the choice of building for Windows 32 bit, Windows 64 bit
+or Linux 64 bit operating systems. Debug and Release build configurations are
 supported for each target OS.
 
 To build a required target OS and build configuration select them in the IDE's
@@ -102,8 +104,8 @@ Step 6: Clean Up
 ----------------
 
 If you cloned the CompFileDate repo using Git you can clean up easily by opening
-a Git command line on directory where the clone was made. Then run:
+a Git command line on the directory where the clone was made. Then run:
 
     git clean -fxd
 
-Make sure you have committed any new files that you need first!
+Make sure you have committed any new files that you wish to keep first!

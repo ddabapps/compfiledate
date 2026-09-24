@@ -18,8 +18,7 @@ interface
 
 type
   ///  <summary>Class that writes text to the console using either standard
-  ///  output or standard error unless told to be silent, when all output is
-  ///  swallowed.</summary>
+  ///  output (unless told to be silent) or standard error.</summary>
   TConsole = class(TObject)
   public
     type

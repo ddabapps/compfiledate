@@ -37,10 +37,16 @@ type
       Err2FilesNeeded = 102;
       ErrFileNamesSame = 103;
       ErrFileNameNotFound = 104;
-      ErrNoCompareType = 105;
+      // Error code 105 unused & removed
       ErrBadCompareType = 106;
-      ErrNoDateType = 107;
+      // Error code 107 unused & removed
       ErrBadDateType = 108;
+      ErrCantReadFileDate = 109;
+      ErrCantReadFileAttrs = 110;
+      ErrCantResolveSymlink = 111;
+      {$IF Defined(MSWINDOWS)}
+      ErrCantResolveShortcut = 112;
+      {$ENDIF}
   public
     ///  <summary>Object constructor.</summary>
     ///  <param name="Msg">[in] Error message.</param>
@@ -54,7 +60,7 @@ type
     ///  exception.</param>
     constructor Create(const Msg: string; const Args: array of const;
       const ExitCode: Integer); overload;
-    ///  <summary>Program exit code associated with the object.</summary>
+    ///  <summary>Program exit code associated with the exception.</summary>
     property ExitCode: Integer read fExitCode;
   end;
 

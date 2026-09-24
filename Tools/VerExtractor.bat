@@ -58,7 +58,7 @@ for /f "tokens=2 delims==" %%A in (
 :: Check that version number was read successfully
 if not defined vernum exit 4
 
-:: Get optional version number suffix from input info file
+:: Get optional version number suffix from input file
 for /f "tokens=2 delims==" %%A in (
   'findstr /rc:"^suffix" "%VerFile%"'
 ) do (
